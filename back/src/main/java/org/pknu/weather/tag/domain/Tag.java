@@ -1,4 +1,4 @@
-package org.pknu.weather.domain;
+package org.pknu.weather.tag.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.common.BaseEntity;
@@ -8,20 +8,19 @@ import org.pknu.weather.common.BaseEntity;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Location extends BaseEntity {
+public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "location_id")
+    @Column(name = "tag_id")
     private Long id;
 
-    private Double longitude;
+    private String temperTag;
 
-    private Double latitude;
+    private String windTag;
 
-    private String province;
+    private String skyTag;
 
-    private String city;
+    private String dustTag;
 
-    private String street;
 }
