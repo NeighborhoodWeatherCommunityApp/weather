@@ -1,8 +1,9 @@
-package org.pknu.weather.weather.domain;
+package org.pknu.weather.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.common.BaseEntity;
-import org.pknu.weather.location.domain.Location;
+import org.pknu.weather.domain.common.RainType;
+import org.pknu.weather.domain.common.SkyType;
 
 import java.time.LocalDateTime;
 
