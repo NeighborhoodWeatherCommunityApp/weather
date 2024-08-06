@@ -1,4 +1,4 @@
-package org.pknu.weather.member.domain;
+package org.pknu.weather.domain.common;
 
 public enum Sensitivity {
     HOT, NONE, COLD

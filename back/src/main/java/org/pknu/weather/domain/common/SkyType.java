@@ -1,4 +1,4 @@
-package org.pknu.weather.weather.domain;
+package org.pknu.weather.domain.common;
 
 public enum SkyType {
 
