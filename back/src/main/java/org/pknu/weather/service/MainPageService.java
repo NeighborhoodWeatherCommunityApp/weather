@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MainPageApiService {
+public class MainPageService {
     private final WeatherFeignClient weatherFeignClient;
     private final WeatherService weatherService;
 

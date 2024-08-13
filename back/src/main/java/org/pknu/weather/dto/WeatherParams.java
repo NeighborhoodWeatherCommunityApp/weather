@@ -3,21 +3,18 @@ package org.pknu.weather.dto;
 
 import lombok.*;
 
-@Builder
 @Getter
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class WeatherParams {
 
-//    @Value("${api.weather.service_key}")
     @Builder.Default
     private String serviceKey = "%2BTr3T2Oz8rE41Pb37Hj%2BdJIBtR7WSkr73xNNd%2FS9YCyBagavmwIlWFjV0ZgBWwTpHL0mp01fgJiHAn7PzbTU0Q%3D%3D";
 
-    private Integer numOfRows;
+    @Builder.Default
+    private Integer numOfRows = 288;
 
-    private Integer pageNo;
+    @Builder.Default
+    private Integer pageNo = 1;
 
-//    @Value("${api.weather.dataType")
     @Builder.Default
     private String dataType = "JSON";
 
@@ -28,4 +25,12 @@ public class WeatherParams {
     private Integer nx;
 
     private Integer ny;
+
+    @Builder
+    private WeatherParams(String base_date, String base_time, Integer nx, Integer ny) {
+        this.base_date = base_date;
+        this.base_time = base_time;
+        this.nx = nx;
+        this.ny = ny;
+    }
 }

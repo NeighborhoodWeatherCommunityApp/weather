@@ -1,5 +1,7 @@
 package org.pknu.weather.common;
 
+import org.pknu.weather.dto.Point;
+
 public final class CoordinateConversionUtils {
 
     private static final int NX = 149; // X 축 격자점 수

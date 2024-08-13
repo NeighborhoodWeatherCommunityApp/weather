@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+// TODO: 낭비되는 공간이 많은데 개선 필요.. 이 형태 아니면 동작 X HttpMessageConverter을 직접 구현하는 것도...
 public class WeatherApiResponse {
 
     @JsonProperty("response")

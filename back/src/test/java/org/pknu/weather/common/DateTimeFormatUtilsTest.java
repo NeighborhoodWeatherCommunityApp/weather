@@ -9,8 +9,8 @@ class DateTimeFormatUtilsTest {
     @Test
     void DateTimeFormatUtils_정상_작동_테스트() {
         //given
-        String formattedDate2YYMMDD = DateTimeFormatUtils.getFormattedDate2YYYYMMDD();
-        String formattedTime2HHMM = DateTimeFormatUtils.getFormattedTime2HHMM();
+        String formattedDate2YYMMDD = DateTimeFormaterUtils.getFormattedDate();
+        String formattedTime2HHMM = DateTimeFormaterUtils.getFormattedTimeByThreeHour();
 
         log.info(formattedDate2YYMMDD);
         log.info(formattedTime2HHMM);

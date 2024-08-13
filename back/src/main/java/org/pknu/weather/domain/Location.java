@@ -1,7 +1,12 @@
 package org.pknu.weather.domain;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.common.BaseEntity;
+import org.pknu.weather.dto.Point;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,4 +29,10 @@ public class Location extends BaseEntity {
     private String city;
 
     private String street;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "location",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Weather> weatherList = new ArrayList<>();
 }

@@ -18,10 +18,8 @@ class WeatherFeignClientTest {
     @Test
     void open_fegin을_이용한_단기예보_api_동작_테스트() {
         WeatherParams weatherParams = WeatherParams.builder()
-                .numOfRows(50)
-                .pageNo(1)
-                .base_date(DateTimeFormatUtils.getFormattedDate2YYYYMMDD())
-                .base_time(DateTimeFormatUtils.getFormattedTime2HHMM())
+                .base_date(DateTimeFormaterUtils.getFormattedDate())
+                .base_time(DateTimeFormaterUtils.getFormattedTimeByThreeHour())
                 .nx(55)
                 .ny(127)
                 .build();
