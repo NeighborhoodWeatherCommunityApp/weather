@@ -7,6 +7,8 @@ import org.pknu.weather.dto.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Getter
@@ -35,4 +37,8 @@ public class Location extends BaseEntity {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private List<Weather> weatherList = new ArrayList<>();
+
+    public String getAddress() {
+        return getCity() + getStreet();
+    }
 }

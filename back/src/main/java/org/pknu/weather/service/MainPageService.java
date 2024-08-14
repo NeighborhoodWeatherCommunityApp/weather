@@ -3,7 +3,15 @@ package org.pknu.weather.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.WeatherFeignClient;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Weather;
+import org.pknu.weather.dto.converter.WeatherConverter;
+import org.pknu.weather.dto.converter.WeatherResponse;
+import org.pknu.weather.repository.MemberRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 메인페이지에서 사용되는 API를 위한 서비스 즉, 화면에 맞춰진 로직을 관리한다.
@@ -14,8 +22,9 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MainPageService {
-    private final WeatherFeignClient weatherFeignClient;
+    private final MemberRepository memberRepository;
     private final WeatherService weatherService;
 
     /**
@@ -26,4 +35,9 @@ public class MainPageService {
      * 4. location entity에 지역 정보를 저장한다.
      * 5. weather entity에 날씨 예보 정보를 저장한다..
      */
+    public WeatherResponse.MainPageWeatherData getWeatherInfo(Long memberId) {
+        Member member = memberRepository.safeFindById(memberId);
+        List<Weather> weatherList = weatherService.getWeathers(member);
+        return WeatherConverter.toMainPageWeatherData(weatherList, member);
+    }
 }

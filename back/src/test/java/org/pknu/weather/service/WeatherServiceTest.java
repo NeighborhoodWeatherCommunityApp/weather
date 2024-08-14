@@ -71,7 +71,7 @@ class WeatherServiceTest {
         Member member = memberRepository.safeFindById(1L);
 
         // when
-        List<Weather> weathers = weatherService.saveWeather(member.getId(), (float)LONGITUDE, (float)LATITUDE);
+        List<Weather> weathers = weatherService.saveWeathers(member.getId(), (float)LONGITUDE, (float)LATITUDE);
 
         // then
         assertThat(weathers.size()).isEqualTo(24);

@@ -63,11 +63,11 @@ public class Weather extends BaseEntity {
             // 강수 형태
             case "PTY" -> this.setRainType(convertRainType(val));
             // 1시간 강수량
-            case "PCP" -> this.setRain(val.equals("강수없음") ? 0.0f : Float.parseFloat(val));
+            case "PCP" -> this.setRain(val.equals("강수없음") ? 0.0f : Float.parseFloat(val.split("mm")[0]));
             // 습도
             case "REH" -> this.setHumidity(Integer.parseInt(val));
             // 1시간 신척설
-            case "SNO" -> this.setSnowCover(val.equals("적설없음") ? 0.0f : Float.parseFloat(val));
+            case "SNO" -> this.setSnowCover(val.equals("적설없음") ? 0.0f : Float.parseFloat(val.split("cm")[0]));
             // 하늘 상태
             case "SKY" -> this.setSkyType(convertSkyType(val));
             // 1시간 기온

@@ -1,9 +1,6 @@
 package org.pknu.weather.repository;
 
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.DateTimeFormaterUtils;
@@ -79,11 +76,10 @@ class LocationRepositoryTest {
         int eq = 24 - LocalTime.now().getHour() - 1;
 
         // when
-        List<Weather> weathers = weatherRepository.findAllGreaterThanNowAndWithLocation();
+        List<Weather> weathers = weatherRepository.findAllWithLocation(location);
 
         // then
         assertThat(weathers.size()).isEqualTo(eq);
         assertThat(weathers.get(0).getLocation().getId()).isEqualTo(location.getId());
-
     }
 }

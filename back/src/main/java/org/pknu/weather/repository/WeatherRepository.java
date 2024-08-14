@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
-    @Query("select w from Weather w join fetch w.location l where w.presentationTime >= now()")
-    List<Weather> findAllGreaterThanNowAndWithLocation();
+    @Query("select w from Weather w join fetch w.location where w.location = :location and w.presentationTime >= now()")
+    List<Weather> findAllWithLocation(Location location);
 
     @Modifying
     @Query("delete from Weather w where w.presentationTime < now()")
-    void bulkDeletePastWeather();
+    void bulkDeletePastWeathers();
 }
