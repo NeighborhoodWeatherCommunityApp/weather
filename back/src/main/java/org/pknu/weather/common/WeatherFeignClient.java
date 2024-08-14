@@ -4,6 +4,7 @@ import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.Point;
 import org.pknu.weather.dto.WeatherApiResponse;
 import org.pknu.weather.dto.WeatherParams;
+import org.pknu.weather.dto.WeatherApiResponse.Response.Body.Items.Item;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ public interface WeatherFeignClient {
         WeatherParams weatherParams = WeatherParamsFactory.create(baseDate, baseTime, point);
 
         WeatherApiResponse weatherApiResponse = getVillageShortTermForecast(weatherParams);
-        List<WeatherApiResponse.Response.Body.Items.Item> itemList = weatherApiResponse.getResponse().getBody().getItems().getItemList();
+        List<Item> itemList = weatherApiResponse.getResponse().getBody().getItems().getItemList();
 
         return WeatherApiUtils.responseProcess(itemList, baseDate, baseTime);
     }

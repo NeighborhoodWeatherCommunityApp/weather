@@ -45,4 +45,12 @@ public class WeatherService {
         weatherList.forEach(w -> w.addLocation(location));
         return weatherRepository.saveAll(weatherList);
     }
+
+
+    /**
+     * 예보 시간이 현재 보다 과거이면 모두 삭제합니다.
+     */
+    public void bulkDeletePastWeather() {
+        weatherRepository.bulkDeletePastWeather();
+    }
 }
