@@ -31,13 +31,13 @@ public interface WeatherFeignClient {
      */
     default Map<String, Weather> preprocess(Float lon, Float lat) {
         Point point = CoordinateConversionUtils.convertCoordinate(lon, lat);
-        String baseDate = DateTimeFormaterUtils.getFormattedDate();
-        String baseTime = DateTimeFormaterUtils.getFormattedTimeByThreeHour();
-        WeatherParams weatherParams = WeatherParamsFactory.create(baseDate, baseTime, point);
+        String date = DateTimeFormaterUtils.getFormattedDate();
+        String time = DateTimeFormaterUtils.getFormattedTimeByThreeHour();
+        WeatherParams weatherParams = WeatherParamsFactory.create(date, time, point);
 
         WeatherApiResponse weatherApiResponse = getVillageShortTermForecast(weatherParams);
         List<Item> itemList = weatherApiResponse.getResponse().getBody().getItems().getItemList();
 
-        return WeatherApiUtils.responseProcess(itemList, baseDate, baseTime);
+        return WeatherApiUtils.responseProcess(itemList, date, time);
     }
 }

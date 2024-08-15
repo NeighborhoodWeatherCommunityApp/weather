@@ -29,8 +29,8 @@ public class WeatherConverter {
 //    }
 
     public static WeatherResponse.MainPageWeatherData toMainPageWeatherData(List<Weather> weatherList, Member member) {
-        Integer max = Integer.MIN_VALUE;
-        Integer min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
 
         for(Weather w : weatherList) {
             max = Math.max(max, w.getTemperature());

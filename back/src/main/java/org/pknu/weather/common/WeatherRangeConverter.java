@@ -40,13 +40,21 @@ public class WeatherRangeConverter {
             weight = 0;
         }
 
-        if (tmp >= VERY_HOT + adjustment) return TemperatureRange.VERY_HOT;
-        else if (tmp >= HOT + adjustment + weight) return TemperatureRange.HOT;
-        else if (tmp >= LITTLE_HOT + adjustment + 2 * weight) return TemperatureRange.LITTLE_HOT;
-        else if (tmp >= AVERAGE) return TemperatureRange.AVERAGE;
-        else if (tmp >= COOL) return TemperatureRange.COOL;
-        else if (tmp >= LITTLE_COLD + adjustment + 2 * weight) return TemperatureRange.LITTLE_COLD;
-        else if (tmp >= COLD + adjustment + weight) return TemperatureRange.COLD;
-        else return TemperatureRange.VERY_COLD;
+        if (tmp >= VERY_HOT + adjustment)
+            return TemperatureRange.VERY_HOT;
+        else if (tmp >= HOT + adjustment + weight)
+            return TemperatureRange.HOT;
+        else if (tmp >= LITTLE_HOT + adjustment + 2 * weight)
+            return TemperatureRange.LITTLE_HOT;
+        else if (tmp >= AVERAGE)
+            return TemperatureRange.AVERAGE;
+        else if (tmp >= COOL)
+            return TemperatureRange.COOL;
+        else if (tmp >= LITTLE_COLD + adjustment + 2 * weight)
+            return TemperatureRange.LITTLE_COLD;
+        else if (tmp >= COLD + adjustment + weight)
+            return TemperatureRange.COLD;
+        else
+            return TemperatureRange.VERY_COLD;
     }
 }

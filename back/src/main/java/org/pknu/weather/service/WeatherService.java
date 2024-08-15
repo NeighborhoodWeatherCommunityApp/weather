@@ -25,7 +25,9 @@ public class WeatherService {
 
     public List<Weather> getWeathers(Member member) {
         Location location = member.getLocation();
-        return weatherRepository.findAllWithLocation(location);
+        return weatherRepository.findAllWithLocation(location).stream()
+                .sorted(Comparator.comparing(Weather::getPresentationTime))
+                .toList();
     }
 
     /**
