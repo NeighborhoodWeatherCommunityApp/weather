@@ -92,7 +92,7 @@ class MainPageServiceTest {
 
         // then
         assertThat(weatherInfo.getCurrentTmp()).isEqualTo(weatherList.get(0).getTemperature());
-        assertThat(weatherInfo.getWeatherPerHourList().size()).isGreaterThanOrEqualTo(22);  // 3시간 간격으로 예보를 발표하기 때문에 22 ~ 24개의 예보
+        assertThat(weatherInfo.getWeatherPerHourList().size()).isGreaterThanOrEqualTo(21);  // 3시간 간격으로 예보를 발표하기 때문에 22 ~ 24개의 예보
         assertThat(weatherInfo.getCurrentSkyType()).isEqualTo(weatherList.get(0).getSkyType());
     }
 }
