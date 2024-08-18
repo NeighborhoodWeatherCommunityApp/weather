@@ -11,7 +11,6 @@ on:
   pull_request:
     # 아래 브랜치에서 PR이 발생했을 때
     branches:
-#      - main
       - dev
       - feat/**
     # 아래 경로에서 변경점이 있다면 CI/CD 진행
@@ -35,7 +34,7 @@ jobs:
 
       # Spring Boot 애플리케이션 빌드
       - name: Grant execute permission for gradlew
-        run: chmod +x test_back/gradlew
+        run: chmod +x back/gradlew
 
       - name: Build with Gradle Wrapper
         working-directory: test_back   # 해당 디렉토리에서 수행한다.
@@ -43,7 +42,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./test_back
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
 
       # DockerHub 로그인
       - name: Docker login
