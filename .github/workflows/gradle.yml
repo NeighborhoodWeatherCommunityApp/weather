@@ -42,7 +42,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./test_back
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app ./back
 
       # DockerHub 로그인
       - name: Docker login
@@ -53,7 +53,7 @@ jobs:
 
       # Docker Hub 이미지 푸시
       - name: Docker Hub push
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
 
   # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
   run-docker-image-on-ec2:
@@ -63,7 +63,7 @@ jobs:
     steps:
       # 최신 이미지를 풀받습니다
       - name: Docker pull
-        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
 
       # 기존의 컨테이너를 중지시킵니다
       - name: Docker stop container
@@ -71,7 +71,7 @@ jobs:
 
       # 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: Docker run new container
-        run: sudo docker run --name neighborhood_weather_community_app --rm -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+        run: sudo docker run --name neighborhood_weather_community_app --rm -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
 
       # 미사용 이미지를 정리합니다
       - name: Delete old Docker image
