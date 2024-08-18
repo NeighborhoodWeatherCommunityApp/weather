@@ -28,3 +28,7 @@ api:
   weather:
     service_key: ${SHORT_TERM_FORECAST_API_KEY}
     data_type: JSON
+management:
+  endpoint:
+    health:
+      show-details: always
