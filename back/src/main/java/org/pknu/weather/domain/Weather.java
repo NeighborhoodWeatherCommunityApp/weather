@@ -5,7 +5,6 @@ import lombok.*;
 import org.pknu.weather.common.BaseEntity;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.WeatherApiResponse;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +21,7 @@ public class Weather extends BaseEntity {
     private Long id;
 
     private LocalDateTime basetime;
+
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
