@@ -2,26 +2,36 @@ spring:
   sql:
     init:
       mode: never
-  profiles:
-    active: # ${ACTIVE_PROFILE}
   datasource:
-    url: #jdbc:mysql://${DB_URL}/{DBName}}
-    username: #사용자 이름
-    password: #DB 패스워드
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
       hibernate:
-        ddl-auto: update #운영 환경에서는 사용하지 않기!!!
         dialect: org.hibernate.dialect.MySQL8Dialect
         show_sql: true
         format_sql: true
         use_sql_comments: true
         default_batch_fetch_size: 500
+    hibernate:
+      ddl-auto: none
 logging:
   level:
     root: debug
 log:
   config:
-    path: # 로그 파일 경로
-    filename: # 로그 파일 이름
+    path: ./log
+    filename: log_file
+api:
+  weather:
+    service_key: ${SHORT_TERM_FORECAST_API_KEY}
+    data_type: JSON
+management:
+  health:
+    db:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
