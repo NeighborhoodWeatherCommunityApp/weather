@@ -34,7 +34,7 @@ jobs:
 
       # Spring Boot 애플리케이션 빌드
       - name: Grant execute permission for gradlew
-        run: chmod +x test_back/gradlew
+        run: chmod +x back/gradlew
 
       - name: Build with Gradle Wrapper
         working-directory: back   # 해당 디렉토리에서 수행한다.
