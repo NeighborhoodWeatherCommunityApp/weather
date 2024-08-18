@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: local
+  sql:
+    init:
+      mode: never
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 500
+    hibernate:
+      ddl-auto: none
+logging:
+  level:
+    root: debug
+log:
+  config:
+    path: D:\
+    filename: \local_log
+api:
+  weather:
+    service_key: ${SHORT_TERM_FORECAST_API_KEY}
+    data_type: JSON
