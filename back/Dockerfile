@@ -1,4 +1,3 @@
-
 FROM openjdk:17-jdk-alpine
 
 CMD ["./gradlew", "clean", "build"]

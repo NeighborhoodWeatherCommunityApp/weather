@@ -17,13 +17,20 @@ spring:
         default_batch_fetch_size: 500
     hibernate:
       ddl-auto: none
+    open-in-view: false   # osiv 설정
 logging:
   level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: TRACE
+        sql: DEBUG
+      springframework:
+        transaction: debug
     root: debug
-log:
-  config:
-    path: ./log
-    filename: log_file
+  file:
+    name: log_file
 api:
   weather:
     service_key: ${SHORT_TERM_FORECAST_API_KEY}
