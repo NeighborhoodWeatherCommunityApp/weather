@@ -76,7 +76,7 @@ class LocationRepositoryTest {
         int eq = 24 - LocalTime.now().getHour() - 1;
 
         // when
-        List<Weather> weathers = weatherRepository.findAllWithLocation(location);
+        List<Weather> weathers = weatherRepository.findAllWithLocation(location, LocalDateTime.now().plusHours(24));
 
         // then
         assertThat(weathers.size()).isEqualTo(eq);
