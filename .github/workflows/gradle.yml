@@ -42,7 +42,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app ./back
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
 
       # DockerHub 로그인
       - name: Docker login
