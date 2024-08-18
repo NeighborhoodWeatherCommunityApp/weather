@@ -68,7 +68,7 @@ class WeatherServiceTest {
     @Transactional
     void shortTermForecastSaveTest() {
         // given
-        Member member = memberRepository.safeFindById(1L);
+        Member member = memberRepository.findAll().get(0);
 
         // when
         List<Weather> weathers = weatherService.saveWeathers(member.getId(), (float)LONGITUDE, (float)LATITUDE);

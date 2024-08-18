@@ -75,7 +75,7 @@ class MainPageServiceTest {
     @Transactional
     void mainPageWeatherApiTest(){
         // given
-        Member member = memberRepository.safeFindById(1L);
+        Member member = memberRepository.findAll().get(0);
         List<Weather> weatherList = weatherService.getWeathers(member);
 
         // when

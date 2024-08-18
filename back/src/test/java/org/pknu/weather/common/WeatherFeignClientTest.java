@@ -26,6 +26,6 @@ class WeatherFeignClientTest {
 
         WeatherApiResponse weatherApiResponses = weatherFeignClient.getVillageShortTermForecast(weatherParams);
 
-        Assertions.assertThat(weatherApiResponses.getResponse().getBody().getItems().getItemList().size()).isEqualTo(50);
+        Assertions.assertThat(weatherApiResponses.getResponse().getBody().getItems().getItemList().size()).isEqualTo(288);
     }
 }
