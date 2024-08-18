@@ -1,13 +1,23 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from './src/screens/HomeScreen';
 import CommunityScreen from './src/screens/CommunityScreen';
 import MyScreen from './src/screens/MyScreen';
+import PostCreationScreen from './src/screens/PostCreationScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {StatusBar} from 'react-native';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="PostCreationScreen" component={PostCreationScreen} />
+  </Stack.Navigator>
+);
 
 const App = () => {
   return (
@@ -25,8 +35,8 @@ const App = () => {
             }}
           />
           <Tab.Screen
-            name="Home"
-            component={HomeScreen}
+            name="HomeStack"
+            component={HomeStack}
             options={{
               tabBarIcon: ({color, size}) => (
                 <Icon name="home" color={color} size={size} />
