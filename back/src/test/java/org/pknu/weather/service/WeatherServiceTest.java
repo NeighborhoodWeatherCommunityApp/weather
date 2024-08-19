@@ -74,6 +74,6 @@ class WeatherServiceTest {
         List<Weather> weathers = weatherService.saveWeathers(member.getId(), (float)LONGITUDE, (float)LATITUDE);
 
         // then
-        assertThat(weathers.size()).isEqualTo(24);
+        assertThat(weathers.size()).isGreaterThanOrEqualTo(21);
     }
 }

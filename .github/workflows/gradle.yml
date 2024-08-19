@@ -13,6 +13,8 @@ on:
     branches:
       - dev
       - feat/**
+      - fix/**
+      - refactor/**
     # 아래 경로에서 변경점이 있다면 CI/CD 진행
     paths:
       - back/**
