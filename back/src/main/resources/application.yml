@@ -21,6 +21,8 @@ spring:
 logging:
   level:
     root: debug
+  file:
+    name: log_file
 api:
   weather:
     service_key: ${SHORT_TERM_FORECAST_API_KEY}
