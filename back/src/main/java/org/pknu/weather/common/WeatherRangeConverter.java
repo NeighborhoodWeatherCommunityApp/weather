@@ -1,8 +1,8 @@
 package org.pknu.weather.common;
 
-import org.pknu.weather.domain.common.RainRange;
+import org.pknu.weather.domain.common.RainTag;
 import org.pknu.weather.domain.common.Sensitivity;
-import org.pknu.weather.domain.common.TemperatureRange;
+import org.pknu.weather.domain.common.TemperatureTag;
 
 public class WeatherRangeConverter {
     private static final int VERY_HOT = 33;
@@ -13,17 +13,17 @@ public class WeatherRangeConverter {
     private static final int LITTLE_COLD = 12;
     private static final int COLD = 5;
 
-    public static RainRange rain2Text(Float rain) {
-        if(rain == 0.0) return RainRange.NOTHING;
-        else if(rain <= 1.0) return RainRange.ALMOST_NOTHING;
-        else if(rain <= 3.0) return RainRange.VERY_WEAK;
-        else if(rain <= 6.0) return RainRange.WEAK;
-        else if(rain <= 10.0) return RainRange.AVERAGE;
-        else if(rain <= 20.0) return RainRange.STRONG;
-        else return RainRange.VERY_STRONG;
+    public static RainTag rain2Text(Float rain) {
+        if(rain == 0.0) return RainTag.NOTHING;
+        else if(rain <= 1.0) return RainTag.ALMOST_NOTHING;
+        else if(rain <= 3.0) return RainTag.VERY_WEAK;
+        else if(rain <= 6.0) return RainTag.WEAK;
+        else if(rain <= 10.0) return RainTag.AVERAGE;
+        else if(rain <= 20.0) return RainTag.STRONG;
+        else return RainTag.VERY_STRONG;
     }
 
-    public static TemperatureRange tmp2Text(Integer tmp, Sensitivity sensitivity) {
+    public static TemperatureTag tmp2Text(Integer tmp, Sensitivity sensitivity) {
         int adjustment = 0;
         int weight = 1;
 
@@ -41,20 +41,20 @@ public class WeatherRangeConverter {
         }
 
         if (tmp >= VERY_HOT + adjustment)
-            return TemperatureRange.VERY_HOT;
+            return TemperatureTag.VERY_HOT;
         else if (tmp >= HOT + adjustment + weight)
-            return TemperatureRange.HOT;
+            return TemperatureTag.HOT;
         else if (tmp >= LITTLE_HOT + adjustment + 2 * weight)
-            return TemperatureRange.LITTLE_HOT;
+            return TemperatureTag.LITTLE_HOT;
         else if (tmp >= AVERAGE)
-            return TemperatureRange.AVERAGE;
+            return TemperatureTag.AVERAGE;
         else if (tmp >= COOL)
-            return TemperatureRange.COOL;
+            return TemperatureTag.COOL;
         else if (tmp >= LITTLE_COLD + adjustment + 2 * weight)
-            return TemperatureRange.LITTLE_COLD;
+            return TemperatureTag.LITTLE_COLD;
         else if (tmp >= COLD + adjustment + weight)
-            return TemperatureRange.COLD;
+            return TemperatureTag.COLD;
         else
-            return TemperatureRange.VERY_COLD;
+            return TemperatureTag.VERY_COLD;
     }
 }

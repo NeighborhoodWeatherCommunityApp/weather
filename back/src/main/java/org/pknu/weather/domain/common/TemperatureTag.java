@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TemperatureRange {
+public enum TemperatureTag {
     VERY_COLD("", "추움", 0),
     COLD("", "추움", 1),
     LITTLE_COLD("조금", "추움", 2),

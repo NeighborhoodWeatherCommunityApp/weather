@@ -4,8 +4,8 @@ import org.pknu.weather.common.WeatherRangeConverter;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
-import org.pknu.weather.domain.common.RainRange;
-import org.pknu.weather.domain.common.TemperatureRange;
+import org.pknu.weather.domain.common.RainTag;
+import org.pknu.weather.domain.common.TemperatureTag;
 
 import java.util.List;
 
@@ -54,18 +54,18 @@ public class WeatherConverter {
     }
 
     public static WeatherResponse.WeatherPerHour toWeatherPerHour(Weather weather, Member member) {
-        RainRange rainRange = WeatherRangeConverter.rain2Text(weather.getRain());
-        TemperatureRange temperatureRange = WeatherRangeConverter.tmp2Text(
+        RainTag rainTag = WeatherRangeConverter.rain2Text(weather.getRain());
+        TemperatureTag temperatureTag = WeatherRangeConverter.tmp2Text(
                 weather.getTemperature(), member.getSensitivity());
 
         return WeatherResponse.WeatherPerHour.builder()
                 .hour(weather.getPresentationTime())
                 .skyType(weather.getSkyType())
-                .rainAdverb(rainRange.getAdverb())
-                .rainText(rainRange.getText())
+                .rainAdverb(rainTag.getAdverb())
+                .rainText(rainTag.getText())
                 .rain(weather.getRain())
-                .tmpAdverb(temperatureRange.getAdverb())
-                .tmpText(temperatureRange.getText())
+                .tmpAdverb(temperatureTag.getAdverb())
+                .tmpText(temperatureTag.getText())
                 .tmp(weather.getTemperature())
                 .build();
     }

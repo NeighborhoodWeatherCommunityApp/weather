@@ -19,6 +19,8 @@ public class Tag extends BaseEntity {
 
     private String windTag;
 
+    private String humidityTag;
+
     private String skyTag;
 
     private String dustTag;

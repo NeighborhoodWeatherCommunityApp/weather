@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RainRange {
+public enum RainTag {
     NOTHING("", "안옴", 0),
     ALMOST_NOTHING("거의", "안옴", 1),
     VERY_WEAK("매우", "약함", 2),
