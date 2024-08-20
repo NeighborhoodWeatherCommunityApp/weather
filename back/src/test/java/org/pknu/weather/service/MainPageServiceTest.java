@@ -4,13 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.pknu.weather.common.DateTimeFormaterUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.Sensitivity;
-import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.converter.WeatherResponse;
+import org.pknu.weather.dto.converter.WeatherResponseConverter;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
@@ -18,10 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -79,13 +73,13 @@ class MainPageServiceTest {
         List<Weather> weatherList = weatherService.getWeathers(member);
 
         // when
-        WeatherResponse.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(member.getId());
+        WeatherResponseConverter.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(member.getId());
 
         for (Weather w : weatherList) {
             log.info(w.getPresentationTime() + " " + w.getTemperature());
         }
 
-        for (WeatherResponse.WeatherPerHour wph : weatherInfo.getWeatherPerHourList()) {
+        for (WeatherResponseConverter.WeatherPerHour wph : weatherInfo.getWeatherPerHourList()) {
             log.info(wph.getHour() + " " + wph.getSkyType() + " " + wph.getRainAdverb() + " " + wph.getRainText() + " " + wph.getRain()
                     + " " + wph.getTmpAdverb() + " " + wph.getTmpText() + " " + wph.getTmp());
         }

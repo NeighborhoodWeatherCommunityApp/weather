@@ -9,7 +9,7 @@ import org.pknu.weather.domain.common.SkyType;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class WeatherResponse {
+public class WeatherResponseConverter {
 
     @Getter
     @Builder

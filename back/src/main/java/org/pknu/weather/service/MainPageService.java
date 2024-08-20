@@ -2,11 +2,10 @@ package org.pknu.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.common.WeatherFeignClient;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.converter.WeatherConverter;
-import org.pknu.weather.dto.converter.WeatherResponse;
+import org.pknu.weather.dto.converter.WeatherResponseConverter;
 import org.pknu.weather.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ public class MainPageService {
      * 4. location entity에 지역 정보를 저장한다.
      * 5. weather entity에 날씨 예보 정보를 저장한다..
      */
-    public WeatherResponse.MainPageWeatherData getWeatherInfo(Long memberId) {
+    public WeatherResponseConverter.MainPageWeatherData getWeatherInfo(Long memberId) {
         Member member = memberRepository.safeFindById(memberId);
         List<Weather> weatherList = weatherService.getWeathers(member);
         return WeatherConverter.toMainPageWeatherData(weatherList, member);

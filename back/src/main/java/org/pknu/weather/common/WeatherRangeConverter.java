@@ -1,8 +1,8 @@
 package org.pknu.weather.common;
 
-import org.pknu.weather.domain.common.RainTag;
+import org.pknu.weather.domain.tag.RainTag;
 import org.pknu.weather.domain.common.Sensitivity;
-import org.pknu.weather.domain.common.TemperatureTag;
+import org.pknu.weather.domain.tag.TemperatureTag;
 
 public class WeatherRangeConverter {
     private static final int VERY_HOT = 33;
@@ -47,7 +47,7 @@ public class WeatherRangeConverter {
         else if (tmp >= LITTLE_HOT + adjustment + 2 * weight)
             return TemperatureTag.LITTLE_HOT;
         else if (tmp >= AVERAGE)
-            return TemperatureTag.AVERAGE;
+            return TemperatureTag.NORMAL;
         else if (tmp >= COOL)
             return TemperatureTag.COOL;
         else if (tmp >= LITTLE_COLD + adjustment + 2 * weight)
