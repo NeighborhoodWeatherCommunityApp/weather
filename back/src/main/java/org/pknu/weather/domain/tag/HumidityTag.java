@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum HumidityTag implements Taggable {
+public enum HumidityTag implements EnumTag {
     DRY("", "건조함", 0),
     NORMAL("", "보통", 1),
     LITTLE_HUMID("약간", "습함", 3),
@@ -18,7 +18,13 @@ public enum HumidityTag implements Taggable {
     private final Integer code;
 
     @Override
-    public Taggable fromCode(int code) {
+    public String toString() {
+        String string = getAdverb() + " " + getText();
+        return string.trim();
+    }
+
+    @Override
+    public EnumTag findByCode(int code) {
         for(HumidityTag tag : HumidityTag.values()) {
             if(tag.getCode().equals(code))
                 return tag;

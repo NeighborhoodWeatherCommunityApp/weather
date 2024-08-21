@@ -1,4 +1,5 @@
 package org.pknu.weather.domain;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.common.BaseEntity;
@@ -16,18 +17,18 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
     private Sensitivity sensitivity;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String nickname;
 
     private String profileImage;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private Location location;
 }

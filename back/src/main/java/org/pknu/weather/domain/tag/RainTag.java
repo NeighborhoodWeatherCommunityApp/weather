@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RainTag implements Taggable {
+
+public enum RainTag implements EnumTag {
     NOTHING("", "안옴", 0),
     ALMOST_NOTHING("거의", "안옴", 1),
     VERY_WEAK("매우", "약함", 2),
@@ -20,7 +21,13 @@ public enum RainTag implements Taggable {
     private final Integer code;
 
     @Override
-    public Taggable fromCode(int code) {
+    public String toString() {
+        String string = getAdverb() + " " + getText();
+        return string.trim();
+    }
+
+    @Override
+    public EnumTag findByCode(int code) {
         for(RainTag tag : RainTag.values()) {
             if(tag.getCode().equals(code))
                 return tag;

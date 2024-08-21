@@ -13,11 +13,11 @@ public class PostRequestConverter {
     public PostRequest.CreatePost toCreatePost(PostRequest.Params params) {
         return PostRequest.CreatePost.builder()
                 .content(params.getContent())
-                .temperatureTag((TemperatureTag) tagConverter.toTagFromCode(params.getTemperatureTagCode()))
-                .skyTag((SkyTag) tagConverter.toTagFromCode(params.getSkyTagCode()))
-                .windTag((WindTag) tagConverter.toTagFromCode(params.getWindTagCode()))
-                .humidityTag((HumidityTag) tagConverter.toTagFromCode(params.getHumidityTagCode()))
-                .dustTag((DustTag) tagConverter.toTagFromCode(params.getDustTagCode()))
+                .temperatureTag((TemperatureTag) tagConverter.toTagFromCode(params.getTemperatureTagCode(), TemperatureTag.class))
+                .skyTag((SkyTag) tagConverter.toTagFromCode(params.getSkyTagCode(), SkyTag.class))
+                .windTag((WindTag) tagConverter.toTagFromCode(params.getWindTagCode(), WindTag.class))
+                .humidityTag((HumidityTag) tagConverter.toTagFromCode(params.getHumidityTagCode(), HumidityTag.class))
+                .dustTag((DustTag) tagConverter.toTagFromCode(params.getDustTagCode(), DustTag.class))
                 .build();
     }
 }

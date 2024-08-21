@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum DustTag implements Taggable {
+public enum DustTag implements EnumTag {
     VERY_GOOD("매우", "좋음", 0),
     GOOD("", "좋음", 1),
     NORMAL("", "보통", 2),
@@ -18,7 +18,13 @@ public enum DustTag implements Taggable {
     private final Integer code;
 
     @Override
-    public Taggable fromCode(int code) {
+    public String toString() {
+        String string = getAdverb() + " " + getText();
+        return string.trim();
+    }
+
+    @Override
+    public EnumTag findByCode(int code) {
         for(DustTag tag : DustTag.values()) {
             if(tag.getCode().equals(code))
                 return tag;

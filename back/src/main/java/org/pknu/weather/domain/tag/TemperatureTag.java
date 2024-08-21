@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TemperatureTag implements Taggable {
+public enum TemperatureTag implements EnumTag {
     VERY_COLD("", "추움", 0),
     COLD("", "추움", 1),
     LITTLE_COLD("조금", "추움", 2),
@@ -22,7 +22,13 @@ public enum TemperatureTag implements Taggable {
     private final Integer code;
 
     @Override
-    public Taggable fromCode(int code) {
+    public String toString() {
+        String string = getAdverb() + " " + getText();
+        return string.trim();
+    }
+
+    @Override
+    public EnumTag findByCode(int code) {
         for(TemperatureTag tag : TemperatureTag.values()) {
             if(tag.getCode().equals(code))
                 return tag;

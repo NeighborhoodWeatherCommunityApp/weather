@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum SkyTag implements Taggable {
+public enum SkyTag implements EnumTag {
     RAIN("비와요",  0),
     CLOUDY("흐려요",  1),
     CLEAR_AND_CLOUDY("맑고 구름이 많아요",  2),
@@ -17,7 +17,12 @@ public enum SkyTag implements Taggable {
     private final Integer code;
 
     @Override
-    public Taggable fromCode(int code) {
+    public String toString() {
+        return getText();
+    }
+
+    @Override
+    public EnumTag findByCode(int code) {
         for(SkyTag tag : SkyTag.values()) {
             if(tag.getCode().equals(code))
                 return tag;
