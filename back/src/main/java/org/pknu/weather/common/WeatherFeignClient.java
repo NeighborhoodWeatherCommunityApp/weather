@@ -30,7 +30,7 @@ public interface WeatherFeignClient {
      * @return now ~ 24 시간의 Wether 엔티티를 담고있는 map
      */
     default Map<String, Weather> preprocess(Float lon, Float lat) {
-        Point point = CoordinateConversionUtils.convertCoordinate(lon, lat);
+        Point point = GeometryUtils.coordinateToPoint(lon, lat);
         String date = DateTimeFormaterUtils.getFormattedDate();
         String time = DateTimeFormaterUtils.getFormattedTimeByThreeHour();
         WeatherParams weatherParams = WeatherParamsFactory.create(date, time, point);

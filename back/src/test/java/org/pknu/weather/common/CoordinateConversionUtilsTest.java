@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.pknu.weather.dto.Point;
 
 @Slf4j
-class CoordinateConversionUtilsTest {
+class GeometryUtilsTest {
 
 //    @Test
 //    void 위경도를_격자로_변환하는_테스트() {
