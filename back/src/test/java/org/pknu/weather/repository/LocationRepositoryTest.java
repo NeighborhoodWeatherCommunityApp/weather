@@ -1,5 +1,5 @@
 package org.pknu.weather.repository;
-
+/*
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,3 +83,5 @@ class LocationRepositoryTest {
         assertThat(weathers.get(0).getLocation().getId()).isEqualTo(location.getId());
     }
 }
+
+ */

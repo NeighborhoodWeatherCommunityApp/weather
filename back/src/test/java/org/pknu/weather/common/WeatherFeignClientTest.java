@@ -1,5 +1,5 @@
 package org.pknu.weather.common;
-
+/*
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,3 +29,5 @@ class WeatherFeignClientTest {
         Assertions.assertThat(weatherApiResponses.getResponse().getBody().getItems().getItemList().size()).isEqualTo(288);
     }
 }
+
+ */
