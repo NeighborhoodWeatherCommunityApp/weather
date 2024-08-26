@@ -5,13 +5,13 @@ import org.pknu.weather.domain.common.Sensitivity;
 import org.pknu.weather.domain.tag.TemperatureTag;
 
 public class WeatherRangeConverter {
-    private static final int VERY_HOT = 33;
-    private static final int HOT = 28;
+    private static final int VERY_HOT = 32;
+    private static final int HOT = 27;
     private static final int LITTLE_HOT = 23;
     private static final int AVERAGE = 20;
     private static final int COOL = 17;
-    private static final int LITTLE_COLD = 12;
-    private static final int COLD = 5;
+    private static final int LITTLE_COLD = 13;
+    private static final int COLD = 8;
 
     public static RainTag rain2Text(Float rain) {
         if(rain == 0.0) return RainTag.NOTHING;
