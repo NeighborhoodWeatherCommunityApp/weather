@@ -1,7 +1,10 @@
 package org.pknu.weather.dto.converter;
 
+import org.pknu.weather.common.DateTimeFormaterUtils;
+import org.pknu.weather.common.RecommendationUtils;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Post;
+import org.pknu.weather.domain.Recommendation;
 import org.pknu.weather.dto.PostResponse;
 
 import java.util.List;
@@ -18,13 +21,15 @@ public class PostResponseConverter {
         }
 
         return PostResponse.Posts.builder()
-                .posts(list)
+                .postList(list)
                 .listSize(postList.size() - 1)
                 .hasNext(hasNext)  // size + 1개를 더 조회해서 확인함
                 .build();
     }
 
     public static PostResponse.Post toPost(Member member, Post post) {
+        List<Recommendation> recommendationList = post.getRecommendationList();
+
         return PostResponse.Post.builder()
                 .postId(post.getId())
                 .profileImageUrl(member.getProfileImage())
@@ -32,7 +37,9 @@ public class PostResponseConverter {
                 .sensitivity(member.getSensitivity())
                 .city(member.getLocation().getCity())
                 .street(member.getLocation().getStreet())
-                .createdAt("n분전")       // TODO: 나중에 관련 클래스 구현
+                .createdAt(DateTimeFormaterUtils.pastTimeToString(post.getCreatedAt()))
+                .like(RecommendationUtils.likeCount(recommendationList))
+                .likeClickable(RecommendationUtils.isClickable(recommendationList, member))
                 .content(post.getContent())
                 .build();
     }

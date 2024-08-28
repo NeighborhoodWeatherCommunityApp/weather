@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.*;
 import org.pknu.weather.dto.PostRequest;
-import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.converter.PostConverter;
-import org.pknu.weather.dto.converter.PostResponseConverter;
 import org.pknu.weather.dto.converter.RecommendationConverter;
 import org.pknu.weather.dto.converter.TagConverter;
 import org.pknu.weather.repository.MemberRepository;
@@ -29,12 +27,12 @@ public class PostService {
     private static final int DISTANCE = 3000;
 
     @Transactional(readOnly = true)
-    public PostResponse.Posts getPosts(Long memberId, Long lastPostId, Long size) {
+    public List<Post> getPosts(Long memberId, Long lastPostId, Long size) {
         Member member = memberRepository.safeFindById(memberId);
         Location location = member.getLocation();
         List<Post> postList = postRepository.findAllWithinDistance(lastPostId, size, location, DISTANCE);
 
-        return PostResponseConverter.toPosts(member, postList, postList.size() > size);
+        return postList;
     }
 
     @Transactional

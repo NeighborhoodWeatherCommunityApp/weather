@@ -1,5 +1,6 @@
 package org.pknu.weather.common;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -8,6 +9,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class DateTimeFormaterUtils {
+
+    /**
+     * post의 생성 시각과 현재와의 차이를 String으로 반환합니다.
+     *
+     * @param createdAt post의 생성 시각
+     * @return
+     */
+    public static String pastTimeToString(LocalDateTime createdAt) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime comparison = createdAt;
+        Duration diff = Duration.between(now, createdAt);
+
+        if (comparison.plusHours(1).isBefore(now)) {
+            return diff.toMinutes() + "분 전";
+        } else {
+            return diff.toHours() + "시간 전";
+        }
+    }
 
     /**
      * LocalDate를 yyyyMMdd 형태로 반환합니다.
@@ -39,6 +58,7 @@ public final class DateTimeFormaterUtils {
 
     /**
      * LocalTime을 HHmm 형태로 반환합니다. 1시간 단위로 반환합니다.
+     *
      * @return HHmm, String 형태의 formatted time
      */
     public static String getFormattedTimeByOneHour() {
@@ -49,6 +69,7 @@ public final class DateTimeFormaterUtils {
 
     /**
      * LocalTime을 HHmm 형태로 반환합니다. 1시간 단위로 반환합니다.
+     *
      * @return HHmm, String 형태의 formatted time
      */
     public static String getFormattedTimeByOneHour(LocalTime now) {
@@ -59,6 +80,7 @@ public final class DateTimeFormaterUtils {
 
     /**
      * yyyyMMDD HHmm 을 LocalDateTime으로 변경
+     *
      * @param date
      * @param time
      * @return

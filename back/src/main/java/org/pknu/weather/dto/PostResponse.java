@@ -16,10 +16,9 @@ public class PostResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Posts {
-        private List<Post> posts;
+        private List<Post> postList;
         private Integer listSize;
         private Boolean hasNext;
-        private Boolean likeClickable;
     }
 
     @Builder
@@ -35,6 +34,7 @@ public class PostResponse {
         private String street;      // 읍면동
         private Sensitivity sensitivity;
         private Integer like;       // 좋아요
+        private Boolean likeClickable;
         private String content;
     }
 }

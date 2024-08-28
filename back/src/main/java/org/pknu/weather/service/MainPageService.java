@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
-import org.pknu.weather.dto.converter.WeatherConverter;
 import org.pknu.weather.dto.WeatherResponse;
+import org.pknu.weather.dto.converter.WeatherConverter;
 import org.pknu.weather.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +25,13 @@ import java.util.List;
 public class MainPageService {
     private final MemberRepository memberRepository;
     private final WeatherService weatherService;
+    private final PostService postService;
 
     public WeatherResponse.MainPageWeatherData getWeatherInfo(Long memberId) {
         Member member = memberRepository.safeFindById(memberId);
         List<Weather> weatherList = weatherService.getWeathers(member);
         return WeatherConverter.toMainPageWeatherData(weatherList, member);
     }
+
+
 }
