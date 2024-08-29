@@ -13,6 +13,6 @@ public class RecommendationUtils {
 
     public static Boolean isClickable(List<Recommendation> recommendationList, Member member) {
         return recommendationList.stream()
-                .anyMatch(recommendation -> recommendation.getMember().getId().equals(member.getId()));
+                .noneMatch(recommendation -> recommendation.getMember().getId().equals(member.getId()));
     }
 }

@@ -9,6 +9,7 @@ import org.pknu.weather.dto.converter.PostResponseConverter;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.PostRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, propagation = Propagation.NESTED)
 public class PostQueryService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;

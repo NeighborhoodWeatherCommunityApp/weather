@@ -20,7 +20,7 @@ public class Recommendation extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 }

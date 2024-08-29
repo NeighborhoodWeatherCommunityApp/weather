@@ -1,30 +1,45 @@
 spring:
-  datasource :
-    url: jdbc:h2:mem:test
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-    hikari:
-      connection-timeout: 3000
-      maximum-pool-size: 5
-      max-lifetime: 30000
-  jwt:
-    key: ${JWT_KEY}
+  sql:
+    init:
+      mode: never
+  datasource:
+    url: jdbc:mysql://localhost:3306/weather
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
       hibernate:
-        ddl-auto: create
-      database-platform: org.hibernate.dialect.H2Dialect
-      show_sql: true
-      format_sql: true
-      use_sql_comments: true
-      default_batch_fetch_size: 500
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 500
+    hibernate:
+      ddl-auto: create
+    open-in-view: false   # osiv 설정
+  jwt:
+    key: ${JWT_KEY}
+  sigs:
+    key: ${CONSUMER_KEY}
+    secret: ${CONSUMER_SECRET}
+
 logging:
   level:
-    org:
-      hibernate:
-        SQL: debug
-    root: info
-  file:
-    name: log_file
-    path: .
+    root: debug
+log:
+  config:
+    path: /customLog
+    filename: custom
+
+api:
+  weather:
+    service_key: ${SHORT_TERM_FORECAST_API_KEY}
+    data_type: JSON
+
+management:
+  health:
+    db:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always

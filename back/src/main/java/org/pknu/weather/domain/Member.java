@@ -5,6 +5,9 @@ import lombok.*;
 import org.pknu.weather.common.BaseEntity;
 import org.pknu.weather.domain.common.Sensitivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -31,6 +34,10 @@ public class Member extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private Location location;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Post> postList = new ArrayList<>();
 
     public void changeLocation(Location location){
         this.location = location;

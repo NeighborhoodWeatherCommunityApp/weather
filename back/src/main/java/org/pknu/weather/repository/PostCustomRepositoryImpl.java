@@ -36,7 +36,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return jpaQueryFactory.selectFrom(post)
                 .join(post.location, location).fetchJoin()
                 .join(post.member, member).fetchJoin()
-//                .join(post.recommendation, recommendation).fetchJoin()
                 .where(
                         goeLastPostId(lastPostId),
                         isContains(latitude, longitude, distance)
