@@ -19,7 +19,7 @@ public final class DateTimeFormaterUtils {
     public static String pastTimeToString(LocalDateTime createdAt) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime comparison = createdAt;
-        Duration diff = Duration.between(now, createdAt);
+        Duration diff = Duration.between(createdAt, now);
 
         if (comparison.plusHours(1).isBefore(now)) {
             return diff.toMinutes() + "분 전";

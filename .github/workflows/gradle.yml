@@ -1,94 +1,94 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
-
-on:
-  pull_request:
-    # 아래 브랜치에서 PR이 발생했을 때
-    branches:
-      - dev
-    #  - feat/**
-    #  - fix/**
-    #  - refactor/**
-    # 아래 경로에서 변경점이 있다면 CI/CD 진행
-    paths:
-      - back/**
-      - .github/**
-
-jobs:
-  # Spring Boot 애플리케이션을 빌드하여 도커허브에 푸시하는 과정
-  build-docker-image:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set yml value
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: "**/src/main/resources/application.yml"
-        env:
-          spring.datasource.url: ${{ secrets.DB_URL }}
-          spring.datasource.username: ${{ secrets.DB_USERNAME }}
-          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
-          api.weather.service_key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
-          spring.jwt.key: ${{ secrets.JWT_KEY }}
-          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
-          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
-
-      # Spring Boot 애플리케이션 빌드
-      - name: Grant execute permission for gradlew
-        run: chmod +x back/gradlew
-
-      - name: Build with Gradle Wrapper
-        working-directory: back   # 해당 디렉토리에서 수행한다.
-        run: ./gradlew build -i
-
-      # Docker 이미지 빌드
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
-
-      # DockerHub 로그인
-      - name: Docker login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-      # Docker Hub 이미지 푸시
-      - name: Docker Hub push
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
-
-  # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
-  run-docker-image-on-ec2:
-    needs: build-docker-image
-    runs-on: self-hosted  # 우분투 서버에서 실행하도록 하는 명령어
-
-    steps:
-      # 최신 이미지를 풀받습니다
-      - name: Docker pull
-        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
-
-      # 기존의 컨테이너를 중지시킵니다
-      - name: Docker stop container
-        run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
-
-      # 최신 이미지를 컨테이너화하여 실행시킵니다
-      - name: Docker run new container
-        run: sudo docker run --name neighborhood_weather_community_app --rm -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
-
-      # 미사용 이미지를 정리합니다
-      - name: Delete old Docker image
-        run: sudo docker system prune -f
+## This workflow uses actions that are not certified by GitHub.
+## They are provided by a third-party and are governed by
+## separate terms of service, privacy policy, and support
+## documentation.
+## This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+## For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+#
+#name: Java CI with Gradle
+#
+#on:
+#  pull_request:
+#    # 아래 브랜치에서 PR이 발생했을 때
+#    branches:
+#      - dev
+#    #  - feat/**
+#    #  - fix/**
+#    #  - refactor/**
+#    # 아래 경로에서 변경점이 있다면 CI/CD 진행
+#    paths:
+#      - back/**
+#      - .github/**
+#
+#jobs:
+#  # Spring Boot 애플리케이션을 빌드하여 도커허브에 푸시하는 과정
+#  build-docker-image:
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#
+#      - name: Set yml value
+#        uses: microsoft/variable-substitution@v1
+#        with:
+#          files: "**/src/main/resources/application.yml"
+#        env:
+#          spring.datasource.url: ${{ secrets.DB_URL }}
+#          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+#          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+#          api.weather.service_key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+#          spring.jwt.key: ${{ secrets.JWT_KEY }}
+#          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
+#          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+#
+#      # Spring Boot 애플리케이션 빌드
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x back/gradlew
+#
+#      - name: Build with Gradle Wrapper
+#        working-directory: back   # 해당 디렉토리에서 수행한다.
+#        run: ./gradlew build -i
+#
+#      # Docker 이미지 빌드
+#      - name: Build Docker image
+#        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
+#
+#      # DockerHub 로그인
+#      - name: Docker login
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+#
+#      # Docker Hub 이미지 푸시
+#      - name: Docker Hub push
+#        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+#
+#  # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
+#  run-docker-image-on-ec2:
+#    needs: build-docker-image
+#    runs-on: self-hosted  # 우분투 서버에서 실행하도록 하는 명령어
+#
+#    steps:
+#      # 최신 이미지를 풀받습니다
+#      - name: Docker pull
+#        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+#
+#      # 기존의 컨테이너를 중지시킵니다
+#      - name: Docker stop container
+#        run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+#
+#      # 최신 이미지를 컨테이너화하여 실행시킵니다
+#      - name: Docker run new container
+#        run: sudo docker run --name neighborhood_weather_community_app --rm -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+#
+#      # 미사용 이미지를 정리합니다
+#      - name: Delete old Docker image
+#        run: sudo docker system prune -f
