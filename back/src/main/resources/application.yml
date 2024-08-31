@@ -23,7 +23,6 @@ spring:
   sigs:
     key: ${CONSUMER_KEY}
     secret: ${CONSUMER_SECRET}
-
 logging:
   level:
     root: debug
