@@ -1,4 +1,3 @@
-/*
 package org.pknu.weather.service;
 
 
@@ -7,10 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.utils.GeometryUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.Sensitivity;
+import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
@@ -19,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static com.mysema.commons.lang.Assert.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Slf4j
@@ -46,6 +47,7 @@ class MainPageServiceTest {
     @BeforeEach
     void init() {
         Location location = Location.builder()
+                .point(GeometryUtils.getPoint(LATITUDE, LONGITUDE))
                 .city("사상구")
                 .province("province")
                 .street("모라동")
@@ -74,16 +76,7 @@ class MainPageServiceTest {
         List<Weather> weatherList = weatherService.getWeathers(member);
 
         // when
-        WeatherResponseConverter.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(member.getId());
-
-        for (Weather w : weatherList) {
-            log.info(w.getPresentationTime() + " " + w.getTemperature());
-        }
-
-        for (WeatherResponseConverter.WeatherPerHour wph : weatherInfo.getWeatherPerHourList()) {
-            log.info(wph.getHour() + " " + wph.getSkyType() + " " + wph.getRainAdverb() + " " + wph.getRainText() + " " + wph.getRain()
-                    + " " + wph.getTmpAdverb() + " " + wph.getTmpText() + " " + wph.getTmp());
-        }
+        WeatherResponse.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(member.getId());
 
         // then
         assertThat(weatherInfo.getCurrentTmp()).isEqualTo(weatherList.get(0).getTemperature());
@@ -91,6 +84,3 @@ class MainPageServiceTest {
         assertThat(weatherInfo.getCurrentSkyType()).isEqualTo(weatherList.get(0).getSkyType());
     }
 }
-
-
-*/

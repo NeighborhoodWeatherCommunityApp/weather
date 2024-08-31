@@ -1,4 +1,3 @@
-/*
 package org.pknu.weather.service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -152,4 +151,4 @@ class PostServiceTest {
         // then
         assertThat(postList.size()).isEqualTo(4);
     }
-}*/
+}

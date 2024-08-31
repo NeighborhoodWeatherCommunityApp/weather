@@ -1,4 +1,3 @@
-/*
 package org.pknu.weather.service;
 
 import org.junit.jupiter.api.AfterEach;
@@ -110,4 +109,4 @@ class PostQueryServiceTest {
         postRepository.deleteAll();
         memberRepository.deleteAll();
     }
-}*/
+}

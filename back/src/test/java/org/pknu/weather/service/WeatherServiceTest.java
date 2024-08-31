@@ -1,9 +1,9 @@
-/*
 package org.pknu.weather.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.utils.GeometryUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
@@ -43,6 +43,7 @@ class WeatherServiceTest {
     @BeforeEach
     void init() {
         Location location = Location.builder()
+                .point(GeometryUtils.getPoint(LATITUDE, LONGITUDE))
                 .city("city")
                 .province("province")
                 .street("street")
@@ -75,4 +76,3 @@ class WeatherServiceTest {
         assertThat(weathers.size()).isGreaterThanOrEqualTo(20);
     }
 }
-*/
