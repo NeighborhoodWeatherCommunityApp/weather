@@ -15,8 +15,8 @@ public class CommunityControllerV1 {
     private final PostQueryService postQueryService;
 
     @GetMapping("/posts")
-    public ApiResponse<PostResponse.Posts> getPosts(Long memberId, Long lastPostId, Long size) {
-        PostResponse.Posts posts = postQueryService.getPosts(memberId, lastPostId, size);
-        return ApiResponse.onSuccess(posts);
+    public ApiResponse<PostResponse.PostList> getPosts(Long memberId, Long lastPostId, Long size) {
+        PostResponse.PostList postList = postQueryService.getPosts(memberId, lastPostId, size);
+        return ApiResponse.onSuccess(postList);
     }
 }

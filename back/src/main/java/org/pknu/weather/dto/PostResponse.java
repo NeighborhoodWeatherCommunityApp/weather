@@ -15,10 +15,18 @@ public class PostResponse {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Posts {
+    public static class PostList {
         private List<Post> postList;
         private Integer listSize;
         private Boolean hasNext;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LikePost {
+        private org.pknu.weather.domain.Post post;
+        private Integer likeCount;
     }
 
     @Builder
@@ -26,15 +34,39 @@ public class PostResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Post {
+        private PostInfo postInfo;
+        private MemberInfo memberInfo;
+        private LikeInfo likeInfo;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PostInfo {
         private Long postId;
-        private String profileImageUrl;
-        private String memberName;
+        private String content;
         private String createdAt;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MemberInfo {
+        private String memberName;
+        private String profileImageUrl;
+        private Sensitivity sensitivity;
         private String city;        // 구군면
         private String street;      // 읍면동
-        private Sensitivity sensitivity;
-        private Integer like;       // 좋아요
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LikeInfo {
+        private Integer count;       // 좋아요 개수
         private Boolean likeClickable;
-        private String content;
     }
 }
