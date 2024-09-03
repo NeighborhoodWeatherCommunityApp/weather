@@ -36,7 +36,6 @@ public class PostResponse {
     public static class Post {
         private PostInfo postInfo;
         private MemberInfo memberInfo;
-        private LikeInfo likeInfo;
     }
 
     @Builder
@@ -47,6 +46,8 @@ public class PostResponse {
         private Long postId;
         private String content;
         private String createdAt;
+        private Integer likeCount;
+        private Boolean likeClickable;
     }
 
     @Builder
@@ -59,14 +60,5 @@ public class PostResponse {
         private Sensitivity sensitivity;
         private String city;        // 구군면
         private String street;      // 읍면동
-    }
-
-    @Builder
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LikeInfo {
-        private Integer count;       // 좋아요 개수
-        private Boolean likeClickable;
     }
 }

@@ -1,7 +1,7 @@
 package org.pknu.weather.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
@@ -11,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Post;
-import org.pknu.weather.dto.PostResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,23 +76,23 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public List<Post> getPopularPostList(Location location) {
         StringPath likeCount = Expressions.stringPath("like_count");
 
-        List<PostResponse.LikePost> results = jpaQueryFactory
-                .select(Projections.constructor(PostResponse.LikePost.class,
-                        post,
+        List<Tuple> tuples = jpaQueryFactory
+                .select(post,
                         ExpressionUtils.as(
                                 JPAExpressions
                                         .select(recommendation.count())
                                         .from(recommendation)
                                         .where(recommendation.post.eq(post)), "like_count")
-                ))
+                )
                 .from(post)
                 .orderBy(likeCount.desc())
                 .limit(5)
                 .fetch();
 
         List<Post> postList = new ArrayList<>();
-        for(PostResponse.LikePost likePost : results) {
-            postList.add(likePost.getPost());
+        for (Tuple tuple : tuples) {
+            Post p = tuple.get(post);
+            postList.add(p);
         }
 
         return postList;

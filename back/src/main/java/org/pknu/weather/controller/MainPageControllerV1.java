@@ -27,7 +27,7 @@ public class MainPageControllerV1 {
         return ApiResponse.onSuccess(weatherInfo);
     }
 
-    @GetMapping("/weather/popular")
+    @GetMapping("/posts/popular")
     public ApiResponse<List<PostResponse.Post>> getPopularPostList(@RequestParam Long memberId) {
         List<PostResponse.Post> popularPosts = mainPageService.getPopularPosts(memberId);
         return ApiResponse.onSuccess(popularPosts);

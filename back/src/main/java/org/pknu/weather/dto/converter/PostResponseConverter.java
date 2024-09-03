@@ -36,9 +36,8 @@ public class PostResponseConverter {
 
     private static PostResponse.Post toPost(Member member, Post post) {
         return PostResponse.Post.builder()
-                .postInfo(toPostInfo(post))
+                .postInfo(toPostInfo(post, member))
                 .memberInfo(toMemberInfo(member))
-                .likeInfo(toLikeInfo(post.getRecommendationList(), member))
                 .build();
     }
 
@@ -53,17 +52,14 @@ public class PostResponseConverter {
                 .build();
     }
 
-    private static PostResponse.PostInfo toPostInfo(Post post) {
+    private static PostResponse.PostInfo toPostInfo(Post post, Member member) {
+        List<Recommendation> recommendationList = post.getRecommendationList();
+
         return PostResponse.PostInfo.builder()
                 .postId(post.getId())
                 .content(post.getContent())
                 .createdAt(DateTimeFormatter.pastTimeToString(post.getCreatedAt()))
-                .build();
-    }
-
-    private static PostResponse.LikeInfo toLikeInfo(List<Recommendation> recommendationList, Member member) {
-        return PostResponse.LikeInfo.builder()
-                .count(RecommendationUtils.likeCount(recommendationList))
+                .likeCount(RecommendationUtils.likeCount(recommendationList))
                 .likeClickable(RecommendationUtils.isClickable(recommendationList, member))
                 .build();
     }
