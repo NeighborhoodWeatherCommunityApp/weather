@@ -103,6 +103,8 @@ jobs:
           spring.jwt.key: ${{ secrets.JWT_KEY }}
           spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
           spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+          cloud.aws.credentials.access-key: ${{secrets.S3_ACCESS_KEY}}
+          cloud.aws.credentials.secret-key: ${{secrets.S3_SECRET_KEY}}
 
       # Gradle을 사용하여 빌드 실행 (테스트 코드 수행 생략)
       - name: Build with Gradle Wrapper
