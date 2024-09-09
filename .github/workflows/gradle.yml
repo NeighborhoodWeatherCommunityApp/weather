@@ -50,7 +50,7 @@ jobs:
       - name: Set yml value
         uses: microsoft/variable-substitution@v1
         with:
-          files: "**/src/test/resources/application.yml"
+          files: "**/src/main/resources/application.yml"
         env:
           spring.datasource.url: ${{ env.SPRING_DATASOURCE_URL }}
           spring.datasource.username: ${{ env.SPRING_DATASOURCE_USERNAME }}
