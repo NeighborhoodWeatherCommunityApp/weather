@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum HumidityTag implements EnumTag {
-    DRY("", "건조함", 1),
-    NORMAL("", "보통", 2),
+    DRY("", "건조함", 0),
+    NORMAL("", "보통", 1),
     LITTLE_HUMID("약간", "습함", 3),
-    HUMID("", "습함", 4),
-    VERY_HUMID("매우", "습함", 5)
+    HUMID("", "습함", 3),
+    VERY_HUMID("매우", "습함", 4)
     ;
 
     private final String adverb;

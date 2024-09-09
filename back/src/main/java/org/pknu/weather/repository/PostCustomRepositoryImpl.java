@@ -26,7 +26,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     /**
-     * post 무한 스크롤,  이내의 거리에 있는 사용자가 작성한 post만 보여줌
+     * post 무한 스크롤, distance 이내의 거리에 있는 사용자가 작성한 post만 보여줌
      * 정렬은 최신순
      *
      * @param lastPostId 마지막 post id

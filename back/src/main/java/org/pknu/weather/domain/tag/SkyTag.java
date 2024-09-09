@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SkyTag implements EnumTag {
-    RAIN("비와요",  1),
-    CLOUDY("흐려요",  2),
-    CLEAR_AND_CLOUDY("맑고 구름이 많아요",  3),
-    CLEAR("맑아요",  4),
-    SUNNY("화창해요",  5)
+    RAIN("비와요",  0),
+    CLOUDY("흐려요",  1),
+    CLEAR_AND_CLOUDY("맑고 구름이 많아요",  2),
+    CLEAR("맑아요",  3),
+    SUNNY("화창해요",  4)
     ;
 
     private final String text;

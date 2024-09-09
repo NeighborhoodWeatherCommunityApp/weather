@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum DustTag implements EnumTag {
-    VERY_GOOD("매우", "좋음", 1),
-    GOOD("", "좋음", 2),
-    NORMAL("", "보통", 3),
-    LITTLE_BAD("약간", "나쁨", 4),
-    VERY_BAD("매우", "나쁨", 5)
+    VERY_GOOD("매우", "좋음", 0),
+    GOOD("", "좋음", 1),
+    NORMAL("", "보통", 2),
+    LITTLE_BAD("약간", "나쁨", 3),
+    VERY_BAD("매우", "나쁨", 4)
     ;
 
     private final String adverb;

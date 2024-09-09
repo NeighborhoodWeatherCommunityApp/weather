@@ -1,5 +1,5 @@
 package org.pknu.weather.domain;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.domain.tag.*;
@@ -15,14 +15,6 @@ public class Tag extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tag_id")
     private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
 
     @Enumerated(EnumType.STRING)
     private TemperatureTag temperTag;
