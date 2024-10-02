@@ -38,8 +38,8 @@ logging:
 
 api:
   weather:
-    service_key: ${SHORT_TERM_FORECAST_API_KEY}
-    data_type: JSON
+    service-key: ${SHORT_TERM_FORECAST_API_KEY}
+    data-type: JSON
 
 management:
   health:

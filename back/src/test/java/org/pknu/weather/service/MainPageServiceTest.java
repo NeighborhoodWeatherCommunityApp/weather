@@ -80,15 +80,6 @@ class MainPageServiceTest {
         // when
         WeatherResponse.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(member.getId());
 
-        for (Weather w : weatherList) {
-            log.info(w.getPresentationTime() + " " + w.getTemperature());
-        }
-
-        for (WeatherResponse.WeatherPerHour wph : weatherInfo.getWeatherPerHourList()) {
-            log.info(wph.getHour() + " " + wph.getSkyType() + " " + wph.getRainAdverb() + " " + wph.getRainText() + " " + wph.getRain()
-                    + " " + wph.getTmpAdverb() + " " + wph.getTmpText() + " " + wph.getTmp());
-        }
-
         // then
         assertThat(weatherInfo.getCurrentTmp()).isEqualTo(weatherList.get(0).getTemperature());
         assertThat(weatherInfo.getWeatherPerHourList().size()).isGreaterThanOrEqualTo(21);  // 3시간 간격으로 예보를 발표하기 때문에 22 ~ 24개의 예보

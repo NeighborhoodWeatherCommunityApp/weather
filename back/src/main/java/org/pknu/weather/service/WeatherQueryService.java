@@ -22,12 +22,6 @@ public class WeatherQueryService {
     private final MemberRepository memberRepository;
     private final WeatherRepository weatherRepository;
 
-//    public void getNearbyLocationWithTagsAndWeathers(Long memberId){
-//        Member member = memberRepository.safeFindById(memberId);
-//        Location location = member.getLocation();
-//        List<Location> nearbyLocationList = locationRepository.getRainProbability(location);
-//    }
-
     public WeatherResponse.SimpleRainInformation getSimpleRainInfo(Long memberId) {
         Member member = memberRepository.safeFindById(memberId);
         Location location = member.getLocation();
