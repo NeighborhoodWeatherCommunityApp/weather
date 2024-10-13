@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.common.utils.GeometryUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
@@ -46,59 +47,58 @@ class PostServiceTest {
     @Autowired
     PostRequestConverter postRequestConverter;
 
-    private final double LATITUDE = 35.1845361111111;
-    private final double LONGITUDE = 128.989688888888;
 
-    @BeforeEach
-    void init() {
-        String[][] list = {
-                {"서울특별시", "종로구", "청운효자동"},
-                {"서울특별시", "종로구", "사직동"},
-                {"서울특별시", "종로구", "삼청동"},
-                {"서울특별시", "종로구", "부암동"},
-                {"부산광역시", "부산진구", "부전제2동"},
-                {"부산광역시", "부산진구", "연지동"},
-                {"부산광역시", "부산진구", "초읍동"},
-                {"부산광역시", "부산진구", "양정제1동"}
-        };
-
-        double[][] latlngList = {
-                {126.9706519, 37.5841367},
-                {126.970955555555, 37.5732694444444},
-                {126.983977777777, 37.582425},
-                {126.966444444444, 37.5898555555555},
-                {129.059075, 35.1495222222222},
-                {129.055008333333, 35.1697138888888},
-                {129.049833333333, 35.175625},
-                {129.066655555555, 35.1713972222222}
-        };
-
-        for (int i = 0; i < list.length; i++) {
-            double latitude = latlngList[i][1];
-            double longitude = latlngList[i][0];
-
-            Location location = Location.builder()
-                    .point(GeometryUtils.getPoint(latitude, longitude))
-                    .province(list[i][0])
-                    .city(list[i][1])
-                    .street(list[i][2])
-                    .latitude(latitude)
-                    .longitude(longitude)
-                    .build();
-
-            Member member = Member.builder()
-                    .location(location)
-                    .email(i + "email@naver.com")
-                    .nickname(i + "user")
-                    .sensitivity(Sensitivity.NONE)
-                    .build();
-
-            memberRepository.save(member);
-        }
-    }
+//    @BeforeEach
+//    void init() {
+//        String[][] list = {
+//                {"서울특별시", "종로구", "청운효자동"},
+//                {"서울특별시", "종로구", "사직동"},
+//                {"서울특별시", "종로구", "삼청동"},
+//                {"서울특별시", "종로구", "부암동"},
+//                {"부산광역시", "부산진구", "부전제2동"},
+//                {"부산광역시", "부산진구", "연지동"},
+//                {"부산광역시", "부산진구", "초읍동"},
+//                {"부산광역시", "부산진구", "양정제1동"}
+//        };
+//
+//        double[][] latlngList = {
+//                {126.9706519, 37.5841367},
+//                {126.970955555555, 37.5732694444444},
+//                {126.983977777777, 37.582425},
+//                {126.966444444444, 37.5898555555555},
+//                {129.059075, 35.1495222222222},
+//                {129.055008333333, 35.1697138888888},
+//                {129.049833333333, 35.175625},
+//                {129.066655555555, 35.1713972222222}
+//        };
+//
+//        for (int i = 0; i < list.length; i++) {
+//            double latitude = latlngList[i][1];
+//            double longitude = latlngList[i][0];
+//
+//            Location location = Location.builder()
+//                    .point(GeometryUtils.getPoint(latitude, longitude))
+//                    .province(list[i][0])
+//                    .city(list[i][1])
+//                    .street(list[i][2])
+//                    .latitude(latitude)
+//                    .longitude(longitude)
+//                    .build();
+//
+//            Member member = Member.builder()
+//                    .location(location)
+//                    .email(i + "email@naver.com")
+//                    .nickname(i + "user")
+//                    .sensitivity(Sensitivity.NONE)
+//                    .build();
+//
+//            memberRepository.save(member);
+//        }
+//    }
 
     @Test
     @DisplayName("post 저장 테스트")
+    @Transactional
     void postSaveTest() {
         // given
         PostRequest.CreatePost createPost = PostRequest.CreatePost.builder()
@@ -110,16 +110,16 @@ class PostServiceTest {
                 .dustTag(DustTag.GOOD)
                 .build();
 
-        Member member = memberRepository.findAll().stream()
-                .filter(m -> m.getNickname().equals("1user"))
-                .findFirst()
-                .get();
+        Member member = memberRepository.save(Member.builder()
+                .location(TestDataCreator.getBusanLocation())
+                .nickname("member")
+                .build());
 
         // when
-        postService.createPost(member.getId(), createPost);
-        Post post = postRepository.findAll().get(0);
+        boolean result = postService.createPost(member.getId(), createPost);
 
         // then
+        Post post = postRepository.findAll().get(0);
         assertThat(post.getContent()).isEqualTo("test");
         assertThat(post.getMember().getId()).isEqualTo(member.getId());
     }
@@ -128,25 +128,30 @@ class PostServiceTest {
     @Transactional
     void 같은_동네의_글만_조회하는_테스트() {
         // given
-        List<Member> memberList = memberRepository.findAll();
-        for (Member member : memberList) {
-            Location location = member.getLocation();
+        Member busanMember = memberRepository.save(Member.builder()
+                .location(TestDataCreator.getBusanLocation())
+                .nickname("busan member")
+                .build());
 
-            Post post = Post.builder()
-                    .location(location)
-                    .content("내용")
-                    .member(member)
-                    .build();
+        Member seoulMember = memberRepository.save(Member.builder()
+                .location(TestDataCreator.getSeoulLocation())
+                .nickname("seoul member")
+                .build());
 
-            postRepository.save(post);
-        }
+        Post busanPost = postRepository.save(Post.builder()
+                .member(busanMember)
+                .location(busanMember.getLocation())
+                .build());
+
+        Post seoulPost = postRepository.save(Post.builder()
+                .member(seoulMember)
+                .location(seoulMember.getLocation())
+                .build());
 
         // when
-        Member member = memberList.get(0);
-        Location location = member.getLocation();
-        List<Post> postList = postRepository.findAllWithinDistance(1L, 5L, location);
+        List<Post> postList = postRepository.findAllWithinDistance(1L, 5L, busanMember.getLocation());
 
         // then
-        assertThat(postList.size()).isEqualTo(4);
+        assertThat(postList.size()).isEqualTo(1);
     }
 }

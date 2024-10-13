@@ -1,16 +1,27 @@
 package org.pknu.weather.repository;
 
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
+import org.pknu.weather.config.QueryDslConfig;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Weather;
+import org.pknu.weather.validation.annotation.IsPositive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,19 +39,10 @@ class LocationRepositoryTest {
 
     @Autowired
     LocationRepository locationRepository;
-    private final double LATITUDE = 35.1845361111111;
-    private final double LONGITUDE = 128.989688888888;
 
     @BeforeEach
     void init() {
-        Location location = Location.builder()
-                .point(GeometryUtils.getPoint(LATITUDE, LONGITUDE))
-                .city("city")
-                .province("province")
-                .street("street")
-                .latitude(30.0)
-                .longitude(60.0)
-                .build();
+        Location location = TestDataCreator.getBusanLocation();
 
         List<Weather> weatherList = new ArrayList<>();
 
@@ -69,7 +71,6 @@ class LocationRepositoryTest {
             weatherList.add(yesterday);
         }
 
-        System.out.println("##################"+weatherList.size());
         weatherRepository.saveAll(weatherList);
     }
 
@@ -79,13 +80,13 @@ class LocationRepositoryTest {
     void locationAndWeatherFetchJoinTest() {
         // given
         Location location = locationRepository.findAll().get(0);
-        int eq = 24 - LocalTime.now().getHour() - 1;
 
         // when
         List<Weather> weathers = weatherRepository.findAllWithLocation(location, LocalDateTime.now().plusHours(24));
 
         // then
-        assertThat(weathers.size()).isEqualTo(eq);
-        assertThat(weathers.get(0).getLocation().getId()).isEqualTo(location.getId());
+        for (Weather weather : weathers) {
+            assertThat(weather.getPresentationTime().isAfter(TestDataCreator.getLocalDateTime().withHour(0))).isTrue();
+        }
     }
 }

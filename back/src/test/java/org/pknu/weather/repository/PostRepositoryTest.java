@@ -39,7 +39,6 @@ class PostRepositoryTest {
     private final double LONGITUDE = 128.989688888888;
 
     @BeforeEach
-    @Transactional
     void init() {
         List<Member> memberList = new ArrayList<>();
         List<Post> postList = new ArrayList<>();
@@ -102,6 +101,6 @@ class PostRepositoryTest {
         Assertions.assertThat(popularPostList.get(1).getContent()).isEqualTo("content4");
         Assertions.assertThat(popularPostList.get(2).getContent()).isEqualTo("content3");
         Assertions.assertThat(popularPostList.get(3).getContent()).isEqualTo("content2");
-//        Assertions.assertThat(popularPostList.get(4).getContent()).isEqualTo("content1");
+        Assertions.assertThat(popularPostList.get(4).getContent()).isEqualTo("content1");
     }
 }

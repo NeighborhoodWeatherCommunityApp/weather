@@ -2,6 +2,7 @@ package org.pknu.weather.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.common.TestGlobalParams;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
@@ -28,28 +29,8 @@ class WeatherRepositoryTest {
     @Autowired
     LocationRepository locationRepository;
 
-    @Transactional
-    void createWeather(LocalDateTime now) {
-        Weather weather = Weather.builder()
-                .basetime(now)
-                .presentationTime(now.plusHours(4))
-                .location(createLocation())
-                .build();
-
-        weatherRepository.save(weather);
-    }
-
     Location createLocation() {
-        Location location = Location.builder()
-                .point(GeometryUtils.getPoint(TestGlobalParams.LATITUDE, TestGlobalParams.LONGITUDE))
-                .city("city")
-                .province("province")
-                .street("street")
-                .latitude(30.0)
-                .longitude(60.0)
-                .build();
-
-        return location;
+        return TestDataCreator.getBusanLocation();
     }
 
 
@@ -60,11 +41,16 @@ class WeatherRepositoryTest {
         LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.now()
                 .withMinute(0)
                 .withSecond(0)
-                .minusHours(3));
+                .withNano(0));
 
-        createWeather(now);
+        Weather weather = Weather.builder()
+                .basetime(now.minusHours(3))
+                .presentationTime(now.plusHours(1))
+                .location(createLocation())
+                .build();
 
-        Location location = locationRepository.findAll().get(0);
+        Weather weatherEntity = weatherRepository.save(weather);
+        Location location = weatherEntity.getLocation();
 
         // when
         boolean result = weatherRepository.weatherHasBeenUpdated(location);
@@ -77,13 +63,16 @@ class WeatherRepositoryTest {
     @Transactional
     void 특정_지역의_날씨_갱신_시각이_지나_업데이트_되었다면_true() {
         // given
-        LocalDateTime now = LocalDateTime.of(LocalDate.now(),
-                DateTimeFormatter.getTimeClosestToPresent(LocalDateTime.now().toLocalTime()
-                ));
+        LocalDateTime baseTime = DateTimeFormatter.getBaseTimeCloseToNow();
 
-        createWeather(now);
+        Weather weather = Weather.builder()
+                .basetime(baseTime)
+                .presentationTime(TestDataCreator.getLocalDateTimePlusHours(1))
+                .location(createLocation())
+                .build();
 
-        Location location = locationRepository.findAll().get(0);
+        Weather weatherEntity = weatherRepository.save(weather);
+        Location location = weatherEntity.getLocation();
 
         // when
         boolean result = weatherRepository.weatherHasBeenUpdated(location);
@@ -109,12 +98,16 @@ class WeatherRepositoryTest {
     @Transactional
     void 특정_지역의_날씨가_등록되어_있다면_true() {
         // give
-        LocalDateTime now = LocalDateTime.of(LocalDate.now(),
-                DateTimeFormatter.getTimeClosestToPresent(LocalDateTime.now().toLocalTime()
-                ));
+        LocalDateTime baseTime = DateTimeFormatter.getBaseTimeCloseToNow();
 
-        createWeather(now);
-        Location location = locationRepository.findAll().get(0);
+        Weather weather = Weather.builder()
+                .basetime(baseTime)
+                .presentationTime(TestDataCreator.getLocalDateTimePlusHours(1))
+                .location(createLocation())
+                .build();
+
+        Weather weatherEntity = weatherRepository.save(weather);
+        Location location = weatherEntity.getLocation();
 
         // when
         boolean result = weatherRepository.weatherHasBeenCreated(location);
@@ -128,7 +121,7 @@ class WeatherRepositoryTest {
     void 간단_강수_정보_테스트_강수_확률이_있을_때() {
         // given
         Location location = createLocation();
-        LocalDateTime presentationTime = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1);
+        LocalDateTime presentationTime = TestDataCreator.getLocalDateTimePlusHours(1);
         Weather weather = Weather.builder()
                 .presentationTime(presentationTime)
                 .location(location)
@@ -152,7 +145,7 @@ class WeatherRepositoryTest {
     void 간단_강수_정보_테스트_강수_확률이_없을_때() {
         // given
         Location location = createLocation();
-        LocalDateTime presentationTime = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0).plusHours(1);
+        LocalDateTime presentationTime = TestDataCreator.getLocalDateTimePlusHours(1);
         Weather weather = Weather.builder()
                 .presentationTime(presentationTime)
                 .location(location)

@@ -11,7 +11,6 @@ import org.pknu.weather.dto.WeatherQueryResult;
 
 import java.time.LocalDateTime;
 
-import static org.pknu.weather.domain.QLocation.location;
 import static org.pknu.weather.domain.QWeather.weather;
 
 @RequiredArgsConstructor
@@ -44,16 +43,20 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
 
     /**
      * 해당 지역의 날씨가 갱신되었는지 확인하는 메서드
-     *
+     * ex.
+     * baseTime: 14:00, now: 14:00~16:59 true
+     * baseTime: 14:00, now: 17:00~      false
      * @param location
      * @return true = 갱신되었음(3시간 안지남), false = 갱신되지 않았음(3시간 지남)
      */
     @Override
     public boolean weatherHasBeenUpdated(Location location) {
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime baseTime = LocalDateTime.of(
-                now.toLocalDate(),
-                DateTimeFormatter.getTimeClosestToPresent(now.toLocalTime()));
+        LocalDateTime now = LocalDateTime.now()
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        LocalDateTime baseTime = DateTimeFormatter.getBaseTimeCloseToNow();
 
         LocalDateTime weatherBaseTime = jpaQueryFactory
                 .select(weather.basetime)
