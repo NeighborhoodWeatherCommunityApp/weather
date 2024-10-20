@@ -84,7 +84,8 @@ public class WeatherResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SimpleRainInformation {
-        String comment;
+        String rainComment;
+        String addComment;
         Boolean willRain;
         String rainfallAmount;
     }

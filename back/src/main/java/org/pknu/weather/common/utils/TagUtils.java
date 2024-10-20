@@ -81,7 +81,7 @@ public class TagUtils {
         String temperature = tag2Text(temperatureTag);
         String humidity = tag2Text(humidityTag);
 
-        return humidity + " " + temperature;
+        return humidity + ", " + temperature;
     }
 
     public static String tag2Text(EnumTag tag) {
@@ -104,29 +104,32 @@ public class TagUtils {
 
     private static String humidityTag2Text(EnumTag humidityTag) {
         assert humidityTag instanceof HumidityTag;
-        return switch (humidityTag.getCode()) {
-            case 1 -> "건조하고";
-            case 3 -> "약간 습하고";
-            case 4 -> "습하면서";
-            case 5 -> "엄청 습하고";
-            default -> "안 습하고";
-        };
+        return humidityTag.toText();
+//        return switch (humidityTag.getCode()) {
+//            case 1 -> "건조하고";
+//            case 3 -> "약간 습하고";
+//            case 4 -> "습하면서";
+//            case 5 -> "엄청 습하고";
+//            default -> "안 습하고";
+//        };
     }
 
     private static String temperatureTag2Text(EnumTag temperatureTag) {
         assert temperatureTag instanceof TemperatureTag;
-        return switch (temperatureTag.getCode()) {
-            case 1 -> "엄청 추움";
-            case 2 -> "추워요";
-            case 3 -> "조금 추워요";
-            case 4 -> "선선해요";
-            case 6 -> "따뜻해요";
-            case 7 -> "조금 따뜻해요";
-            case 8 -> "조금 더워요";
-            case 9 -> "더워요";
-            case 10 -> "엄청 더워요";
-            default -> "무난해요";
-        };
+        return temperatureTag.toText();
+
+//        return switch (temperatureTag.getCode()) {
+//            case 1 -> "엄청 추움";
+//            case 2 -> "추워요";
+//            case 3 -> "조금 추워요";
+//            case 4 -> "선선해요";
+//            case 6 -> "따뜻해요";
+//            case 7 -> "조금 따뜻해요";
+//            case 8 -> "조금 더워요";
+//            case 9 -> "더워요";
+//            case 10 -> "엄청 더워요";
+//            default -> "무난해요";
+//        };
     }
 
     private static String windTag2Text(EnumTag windTag) {
