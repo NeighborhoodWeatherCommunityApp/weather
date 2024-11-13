@@ -73,4 +73,5 @@ public class MainPageControllerV1 {
         WeatherResponse.SimpleRainInformation rainProb = mainPageService.getSimpleRainInfo(email);
         return ApiResponse.onSuccess(rainProb);
     }
+
 }
