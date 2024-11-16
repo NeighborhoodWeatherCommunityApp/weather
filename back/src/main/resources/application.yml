@@ -56,6 +56,10 @@ management:
   endpoint:
     health:
       show-details: always
+    web:
+      exposure:
+        include: '*'
+
 cloud:
   aws:
     credentials:
@@ -67,3 +71,8 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
