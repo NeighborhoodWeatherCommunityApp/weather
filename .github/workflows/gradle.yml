@@ -135,12 +135,6 @@ jobs:
             sudo docker stop $(sudo docker ps -q)
           fi
 
-      - name: Remove the existing container (if any)
-        run: |
-          if [ "$(sudo docker ps -a -q)" ]; then
-            sudo docker rm $(sudo docker ps -a -q)
-          fi
-
       - name: Run the new Docker container
         run: |
           sudo docker run --name neighborhood_weather_community_app \
