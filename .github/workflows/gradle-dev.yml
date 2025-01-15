@@ -1,0 +1,74 @@
+name: Deploy to CLOUDTYPE
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Connect deploy key
+        uses: cloudtype-github-actions/connect@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          ghtoken: ${{ secrets.GHP_TOKEN }}
+
+      - name: set profiles active value
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "**/src/main/resources/application.yml"
+        env:
+          spring.profiles.active: dev
+
+      - name: Deploy
+        uses: cloudtype-github-actions/deploy@v1
+        with:
+          token: ${{ secrets.CLOUDTYPE_TOKEN }}
+          project: weather-dev/web-programing
+          stage: main
+          yaml: |
+            name: weather
+            app: java@17
+            options:
+              ports: "8080"
+              healthz: /helath-check
+              env: 
+                - name: MARIA_DB_URL
+                  value: ${{ secrets.DB_URL }}
+                - name: MARIA_DB_USERNAME
+                  value: ${{ secrets.MARIA_DB_USERNAME }}
+                - name: MARIA_DB_PASSWORD
+                  value: ${{ secrets.MARIA_DB_PASSWORD }}
+                - name: SHORT_TERM_FORECAST_API_KEY
+                  value: ${{ secrets.MARIA_DB_PASSWORD }}
+                - name: JWT_KEY
+                  value: ${{ secrets.JWT_KEY }}
+                - name: CONSUMER_KEY
+                  value: ${{ secrets.CONSUMER_KEY }}
+                - name: CONSUMER_SECRET
+                  value: ${{ secrets.CONSUMER_SECRET }}
+                - name: S3_ACCESS_KEY
+                  value: ${{ secrets.S3_ACCESS_KEY }}
+                - name: S3_SECRET_KEY
+                  value: ${{ secrets.S3_SECRET_KEY }}
+                - name: METEOROLOGICAL_ADMIN_KEY
+                  value: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
+                - name: KAKAO_SERVICE_ADMIN_KEY
+                  value: ${{ secrets.KAKAO_SERVICE_ADMIN_KEY }}
+                - name: CLIENT_ID
+                  value: ${{ secrets.CLIENT_ID }}
+                - name: TEAM_ID
+                  value: ${{ secrets.TEAM_ID }}
+                - name: APPLE_KEY_ID
+                  value: ${{ secrets.APPLE_KEY_ID }}
+                - name: APPLE_KEY
+                  value: ${{ secrets.APPLE_KEY }}
+              buildenv: []
+            context:
+              git:
+                url: git@github.com:${{ github.repository }}.git
+                ref: ${{ github.ref }}
