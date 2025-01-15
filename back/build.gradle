@@ -43,6 +43,8 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	implementation 'com.mysql:mysql-connector-j'
 
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 
