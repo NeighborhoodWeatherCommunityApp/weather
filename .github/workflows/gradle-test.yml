@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: test Pipeline
 
 on:
   pull_request:
@@ -9,12 +9,6 @@ on:
       - bug/**
       - config/**
       - ci/**
-    paths:
-      - back/**
-
-  push:
-    branches:
-      - dev
     paths:
       - back/**
       - .github/**
