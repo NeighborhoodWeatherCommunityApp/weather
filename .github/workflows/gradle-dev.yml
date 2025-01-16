@@ -1,7 +1,11 @@
 name: Deploy to CLOUDTYPE
 on:
-  push:
+#  push:
+#    branches:
+#      - dev
+  pull_request:
     branches:
+      - ci/**
       - dev
 
 jobs:
