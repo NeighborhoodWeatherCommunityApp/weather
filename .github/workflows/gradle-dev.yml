@@ -41,7 +41,7 @@ jobs:
               ports: "8080"
               healthz: /helath-check
               command: |
-                sudo mkdir -p /customLog && sudo chmod 777 /customLog
+                sudo mkdir -p /app/customLog && sudo chmod 777 /app/customLog
               env: 
                 - name: MARIA_DB_URL
                   value: ${{ secrets.DB_URL }}
