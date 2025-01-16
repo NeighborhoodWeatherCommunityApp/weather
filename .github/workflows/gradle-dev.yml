@@ -11,6 +11,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Create directory
+        run: |
+          mkdir -p /customLog
+          chmod 777 /customLog
+
       - name: Connect deploy key
         uses: cloudtype-github-actions/connect@v1
         with:
