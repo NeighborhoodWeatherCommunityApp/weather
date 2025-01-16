@@ -11,11 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Create directory
-        run: |
-          sudo mkdir -p /customLog
-          sudo chmod 777 /customLog
-
       - name: Connect deploy key
         uses: cloudtype-github-actions/connect@v1
         with:
@@ -41,6 +36,9 @@ jobs:
             options:
               ports: "8080"
               healthz: /helath-check
+              predeploy: |
+                mkdir -p /customLog
+                chmod 777 /customLog
               env: 
                 - name: MARIA_DB_URL
                   value: ${{ secrets.DB_URL }}
