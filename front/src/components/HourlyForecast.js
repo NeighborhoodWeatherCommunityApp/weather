@@ -44,7 +44,7 @@ const HourlyForecast = ({weatherData, showText, refreshing}) => {
     if (weatherData) {
       loadData();
     }
-  }, [weatherData]);
+  }, [weatherData, refreshing]);
 
   const formatHour = isoString => {
     const date = new Date(isoString);
@@ -93,8 +93,17 @@ const HourlyForecast = ({weatherData, showText, refreshing}) => {
   return (
     <ScrollView
       horizontal
-      contentContainerStyle={styles.scrollContent}
-      style={[styles.container, {marginTop}]}>
+      contentContainerStyle={[
+        styles.scrollContent,
+        {paddingRight: width * 0.025},
+        {alignItems: 'center'},
+      ]}
+      style={[styles.container, {marginRight: 0}, {marginTop}]}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={false}
+      bounces={true}
+      scrollEnabled={true}>
       {(loading ? placeholderData : hourlyData || []).map((item, i) => (
         <View key={i} style={styles.shadowContainer}>
           <Card
@@ -146,8 +155,12 @@ const HourlyForecast = ({weatherData, showText, refreshing}) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingRight: 0,
+    marginRight: 0,
+  },
+  scrollContent: {
     paddingRight: 10,
-    marginRight: 10,
+    marginRight: 0,
   },
   shadowContainer: {
     marginLeft: width * 0.025,

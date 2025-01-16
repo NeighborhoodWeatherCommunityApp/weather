@@ -99,11 +99,9 @@ const ProfileScreen = ({accessToken, navigation, route}) => {
         Alert.alert('프로필 수정 완료', '프로필 정보가 수정되었습니다.');
         navigation.navigate('MyScreen', {refresh: true});
       } else {
-        /* Alert.alert('프로필 수정 실패', result.message || '다시 시도해주세요.'); */
       }
     } catch (error) {
       console.error('Error registering profile:', error);
-      /* Alert.alert('프로필 수정 실패', '다시 시도해주세요.'); */
     } finally {
       setSaving(false);
     }
@@ -223,8 +221,8 @@ const styles = StyleSheet.create({
     /*backgroundColor: '#3f51b5',*/
     backgroundColor: '#2f5af4',
     borderRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: Platform.OS === 'ios' ? 4 : 4,
+    paddingHorizontal: Platform.OS === 'ios' ? 8 : 10,
   },
   plusIcon: {
     color: '#fff',

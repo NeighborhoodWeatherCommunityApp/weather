@@ -266,13 +266,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    padding: 20,
+    padding: 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
     marginTop: Platform.OS === 'ios' ? 15 : 10,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   profileImage: {
     width: 50,
@@ -289,6 +291,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E5E7EB',
     marginBottom: 20,
+    marginHorizontal: 20,
   },
   textInput: {
     height: 100,
@@ -299,6 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlignVertical: 'top',
     color: '#333',
+    marginHorizontal: 20,
   },
   section: {
     marginBottom: 20,
@@ -307,9 +311,12 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'ios' ? 15 : 16,
     marginBottom: 10,
     color: Platform.OS === 'ios' ? '#494949' : '#494949',
+    marginHorizontal: 20,
   },
   tagContainer: {
     flexDirection: 'row',
+    paddingLeft: 20,
+    paddingRight: 10,
   },
   tag: {
     paddingVertical: 10,
@@ -334,6 +341,8 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
     marginTop: 10,
+    marginBottom: 30,
+    marginHorizontal: 20,
   },
   shareButtonText: {
     color: '#fff',

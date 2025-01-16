@@ -7,10 +7,21 @@ import {
   Dimensions,
   Switch,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+  PermissionsAndroid,
+  Platform,
+  Linking,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
-import {fetchUserLocation, fetchWeatherTags} from '../api/api';
+import Geolocation from 'react-native-geolocation-service';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {
+  fetchUserLocation,
+  fetchWeatherTags,
+  sendLocationToBackend,
+} from '../api/api';
 
 const {width, height} = Dimensions.get('window');
 
@@ -157,6 +168,123 @@ const WeatherHeader = ({
     }
   };
 
+  const handleLocationClick = async () => {
+    const requestAndCheckPermission = async () => {
+      const hasPermission = await requestLocationPermission();
+
+      if (!hasPermission) {
+        Alert.alert(
+          '위치 권한 필요',
+          '현재 위치를 가져오려면 위치 권한이 필요합니다. 앱 설정에서 권한을 허용해 주세요.',
+          [
+            {text: '취소', style: 'cancel'},
+            {
+              text: '설정 열기',
+              onPress: () => Linking.openSettings(),
+            },
+          ],
+        );
+        return false;
+      }
+      return true;
+    };
+
+    const permissionGranted = await requestAndCheckPermission();
+    if (!permissionGranted) {
+      return;
+    }
+
+    Alert.alert(
+      '위치 변경',
+      '현재 위치로 변경할까요?',
+      [
+        {
+          text: '아니오',
+          style: 'cancel',
+        },
+        {
+          text: '예',
+          onPress: async () => {
+            setLoadingLocation(true);
+
+            Geolocation.getCurrentPosition(
+              async position => {
+                const {longitude, latitude} = position.coords;
+
+                try {
+                  const response = await sendLocationToBackend(
+                    longitude,
+                    latitude,
+                    accessToken,
+                  );
+
+                  console.log('Location updated successfully:', response);
+
+                  setUserLocation({
+                    city: response.city || '',
+                    street: response.street || '',
+                  });
+
+                  Alert.alert(
+                    '위치 업데이트',
+                    '현재 위치가 다시 설정되었습니다.',
+                  );
+                } catch (error) {
+                  console.error(
+                    'Error sending location to backend:',
+                    error.message,
+                  );
+                  Alert.alert(
+                    '위치 전송 실패',
+                    '위치 정보 등록에 실패하였습니다.',
+                  );
+                }
+              },
+              error => {
+                console.error('Error getting current location:', error.message);
+                Alert.alert(
+                  '위치 확인 실패',
+                  '현재 위치를 확인할 수 없습니다.',
+                );
+              },
+              {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+            );
+
+            setLoadingLocation(false);
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  useEffect(() => {
+    loadLocationData();
+  }, [accessToken]);
+
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+      const status = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      if (status === RESULTS.DENIED || status === RESULTS.BLOCKED) {
+        const result = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        return result === RESULTS.GRANTED;
+      }
+      return status === RESULTS.GRANTED;
+    } else {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: '위치 권한 요청',
+          message: '앱에서 위치 정보를 사용하려면 권한이 필요합니다.',
+          buttonNeutral: '나중에',
+          buttonNegative: '취소',
+          buttonPositive: '허용',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+  };
+
   if (loadingLocation) {
     return (
       <LinearGradient
@@ -184,7 +312,9 @@ const WeatherHeader = ({
       />
 
       <View style={styles.infoContainer}>
-        <View style={styles.locationContainer}>
+        <TouchableOpacity
+          style={styles.locationContainer}
+          onPress={handleLocationClick}>
           <Image
             source={require('../../assets/images/icon_location.png')}
             style={styles.locationIcon}
@@ -192,7 +322,7 @@ const WeatherHeader = ({
           <Text style={styles.location}>
             {userLocation.city} {userLocation.street}
           </Text>
-        </View>
+        </TouchableOpacity>
         <Text style={styles.temperature}>{weatherData?.currentTmp}°C</Text>
         <Text style={styles.feelsLike}>
           체감 {weatherData?.currentSensibleTmp?.toFixed(1)}°C

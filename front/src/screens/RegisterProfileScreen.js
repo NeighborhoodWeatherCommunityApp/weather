@@ -108,7 +108,7 @@ const RegisterProfileScreen = ({
       } else {
         Alert.alert(
           '위치 권한 필요',
-          '위치 정보를 등록하려면 권한을 허용해주세요. 앱 설정에서 권한을 활성화하세요.',
+          '위치 정보를 등록하려면 위치 권한이 필요합니다. 앱 설정에서 권한을 허용해 주세요.',
           [
             {text: '취소', style: 'cancel', onPress: () => setLoading(false)},
             {

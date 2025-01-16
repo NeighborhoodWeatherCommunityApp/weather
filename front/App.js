@@ -8,6 +8,7 @@ import MyScreen from './src/screens/MyScreen';
 import TermsAgreementScreen from './src/screens/TermsAgreementScreen';
 import RegisterProfileScreen from './src/screens/RegisterProfileScreen';
 import PostCreationScreen from './src/screens/PostCreationScreen';
+import TestLoginScreen from './src/screens/TestLoginScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import TermsViewScreen from './src/screens/TermsViewScreen';
@@ -37,6 +38,15 @@ const AuthStack = ({
           setIsDeleted={setIsDeleted}
           setIsProfileCompleted={setIsProfileCompleted}
           isProfileCompleted={isProfileCompleted}
+        />
+      )}
+    </Stack.Screen>
+    <Stack.Screen name="TestLoginScreen">
+      {props => (
+        <TestLoginScreen
+          {...props}
+          setIsLoggedIn={setIsLoggedIn}
+          setAccessToken={setAccessToken}
         />
       )}
     </Stack.Screen>
@@ -72,6 +82,7 @@ const HomeStack = ({accessToken}) => (
     <Stack.Screen name="PostCreationScreen">
       {props => <PostCreationScreen {...props} accessToken={accessToken} />}
     </Stack.Screen>
+    <Stack.Screen name="TestLoginScreen" component={TestLoginScreen} />
   </Stack.Navigator>
 );
 
