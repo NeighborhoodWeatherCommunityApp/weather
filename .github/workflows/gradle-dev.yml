@@ -72,7 +72,7 @@ jobs:
                 - name: APPLE_KEY
                   value: ${{ secrets.APPLE_KEY }}
               buildenv: []
-              start: sudo mkdir -p /customLog && sudo chmod 777 /customLog
+              start: mkdir -p /customLog && chmod 777 /customLog
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
