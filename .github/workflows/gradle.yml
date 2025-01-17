@@ -1,0 +1,171 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - feat/**
+      - fix/**
+      - refactor/**
+      - bug/**
+      - config/**
+    paths:
+      - back/**
+      - .github/**
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testdb
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 환경 변수 설정
+      - name: Set up environment variables
+        run: |
+          echo "SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/testdb" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_USERNAME=root" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_PASSWORD=root" >> $GITHUB_ENV
+
+      # 환경변수 주입
+      - name: Set yml value
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "**/src/test/resources/application.yml"
+        env:
+          spring.datasource.url: ${{ env.SPRING_DATASOURCE_URL }}
+          spring.datasource.username: ${{ env.SPRING_DATASOURCE_USERNAME }}
+          spring.datasource.password: ${{ env.SPRING_DATASOURCE_PASSWORD }}
+          api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          spring.jwt.key: ${{ secrets.JWT_KEY }}
+          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
+          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+          cloud.aws.credentials.access-key: ${{secrets.S3_ACCESS_KEY}}
+          cloud.aws.credentials.secret-key: ${{secrets.S3_SECRET_KEY}}
+          spring.weather.key: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
+          spring.kakao.admin_key: $ {{secrets.KAKAO_SERVICE_ADMIN_KEY}}
+
+
+      # Gradle 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x back/gradlew
+
+      # Gradle을 사용하여 테스트 실행 (임시로 띄운 db 사용)
+      - name: Build with Gradle Wrapper
+        working-directory: back
+        run: ./gradlew test -i
+
+  build-and-push:
+    # test 가 정상적으로 수행된다면 해당 작업 실행
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ success() }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Gradle 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x back/gradlew
+
+      # 환경변수 주입
+      - name: Set yml value
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "**/src/main/resources/application.yml"
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+          api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          spring.jwt.key: ${{ secrets.JWT_KEY }}
+          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
+          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+          cloud.aws.credentials.access-key: ${{secrets.S3_ACCESS_KEY}}
+          cloud.aws.credentials.secret-key: ${{secrets.S3_SECRET_KEY}}
+          spring.weather.key: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
+          spring.kakao.admin_key: $ {{secrets.KAKAO_SERVICE_ADMIN_KEY}}
+
+
+      # Gradle을 사용하여 빌드 실행 (테스트 코드 수행 생략)
+      - name: Build with Gradle Wrapper
+        working-directory: back   # 해당 디렉토리에서 수행한다.
+        run: ./gradlew build -x test -i
+
+      # Docker 이미지를 빌드
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
+
+      # Docker Hub에 로그인
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      # Docker 이미지를 Docker Hub에 푸시
+      - name: Docker Hub push
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push
+    if: ${{ success() }}
+
+    steps:
+      # 최신 Docker 이미지를 풀
+      - name: Pull the latest Docker image
+        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+
+      # 기존의 Docker 컨테이너를 중지
+      - name: Stop the existing container (if any)
+        run: |
+          if [ "$(sudo docker ps -q)" ]; then
+            sudo docker stop $(sudo docker ps -q)
+          fi
+
+      # 기존의 Docker 컨테이너를 제거
+      - name: Remove the existing container (if any)
+        run: |
+          if [ "$(sudo docker ps -a -q)" ]; then
+            sudo docker rm $(sudo docker ps -a -q)
+          fi
+
+      # 새로운 Docker 컨테이너를 실행
+      - name: Run the new Docker container
+        run: |
+          sudo docker run --name neighborhood_weather_community_app \
+          -e TZ=Asia/Seoul \
+          -v /etc/localtime:/etc/localtime:ro \
+          -v /etc/timezone:/etc/timezone:ro \
+          --rm -d -p 8080:8080 \
+          ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+
+      # 사용하지 않는 Docker 이미지를 정리
+      - name: Clean up unused Docker images
+        run: sudo docker system prune -f --volumes
