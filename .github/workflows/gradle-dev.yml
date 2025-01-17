@@ -41,14 +41,14 @@ jobs:
               ports: "8080"
               healthz: /helath-check
               env: 
-                - name: MARIA_DB_URL
-                  value: ${{ secrets.DB_URL }}
-                - name: MARIA_DB_USERNAME
-                  value: ${{ secrets.MARIA_DB_USERNAME }}
-                - name: MARIA_DB_PASSWORD
-                  value: ${{ secrets.MARIA_DB_PASSWORD }}
+                - name: DB_URL
+                  value: ${{ secrets.DB_DEV_URL }}
+                - name: DB_USERNAME
+                  value: ${{ secrets.DB_USERNAME }}
+                - name: DB_PASSWORD
+                  value: ${{ secrets.DB_PASSWORD }}
                 - name: SHORT_TERM_FORECAST_API_KEY
-                  value: ${{ secrets.MARIA_DB_PASSWORD }}
+                  value: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }} 
                 - name: JWT_KEY
                   value: ${{ secrets.JWT_KEY }}
                 - name: CONSUMER_KEY
