@@ -69,9 +69,9 @@ jobs:
               buildenv: []
               start: |
                 mkdir -p ./customLog |
-                echo " " > /.log |
-                echo " " > /.err_log.log |
-                chmod 666 /.log /.err_log.log |
+                echo "" > /customLog/log |
+                echo "" > /customLog/err_log.log |
+                chmod 666 /customLog/log /customLog/err_log.log |
                 java -jar ./build/libs/weather-0.0.1-SNAPSHOT.jar
             context:
               git:
