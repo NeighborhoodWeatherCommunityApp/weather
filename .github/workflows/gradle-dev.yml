@@ -35,7 +35,7 @@ jobs:
               healthz: /helath-check
               env: 
                 - name: PROFILE_TYPE
-                  value: ${{ dev }}
+                  value: dev
                 - name: DB_URL
                   value: ${{ secrets.DB_DEV_URL }}
                 - name: DB_USERNAME
