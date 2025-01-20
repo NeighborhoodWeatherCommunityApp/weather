@@ -21,13 +21,6 @@ jobs:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
           ghtoken: ${{ secrets.GHP_TOKEN }}
 
-      - name: set profiles active value
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: "**/src/main/resources/application.yml"
-        env:
-          spring.profiles.active: dev
-
       - name: Deploy
         uses: cloudtype-github-actions/deploy@v1
         with:
@@ -41,6 +34,8 @@ jobs:
               ports: "8080"
               healthz: /helath-check
               env: 
+                - name: PROFILE_TYPE
+                  value: ${{ dev }}
                 - name: DB_URL
                   value: ${{ secrets.DB_DEV_URL }}
                 - name: DB_USERNAME
