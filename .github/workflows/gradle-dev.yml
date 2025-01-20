@@ -67,7 +67,10 @@ jobs:
                 - name: APPLE_KEY
                   value: ${{ secrets.APPLE_KEY }}
               buildenv: []
-              start: mkdir -p ./customLog && chmod 777 ./customLog && java -jar ./build/libs/weather-0.0.1-SNAPSHOT.jar
+              start: |
+                mkdir -p ./customLog
+                chmod 777 ./customLog
+                java -jar ./build/libs/weather-0.0.1-SNAPSHOT.jar
             context:
               git:
                 url: git@github.com:${{ github.repository }}.git
