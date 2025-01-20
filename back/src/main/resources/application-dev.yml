@@ -38,7 +38,7 @@ logging:
     root: info
 log:
   config:
-    path: /customLog
+    path: /var/customLog
     filename: custom
 
 api:
