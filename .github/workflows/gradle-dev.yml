@@ -66,8 +66,11 @@ jobs:
                   value: ${{ secrets.APPLE_KEY_ID }}
                 - name: APPLE_KEY
                   value: ${{ secrets.APPLE_KEY }}
+                - name: LOG_PATH
+                  value: /customLog
               buildenv: []
               start: |
+                export LOG_PATH=./customLog
                 mkdir -p ./customLog
                 ls -ld ./customLog
                 echo "" > ./customLog/log
