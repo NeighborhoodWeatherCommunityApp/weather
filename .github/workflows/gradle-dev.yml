@@ -33,64 +33,59 @@ jobs:
       - name: Set yml value
         uses: microsoft/variable-substitution@v1
         with:
-          token: ${{ secrets.CLOUDTYPE_TOKEN }}
-          project: weather-dev/web-programing
-          stage: main
-          yaml: |
-            name: weather
-            app: java@17
-            options:
-              ports: "8080"
-              healthz: /helath-check
-              env: 
-                - name: PROFILE_TYPE
-                  value: dev
-                - name: DB_URL
-                  value: ${{ secrets.DB_DEV_URL }}
-                - name: DB_USERNAME
-                  value: ${{ secrets.DB_USERNAME }}
-                - name: DB_PASSWORD
-                  value: ${{ secrets.DB_PASSWORD }}
-                - name: SHORT_TERM_FORECAST_API_KEY
-                  value: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }} 
-                - name: JWT_KEY
-                  value: ${{ secrets.JWT_KEY }}
-                - name: CONSUMER_KEY
-                  value: ${{ secrets.CONSUMER_KEY }}
-                - name: CONSUMER_SECRET
-                  value: ${{ secrets.CONSUMER_SECRET }}
-                - name: S3_ACCESS_KEY
-                  value: ${{ secrets.S3_ACCESS_KEY }}
-                - name: S3_SECRET_KEY
-                  value: ${{ secrets.S3_SECRET_KEY }}
-                - name: METEOROLOGICAL_ADMIN_KEY
-                  value: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
-                - name: KAKAO_SERVICE_ADMIN_KEY
-                  value: ${{ secrets.KAKAO_SERVICE_ADMIN_KEY }}
-                - name: CLIENT_ID
-                  value: ${{ secrets.CLIENT_ID }}
-                - name: TEAM_ID
-                  value: ${{ secrets.TEAM_ID }}
-                - name: APPLE_KEY_ID
-                  value: ${{ secrets.APPLE_KEY_ID }}
-                - name: APPLE_KEY
-                  value: ${{ secrets.APPLE_KEY }}
-              buildenv: []
-              start: |
-                mkdir -p ./customLog |
-                echo "" > ./customLog/log |
-                echo "" > ./customLog/err_log.log |
-                chmod 666 ./customLog/log ./customLog/err_log.log |
-                java -jar ./build/libs/weather-0.0.1-SNAPSHOT.jar
-            context:
-              git:
-                url: git@github.com:${{ github.repository }}.git
-                ref: ${{ github.ref }}
-                branch: dev
-                path: /back
+          files: "**/src/main/resources/application.yml"
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+          api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          spring.jwt.key: ${{ secrets.JWT_KEY }}
+          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
+          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+          cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
+          cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
+          spring.weather.key: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
+          spring.kakao.admin_key: ${{ secrets.KAKAO_SERVICE_ADMIN_KEY }}
+          apple.client-id: ${{ secrets.CLIENT_ID }}
+          apple.team-id: ${{ secrets.TEAM_ID }}
+          apple.key.id: ${{ secrets.APPLE_KEY_ID }}
+          apple.key.content: ${{ secrets.APPLE_KEY }}
+          spring.profiles.active: ${{ secrets.PROFILE_TYPE }}
 
-      # 새로운 Docker 컨테이너를 실행
-      - name: Run the new Docker container
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
+
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Docker Hub push
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: self-hosted
+    needs: build-and-push
+
+    steps:
+      - name: 최신 Docker 이미지를 풀
+        run: sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
+
+      - name: 기존의 Docker 컨테이너를 중지 (if any)
+        run: |
+          if [ "$(sudo docker ps -q)" ]; then
+            sudo docker stop $(sudo docker ps -q)
+          fi
+
+      - name: 기존의 Docker 컨테이너를 제거 (if any)
+        run: |
+          if [ "$(sudo docker ps -a -q)" ]; then
+            sudo docker rm $(sudo docker ps -a -q)
+          fi
+
+      - name: 새로운 Docker 컨테이너를 실행
         run: |
           sudo docker run --name neighborhood_weather_community_app \
           -e TZ=Asia/Seoul \
@@ -99,6 +94,5 @@ jobs:
           --rm -d -p 8080:8080 \
           ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo
 
-      # 사용하지 않는 Docker 이미지를 정리
-      - name: Clean up unused Docker images
+      - name: 사용하지 않는 Docker 이미지를 정리
         run: sudo docker system prune -f --volumes
