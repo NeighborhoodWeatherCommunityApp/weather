@@ -18,8 +18,7 @@ on:
       - back/**
 
 jobs:
-  build-and-deploy:
-    if: github.event_name == 'push' && github.ref_name == 'dev'
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +29,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x back/gradlew
 
       - name: Set yml value
         uses: microsoft/variable-substitution@v1
@@ -56,10 +52,6 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           spring.profiles.active: ${{ secrets.PROFILE_TYPE }}
 
-      - name: Build with Gradle Wrapper
-        working-directory: back
-        run: ./gradlew build -x test -i
-
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/github-actions-demo ./back
 
@@ -75,7 +67,7 @@ jobs:
   deploy:
     if: github.event_name == 'push'
     runs-on: self-hosted
-    needs: build-and-deploy
+    needs: build-and-push
 
     steps:
       # 최신 Docker 이미지를 풀
