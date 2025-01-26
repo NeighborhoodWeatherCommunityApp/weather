@@ -39,12 +39,16 @@ class PostCustomRepositoryTest {
         Location seoulLocation = locationRepository.save(TestDataCreator.getSeoulLocation());
 
         Member member = memberRepository.save(TestDataCreator.getMember());
-        postRepository.save(TestDataCreator.getPost(member));
-        postRepository.save(TestDataCreator.getPost(member));
-        postRepository.save(TestDataCreator.getPost(member));
-        postRepository.save(TestDataCreator.getPost(member));
-        postRepository.save(TestDataCreator.getPost(member));
-        postRepository.save(TestDataCreator.getPost(member));
+        Post testPost = TestDataCreator.getPost(member);
+        for (int i = 0; i < 5; i++) {
+            postRepository.save(Post.builder()
+                    .content("")
+                    .postType(testPost.getPostType())
+                    .location(testPost.getLocation())
+                    .member(member)
+                    .build());
+            postRepository.save(TestDataCreator.getPost(member));
+        }
 
         em.flush();
         em.clear();
@@ -53,12 +57,12 @@ class PostCustomRepositoryTest {
         List<Post> latestPostList = postRepository.getLatestPostList(seoulLocation);
 
         // then
-        Assertions.assertThat(latestPostList.get(0).getCreatedAt()).isAfter(latestPostList.get(1).getCreatedAt());
-        Assertions.assertThat(latestPostList.get(1).getCreatedAt()).isAfter(latestPostList.get(2).getCreatedAt());
-        Assertions.assertThat(latestPostList.get(2).getCreatedAt()).isAfter(latestPostList.get(3).getCreatedAt());
-        Assertions.assertThat(latestPostList.get(3).getCreatedAt()).isAfter(latestPostList.get(4).getCreatedAt());
-        Assertions.assertThat(latestPostList.size()).isEqualTo(5);
+        for (int i = 0; i < 4; i++) {
+            Assertions.assertThat(latestPostList.get(i).getCreatedAt()).isAfter(latestPostList.get(i + 1).getCreatedAt());
+            Assertions.assertThat(latestPostList.get(i).getContent()).isNotEmpty();
+        }
 
+        Assertions.assertThat(latestPostList.size()).isEqualTo(5);
     }
 }
 

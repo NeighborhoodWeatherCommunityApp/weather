@@ -93,6 +93,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .select(post)
                 .from(post)
                 .orderBy(post.createdAt.desc())
+                .where(post.content.isNotEmpty())
                 .limit(5)
                 .fetch();
     }
