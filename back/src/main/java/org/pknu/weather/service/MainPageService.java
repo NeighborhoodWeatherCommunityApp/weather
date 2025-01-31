@@ -66,7 +66,7 @@ public class MainPageService {
             weatherService.updateWeathersAsync(location);
         }
 
-        weatherList = weatherService.getWeathers(location);
+        weatherList = weatherList.isEmpty() ? weatherService.getWeathers(location) : weatherList;
 
         return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
     }

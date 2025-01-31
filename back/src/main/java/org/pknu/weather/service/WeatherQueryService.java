@@ -7,9 +7,9 @@ import org.pknu.weather.domain.Member;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
-import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Transactional(readOnly = true)
 public class WeatherQueryService {
-    private final LocationRepository locationRepository;
     private final MemberRepository memberRepository;
     private final WeatherRepository weatherRepository;
 
@@ -35,6 +34,7 @@ public class WeatherQueryService {
      * @param location
      * @return true = 갱신되었음(3시간 안지남), false = 갱신되지 않았음(3시간 지남)
      */
+    @Cacheable(value = "locationCache", key = "#location.id", sync = true)
     public boolean weatherHasBeenUpdated(Location location) {
         return weatherRepository.weatherHasBeenUpdated(location);
     }
