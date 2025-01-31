@@ -36,6 +36,12 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10s
+
+
 logging:
   level:
     root: info

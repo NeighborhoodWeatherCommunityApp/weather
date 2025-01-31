@@ -1,4 +1,6 @@
 spring:
+  cache:
+    type: simple
   sql:
     init:
       mode: never
@@ -41,6 +43,7 @@ spring:
 logging:
   level:
     root: debug
+    org.springframework.cache: DEBUG
 api:
   weather:
     service-key: ${SHORT_TERM_FORECAST_API_KEY}
