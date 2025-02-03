@@ -2,20 +2,11 @@ name: test Pipeline
 
 on:
   pull_request:
-    branches:
-      - feat/**
-      - fix/**
-      - refactor/**
-      - bug/**
-      - config/**
-      - ci/**
     paths:
       - back/**
-      - .github/**
 
 jobs:
   test:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:

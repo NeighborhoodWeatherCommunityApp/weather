@@ -77,7 +77,7 @@ const KakaoShareButton = ({accessToken}) => {
         },
         buttons: [
           {
-            title: '날씨요정 앱에서 확인해 보세요.',
+            title: '날씨톡톡 앱에서 확인해 보세요.',
             link: {
               mobileWebUrl: 'https://링크 추가.com',
               webUrl: 'https://링크 추가.com',

@@ -15,6 +15,7 @@ const AirQuality = ({accessToken, refreshing}) => {
   const [loading, setLoading] = useState(true);
 
   const getGradeText = grade => {
+    if (grade === 0) return '좋음';
     switch (grade) {
       case 1:
         return '좋음';
@@ -30,6 +31,7 @@ const AirQuality = ({accessToken, refreshing}) => {
   };
 
   const getGradientColors = grade => {
+    if (grade === 0) return ['#EFF6FF', '#DBEAFE'];
     switch (grade) {
       case 1:
         return ['#EFF6FF', '#DBEAFE'];
@@ -44,6 +46,7 @@ const AirQuality = ({accessToken, refreshing}) => {
   };
 
   const getTextColor = grade => {
+    if (grade === 0) return '#2F5AF4';
     switch (grade) {
       case 1:
         return '#2F5AF4';

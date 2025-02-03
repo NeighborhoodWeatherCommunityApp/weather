@@ -121,6 +121,19 @@ export const sendLocationToBackend = async (
   latitude,
   accessToken,
 ) => {
+  const getKSTISOString = () => {
+    const now = new Date();
+    const kstOffset = 9 * 60 * 60 * 1000;
+    const kstTime = new Date(now.getTime() + kstOffset);
+    return kstTime.toISOString();
+  };
+
+  const requestTime = getKSTISOString();
+  console.log(`[${requestTime} KST] Sending location data:`, {
+    latitude,
+    longitude,
+  });
+
   try {
     const postData = {latitude, longitude};
 

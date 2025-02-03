@@ -1,0 +1,114 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    paths:
+      - back/**
+
+  push:
+    branches:
+      - main
+    paths:
+      - back/**
+
+jobs:
+  backend-docker-build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 환경변수 주입
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "**/src/main/resources/application.yml"
+        env:
+          spring.datasource.url: ${{ secrets.DB_PROD_URL }}
+          spring.datasource.username: ${{ secrets.DB_PROD_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PROD_PASSWORD }}
+          api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          spring.jwt.key: ${{ secrets.JWT_KEY }}
+          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
+          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
+          cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
+          cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
+          spring.weather.key: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
+          spring.kakao.admin_key: ${{ secrets.KAKAO_SERVICE_ADMIN_KEY }}
+          apple.client-id: ${{ secrets.CLIENT_ID }}
+          apple.team-id: ${{ secrets.TEAM_ID }}
+          apple.key.id: ${{ secrets.APPLE_KEY_ID }}
+          apple.key.content: ${{ secrets.APPLE_KEY }}
+          spring.profiles.active: ${{ secrets.PROFILE_TYPE }}
+
+      - name: 도커 이미지 build
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app ./back
+
+      - name: 도커에 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Docker Hub push
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
+
+  jobs:
+    backend-docker-pull-and-run:
+      runs-on: self-hosted
+      if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
+      needs: [ backend-docker-build-and-push ]
+
+      steps:
+        - name: 최신 Docker 이미지를 pull
+          run: |
+            echo "Pulling new Docker image..."
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
+
+        - name: 현재 실행 중인 컨테이너 백업 (롤백 대비)
+          run: |
+            echo "Backing up running container..."
+            if [ "$(sudo docker ps -q --filter 'name=neighborhood_weather_community_app')" ]; then
+              sudo docker rename neighborhood_weather_community_app neighborhood_weather_community_app_backup
+              sudo docker stop neighborhood_weather_community_app_backup
+            fi
+
+        - name: 새로운 Docker 컨테이너 실행
+          run: |
+            echo "Running new Docker container..."
+            sudo docker run --name neighborhood_weather_community_app \
+            -e TZ=Asia/Seoul \
+            -v /etc/localtime:/etc/localtime:ro \
+            -v /etc/timezone:/etc/timezone:ro \
+            --rm -d -p 8080:8080 \
+            ${{ secrets.DOCKER_HUB_USERNAME }}/neighborhood_weather_community_app
+
+        - name: 헬스 체크 수행
+          run: |
+            echo "Performing health check..."
+            sleep 10  # 컨테이너가 완전히 시작될 때까지 대기
+            if curl -f http://localhost:8080/actuator/health; then
+              echo "Health check passed. Deployment successful."
+            else
+              echo "Health check failed. Rolling back to previous version..."
+              sudo docker stop neighborhood_weather_community_app
+              sudo docker rm neighborhood_weather_community_app
+              sudo docker rename neighborhood_weather_community_app_backup neighborhood_weather_community_app
+              sudo docker start neighborhood_weather_community_app
+              exit 1  # 실패 상태로 GitHub Actions에 알림
+            fi
+
+        - name: 성공 시 이전 컨테이너 제거
+          run: |
+            echo "Cleaning up old backup container..."
+            if [ "$(sudo docker ps -a -q --filter 'name=neighborhood_weather_community_app_backup')" ]; then
+              sudo docker rm neighborhood_weather_community_app_backup
+            fi
+
+        - name: 사용하지 않는 Docker 이미지를 정리
+          run: sudo docker system prune -f --volumes

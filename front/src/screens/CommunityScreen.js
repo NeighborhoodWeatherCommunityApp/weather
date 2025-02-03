@@ -1,4 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
+import {useRefresh} from '../contexts/RefreshContext';
 import {
   View,
   StatusBar,
@@ -17,6 +18,7 @@ import {fetchWeatherData} from '../api/api';
 const {width, height} = Dimensions.get('window');
 
 const CommunityScreen = ({accessToken, navigation}) => {
+  const {refresh, setRefresh} = useRefresh();
   const [refreshPosts, setRefreshPosts] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#3f7dfd');
@@ -88,6 +90,14 @@ const CommunityScreen = ({accessToken, navigation}) => {
       loadPosts(false);
     }, []),
   );
+
+  useEffect(() => {
+    if (refresh) {
+      console.log('Refresh CommunityScreen');
+      loadPosts();
+      setRefresh(false);
+    }
+  }, [refresh]);
 
   useEffect(() => {
     const interval = setInterval(() => {

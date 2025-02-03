@@ -1,4 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
+import {useRefresh} from '../contexts/RefreshContext';
 import {
   ScrollView,
   View,
@@ -22,6 +23,7 @@ import {fetchWeatherData} from '../api/api';
 const {width, height} = Dimensions.get('window');
 
 const HomeScreen = ({accessToken, navigation}) => {
+  const {refresh, setRefresh} = useRefresh();
   const [weatherData, setWeatherData] = useState(null);
   const [showText, setShowText] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -72,6 +74,14 @@ const HomeScreen = ({accessToken, navigation}) => {
       setButtonBackgroundColor('#3f7dfd');
     }
   };
+
+  useEffect(() => {
+    if (refresh) {
+      console.log('Refresh HomeScreen');
+      fetchWeather();
+      setRefresh(false);
+    }
+  }, [refresh]);
 
   const onRefresh = async () => {
     setRefreshing(true);
