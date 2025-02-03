@@ -4,7 +4,7 @@ CMD ["./gradlew", "clean", "build"]
 
 VOLUME /tmp
 
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=build/libs/*SNAPSHOT.jar
 
 #ARG SPRING_DATASOURCE_URL \SPRING_DATASOURCE_USERNAME \
 #    SPRING_DATASOURCE_PASSWORD \

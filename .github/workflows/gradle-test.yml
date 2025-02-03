@@ -3,7 +3,7 @@ name: test Pipeline
 on:
   pull_request:
     paths:
-      - back/**
+      - back/src/main/**
 
 jobs:
   test:
