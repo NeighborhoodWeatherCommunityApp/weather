@@ -30,6 +30,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: 빌드
+        run: chmod +x back/gradlew
+
       - name: Set yml value
         uses: microsoft/variable-substitution@v1
         with:

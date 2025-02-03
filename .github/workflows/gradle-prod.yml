@@ -20,6 +20,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: 빌드
+        run: chmod +x back/gradlew
+
       - name: 환경변수 주입
         uses: microsoft/variable-substitution@v1
         with:
