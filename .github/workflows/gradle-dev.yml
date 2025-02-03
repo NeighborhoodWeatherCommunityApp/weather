@@ -8,15 +8,14 @@ on:
       - refactor/**
       - bug/**
       - config/**
-      - ci/**
-#    paths:
-#      - back/**
-#
-#  push:
-#    branches:
-#      - dev
-#    paths:
-#      - back/**
+    paths:
+      - back/**
+
+  push:
+    branches:
+      - dev
+    paths:
+      - back/**
 
 jobs:
   build-and-push:
