@@ -42,7 +42,7 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
         Tuple tuple = jpaQueryFactory
                 .select(pTag.count(), pTag)
                 .from(tag)
-                .join(tag.location, location).fetchJoin()
+                .join(tag.location, location)
                 .where(
                         location.latitude.between(box.getLeftLat(), box.getRightLat()),
                         location.longitude.between(box.getLeftLon(), box.getRightLon()),

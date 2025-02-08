@@ -9,7 +9,6 @@ import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostConverter;
 import org.pknu.weather.dto.converter.RecommendationConverter;
 import org.pknu.weather.dto.converter.TagConverter;
-import org.pknu.weather.dto.converter.TagWeatherConverter;
 import org.pknu.weather.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +22,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final RecommendationRepository recommendationRepository;
-    private final TagRepository tagRepository;
     private final LocationRepository locationRepository;
-    private final TagWeatherRepository tagWeatherRepository;
     private final WeatherRepository weatherRepository;
     private final EnumTagMapper enumTagMapper;
 
@@ -63,8 +60,6 @@ public class PostService {
         post = postRepository.save(post);
 
         Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
-        TagWeather tagWeather = TagWeatherConverter.toTagWeather(tag, weather);
-        tagWeatherRepository.save(tagWeather);
 
         return true;
     }
@@ -82,8 +77,6 @@ public class PostService {
             postRepository.save(post);
 
             Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
-            TagWeather tagWeather = TagWeatherConverter.toTagWeather(tag, weather);
-            tagWeatherRepository.save(tagWeather);
             return true;
         }
 
@@ -94,8 +87,6 @@ public class PostService {
             postRepository.save(post);
 
             Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
-            TagWeather tagWeather = TagWeatherConverter.toTagWeather(tag, weather);
-            tagWeatherRepository.save(tagWeather);
             return true;
         }
 
