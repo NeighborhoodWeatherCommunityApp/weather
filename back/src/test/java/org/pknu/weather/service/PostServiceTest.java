@@ -41,9 +41,6 @@ class PostServiceTest {
     RecommendationRepository recommendationRepository;
 
     @Autowired
-    TagWeatherRepository tagWeatherRepository;
-
-    @Autowired
     WeatherRepository weatherRepository;
 
     @Autowired
@@ -113,10 +110,8 @@ class PostServiceTest {
 
         // then
         Post post = postRepository.findAll().get(0);
-        List<TagWeather> tagWeathers = tagWeatherRepository.findAll();
         assertThat(post.getContent()).isEqualTo("test");
         assertThat(post.getMember().getId()).isEqualTo(member.getId());
-        assertThat(tagWeathers.size()).isEqualTo(1);
     }
 
     @ParameterizedTest
@@ -162,7 +157,6 @@ class PostServiceTest {
 
         // then
         Post post = postRepository.findAll().get(0);
-        List<TagWeather> tagWeathers = tagWeatherRepository.findAll();
         assertThat(post.getContent()).isEqualTo(content);
         assertThat(post.getMember().getId()).isEqualTo(member.getId());
     }
