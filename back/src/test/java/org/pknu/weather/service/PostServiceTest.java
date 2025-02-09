@@ -227,22 +227,25 @@ class PostServiceTest {
     @Transactional
     public void 좋아요_누르기_좋아요_취소_테스트() {
         // given
-        Member member = memberRepository.save(TestDataCreator.getBusanMember());
-        Post post = postRepository.save(TestDataCreator.getPost(member));
+        Member member1 = memberRepository.save(TestDataCreator.getBusanMember("test1"));
+        Member member2 = memberRepository.save(TestDataCreator.getBusanMember("test2"));
+        Post post = postRepository.save(TestDataCreator.getPost(member1));
 
         // when
-        postService.addRecommendation(member.getEmail(), post.getId());
+        postService.addRecommendation(member1.getEmail(), post.getId());
+        postService.addRecommendation(member2.getEmail(), post.getId());
+        em.flush();
+        em.clear();
+
+        post = postRepository.safeFindById(post.getId());
+        assertThat(post.getRecommendationList().size()).isEqualTo(2);
+        assertThat(post.getRecommendationList().get(0).getPost()).isEqualTo(2);
+
+        postService.addRecommendation(member1.getEmail(), post.getId());
         em.flush();
         em.clear();
 
         post = postRepository.safeFindById(post.getId());
         assertThat(post.getRecommendationList().size()).isEqualTo(1);
-
-        postService.addRecommendation(member.getEmail(), post.getId());
-        em.flush();
-        em.clear();
-
-        post = postRepository.safeFindById(post.getId());
-        assertThat(post.getRecommendationList().size()).isEqualTo(0);
     }
 }

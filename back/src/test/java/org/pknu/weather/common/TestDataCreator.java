@@ -22,6 +22,16 @@ public class TestDataCreator {
                 .build();
     }
 
+    public static Member getBusanMember(String nickname) {
+        return Member.builder()
+                .location(getBusanLocation())
+                .email(nickname+ "@naver.com")
+                .profileImage("http://test.png")
+                .sensitivity(Sensitivity.HOT)
+                .nickname(nickname)
+                .build();
+    }
+
     public static Post getPost(Member member) {
         return Post.builder()
                 .location(member.getLocation())
