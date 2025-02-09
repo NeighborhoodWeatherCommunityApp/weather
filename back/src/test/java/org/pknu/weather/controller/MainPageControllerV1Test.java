@@ -58,27 +58,27 @@ class MainPageControllerV1Test {
         addRecommendation(post, member1Token);
 
         // 조회
-        mockMvc.perform(get("/api/v1/posts/popular")
+        mockMvc.perform(get("/api/v1/main/posts/popular")
                         .header("Authorization", member1Token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.postInfo.likeClickable").value(false))
-                .andExpect(jsonPath("$.result.postInfo.likeCount").value(1)) ;
+                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(false))
+                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(1)) ;
 
         addRecommendation(post, member2Token);
 
-        mockMvc.perform(get("/api/v1/posts/popular")
+        mockMvc.perform(get("/api/v1/main/posts/popular")
                         .header("Authorization", member2Token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.postInfo.likeClickable").value(false))
-                .andExpect(jsonPath("$.result.postInfo.likeCount").value(2)) ;
+                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(false))
+                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(2)) ;
 
         addRecommendation(post, member2Token);
 
-        mockMvc.perform(get("/api/v1/posts/popular")
+        mockMvc.perform(get("/api/v1/main/posts/popular")
                         .header("Authorization", member2Token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.postInfo.likeClickable").value(true))
-                .andExpect(jsonPath("$.result.postInfo.likeCount").value(1));
+                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(true))
+                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(1));
     }
 
     public void addRecommendation(Post post, String token) throws Exception {
