@@ -12,10 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostResponseConverter {
+    /**
+     * @param postViewer 게시글을 조회한 사람
+     * @param postList post list
+     * @param hasNext 다음 게시글이 존재하는지 여부
+     * @return PostResponse.PostList
+     */
 
-    public static PostResponse.PostList toPostList(List<Post> postList, boolean hasNext) {
+    public static PostResponse.PostList toPostList(Member postViewer, List<Post> postList, boolean hasNext) {
         List<PostResponse.Post> list = new ArrayList<>(postList.stream()
-                .map(PostResponseConverter::toPost)
+                .map(post -> {
+                    return toPost(post, postViewer);
+                })
                 .toList());
 
         if (hasNext) {
@@ -29,33 +37,40 @@ public class PostResponseConverter {
                 .build();
     }
 
-    public static List<PostResponse.Post> toLatestPostList(Member member, List<Post> latestPostList) {
+    /**
+     * @param postViewer 게시글을 조회한 사람
+     * @param latestPostList post list
+     * @return List<PostResponse.Post> 형태로 반환합니다.
+     */
+    public static List<PostResponse.Post> toLatestPostList(Member postViewer, List<Post> latestPostList) {
         return latestPostList.stream()
-                .map(PostResponseConverter::toPost)
+                .map(post -> {
+                    return toPost(post, postViewer);
+                })
                 .toList();
     }
 
-    private static PostResponse.Post toPost(Post post) {
-        Member member = post.getMember();
+    private static PostResponse.Post toPost(Post post, Member postViewer) {
+        Member postAuthor  = post.getMember();
 
         return PostResponse.Post.builder()
-                .postInfo(toPostInfo(post, member))
-                .memberInfo(toMemberInfo(member))
+                .postInfo(toPostInfo(post, postViewer))
+                .memberInfo(toMemberInfo(postAuthor))
                 .build();
     }
 
-    private static PostResponse.MemberInfo toMemberInfo(Member member) {
-        Location location = member.getLocation();
+    private static PostResponse.MemberInfo toMemberInfo(Member postAuthor) {
+        Location location = postAuthor.getLocation();
         return PostResponse.MemberInfo.builder()
-                .memberName(member.getNickname())
-                .profileImageUrl(member.getProfileImage())
-                .sensitivity(member.getSensitivity())
+                .memberName(postAuthor.getNickname())
+                .profileImageUrl(postAuthor.getProfileImage())
+                .sensitivity(postAuthor.getSensitivity())
                 .city(location.getCity())
                 .street(location.getStreet())
                 .build();
     }
 
-    private static PostResponse.PostInfo toPostInfo(Post post, Member member) {
+    private static PostResponse.PostInfo toPostInfo(Post post, Member postViewer) {
         List<Recommendation> recommendationList = post.getRecommendationList();
 
         return PostResponse.PostInfo.builder()
@@ -63,7 +78,7 @@ public class PostResponseConverter {
                 .content(post.getContent())
                 .createdAt(DateTimeFormatter.pastTimeToString(post.getCreatedAt()))
                 .likeCount(RecommendationUtils.likeCount(recommendationList))
-                .likeClickable(RecommendationUtils.isClickable(recommendationList, member))
+                .likeClickable(RecommendationUtils.isClickable(recommendationList, postViewer))
                 .build();
     }
 }
