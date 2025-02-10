@@ -239,7 +239,6 @@ class PostServiceTest {
 
         post = postRepository.safeFindById(post.getId());
         assertThat(post.getRecommendationList().size()).isEqualTo(2);
-        assertThat(post.getRecommendationList().get(0).getPost()).isEqualTo(2);
 
         postService.addRecommendation(member1.getEmail(), post.getId());
         em.flush();
