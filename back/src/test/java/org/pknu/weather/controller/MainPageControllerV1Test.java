@@ -16,7 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,45 +47,47 @@ class MainPageControllerV1Test {
     public void 좋아요_테스트() throws Exception {
         // given
         Member member1 = memberRepository.save(TestDataCreator.getBusanMember("test1"));
-        String member1Token = TestUtil.generateJwtToken(jwtUtil, member1);
         Member member2 = memberRepository.save(TestDataCreator.getBusanMember("test2"));
+        String member1Token = TestUtil.generateJwtToken(jwtUtil, member1);
         String member2Token = TestUtil.generateJwtToken(jwtUtil, member2);
         Post post = postRepository.save(TestDataCreator.getPost(member1));
+        flushAndClear();
 
-        em.flush();
-        em.clear();
+        getPosts(member1Token, true, 0);
 
-        // member1이 post1에 좋아요 요청
+        // member1이 post1에 좋아요
         addRecommendation(post, member1Token);
+        flushAndClear();
+        getPosts(member1Token, false, 1);
 
-        // 조회
-        mockMvc.perform(get("/api/v1/main/posts/popular")
-                        .header("Authorization", member1Token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(false))
-                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(1)) ;
-
+        // member2가 post1에 좋아요
         addRecommendation(post, member2Token);
+        flushAndClear();
+        getPosts(member2Token, false, 2);
 
-        mockMvc.perform(get("/api/v1/main/posts/popular")
-                        .header("Authorization", member2Token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(false))
-                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(2)) ;
-
+        // member2가 post1에 좋아요 취소
         addRecommendation(post, member2Token);
-
-        mockMvc.perform(get("/api/v1/main/posts/popular")
-                        .header("Authorization", member2Token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(true))
-                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(1));
+        flushAndClear();
+        getPosts(member2Token, true, 1);
     }
 
-    public void addRecommendation(Post post, String token) throws Exception {
+    private void flushAndClear() {
+        em.flush();
+        em.clear();
+    }
+
+    private void addRecommendation(Post post, String token) throws Exception {
         mockMvc.perform(post("/api/v1/post/recommendation")
                         .param("postId", String.valueOf(post.getId()))
                         .header("Authorization", token))
                 .andExpect(status().isOk());
+    }
+
+    private void getPosts(String token, boolean likeClickableExpect, int likeCountExpect) throws Exception {
+        mockMvc.perform(get("/api/v1/main/posts/popular")
+                        .header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].postInfo.likeClickable").value(likeClickableExpect))
+                .andExpect(jsonPath("$.result[0].postInfo.likeCount").value(likeCountExpect));
     }
 }
