@@ -1,19 +1,26 @@
 package org.pknu.weather.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.mapper.EnumTagMapper;
-import org.pknu.weather.domain.*;
+import org.pknu.weather.domain.Location;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Post;
+import org.pknu.weather.domain.Recommendation;
+import org.pknu.weather.domain.Tag;
 import org.pknu.weather.domain.common.PostType;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostConverter;
 import org.pknu.weather.dto.converter.RecommendationConverter;
 import org.pknu.weather.dto.converter.TagConverter;
-import org.pknu.weather.repository.*;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.repository.PostRepository;
+import org.pknu.weather.repository.RecommendationRepository;
+import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -45,6 +52,7 @@ public class PostService {
 
     /**
      * 게시글과 날씨 태그를 생성합니다.
+     *
      * @param email
      * @param createPost
      * @return
@@ -57,9 +65,7 @@ public class PostService {
         Post post = PostConverter.toPost(member, tag, createPost.getContent());
 
         post.addTag(tag);
-        post = postRepository.save(post);
-
-        Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
+        postRepository.save(post);
 
         return true;
     }
@@ -70,27 +76,23 @@ public class PostService {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
 
-        if(!params.parametersIsEmpty()) {
+        if (!params.parametersIsEmpty()) {
             Post post = PostConverter.toPost(member, params.getContent());
             Tag tag = TagConverter.toTag(params, location, enumTagMapper);
             post.addTag(tag);
             postRepository.save(post);
-
-            Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
             return true;
         }
 
-        if(params.contentIsEmpty()) {
+        if (params.contentIsEmpty()) {
             Post post = PostConverter.toContentEmptyPost(member);
             Tag tag = TagConverter.toTag(params, location, enumTagMapper);
             post.addTag(tag);
             postRepository.save(post);
-
-            Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
             return true;
         }
 
-        if(params.tagKeyStringIsEmpty()) {
+        if (params.tagKeyStringIsEmpty()) {
             Post post = PostConverter.toPost(member, params.getContent());
             postRepository.save(post);
             return true;
@@ -110,6 +112,7 @@ public class PostService {
 
     /**
      * 좋아요, 좋아요 취소를 수행합니다.
+     *
      * @param email
      * @param postId
      * @return

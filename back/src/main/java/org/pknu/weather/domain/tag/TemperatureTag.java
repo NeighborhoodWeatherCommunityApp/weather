@@ -1,11 +1,11 @@
 package org.pknu.weather.domain.tag;
 
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.dto.TotalWeatherDto;
 import org.pknu.weather.exception.GeneralException;
-
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -38,4 +38,8 @@ public enum TemperatureTag implements EnumTag {
         return name();
     }
 
+    @Override
+    public EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+        return null;
+    }
 }

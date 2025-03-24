@@ -99,7 +99,7 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
 
     @Override
     public Weather findByLocationClosePresentationTime(Location location) {
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime now = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
         return jpaQueryFactory
                 .selectFrom(weather)
