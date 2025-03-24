@@ -50,16 +50,16 @@ public class WeatherWriteService {
         Location location = locationRepository.safeFindById(locationId);
         Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
 
-        List<Weather> weatherList = weatherFeignClientUtils.getVillageShortTermForecast(location).stream()
-                .peek(newWeather -> {
+        weatherFeignClientUtils.getVillageShortTermForecast(location)
+                .forEach(newWeather -> {
                     LocalDateTime presentationTime = newWeather.getPresentationTime();
                     if (oldWeatherMap.containsKey(presentationTime)) {
                         Weather oldWeather = oldWeatherMap.get(presentationTime);
                         oldWeather.updateWeather(newWeather);
                     } else {
+                        newWeather.addLocation(location);
                         weatherRepository.save(newWeather);
                     }
-                })
-                .toList();
+                });
     }
 }
