@@ -1,7 +1,11 @@
 package org.pknu.weather.dto;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.pknu.weather.domain.common.Sensitivity;
 
 
@@ -23,13 +27,13 @@ public class MemberResponse {
         private String profileImage;
 
     }
+
     @Getter
     @Builder
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberResponseWithAddressDTO {
-
         private String email;
 
         private Sensitivity sensitivity;
@@ -45,6 +49,14 @@ public class MemberResponse {
         private String city;
 
         private String street;
+
+        private String levelName;
+
+        private String levelTitle;
+
+        private Long exp;
+
+        private Long nextLevelRequiredExp;
 
     }
 
