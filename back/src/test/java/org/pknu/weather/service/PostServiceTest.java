@@ -123,6 +123,7 @@ class PostServiceTest {
         Post post = postRepository.findAll().get(0);
         assertThat(post.getContent()).isEqualTo("test");
         assertThat(post.getMember().getId()).isEqualTo(member.getId());
+        assertThat(post.getMember().getLevel()).isEqualTo(member.getLevel());
     }
 
     @ParameterizedTest
@@ -259,4 +260,6 @@ class PostServiceTest {
         post = postRepository.safeFindById(post.getId());
         assertThat(post.getRecommendationList().size()).isEqualTo(1);
     }
+
+
 }
