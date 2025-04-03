@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.common.Level;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.exception.GeneralException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

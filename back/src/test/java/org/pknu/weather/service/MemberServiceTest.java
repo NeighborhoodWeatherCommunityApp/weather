@@ -14,7 +14,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.common.Level;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberResponse.MemberResponseWithAddressDTO;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.repository.MemberRepository;

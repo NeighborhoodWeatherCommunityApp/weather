@@ -9,11 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.common.TestUtil;
 import org.pknu.weather.common.utils.LocalUploaderUtils;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.common.Level;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.security.util.JWTUtil;
 import org.pknu.weather.service.MemberService;
@@ -21,14 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MemberControllerV2Test {
-    @SpyBean
+    @InjectMocks
     MemberService memberService;
 
     @MockBean
