@@ -1,4 +1,4 @@
-package org.pknu.weather.domain.common;
+package org.pknu.weather.domain.exp;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

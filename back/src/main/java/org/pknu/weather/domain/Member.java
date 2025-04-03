@@ -25,8 +25,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.domain.common.Level;
 import org.pknu.weather.domain.common.Sensitivity;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberJoinDTO;
 import org.pknu.weather.exception.GeneralException;
 
