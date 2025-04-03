@@ -1,7 +1,7 @@
 package org.pknu.weather.dto.converter;
 
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.common.ExpEvent;
+import org.pknu.weather.domain.exp.ExpEvent;
 import org.pknu.weather.dto.ExpRewardResponseDTO;
 
 public class ExpRewardResponseConverter {
