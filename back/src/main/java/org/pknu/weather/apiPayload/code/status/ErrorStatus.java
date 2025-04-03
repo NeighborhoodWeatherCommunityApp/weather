@@ -18,6 +18,10 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON_401", "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_403", "금지된 요청입니다."),
 
+    // epx
+    _EXP_NOT_NEGATIVE(HttpStatus.BAD_REQUEST, "EXP_400_1", "경험치는 음수일 수 없습니다."),
+    _EXP_NOT_EXCEED(HttpStatus.BAD_REQUEST, "EXP_400_2", "경험치는 최대 경험치를 초과할 수 없습니다."),
+
     // tag
     _TAG_NOT_FOUND_FROM_CODE(HttpStatus.FORBIDDEN, "TAG_404_1", "요청하신 code로 태그를 찾을 수 없습니다."),
     _TAG_NOT_FOUND(HttpStatus.FORBIDDEN, "TAG_404_2", "해당 지역의 태그가 존재하지 않습니다."),

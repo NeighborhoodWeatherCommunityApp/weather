@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -22,9 +24,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.common.Level;
 import org.pknu.weather.domain.common.Sensitivity;
 import org.pknu.weather.dto.MemberJoinDTO;
+import org.pknu.weather.exception.GeneralException;
 
 @Entity(name = "member")
 @Getter
@@ -63,7 +67,7 @@ public class Member extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer exp = 0;
+    private Long exp = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "location_id")
@@ -101,23 +105,47 @@ public class Member extends BaseEntity {
      *
      * @param addedExp exp 증가량
      */
-    public void addExp(int addedExp) {
-        if (exp.equals(Level.getMaxLevel().getRequiredExp())) {
-            return;
+    public void addExp(long addedExp) {
+        Long maxLevelExp = Level.getMaxLevel().getRequiredExp();
+
+        if ((exp + addedExp) >= maxLevelExp) {
+            exp = maxLevelExp;
+        } else {
+            exp += addedExp;
         }
 
-        if (addedExp > 0) {
-            exp += addedExp;
-            levelUpCheck();
+        levelUpdateCheck();
+    }
+
+    private void levelUpdateCheck() {
+        for (Level level : Level.values()) {
+            if (this.exp >= level.getRequiredExp()) {
+                this.level = level;
+            }
         }
     }
 
-    private void levelUpCheck() {
-        for (Level level : Level.values()) {
-            if (level.getRequiredExp() >= this.exp) {
-                this.level = level;
-                return;
-            }
+    public void minusExp(Long minusExp) {
+        Long currentLevelMinimumExp = level.getRequiredExp();
+
+        if ((exp + minusExp) < currentLevelMinimumExp) {
+            exp = currentLevelMinimumExp;
+        } else {
+            exp -= minusExp;
+        }
+
+        levelUpdateCheck();
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void validExp() {
+        if (exp < 0) {
+            throw new GeneralException(ErrorStatus._EXP_NOT_NEGATIVE);
+        }
+
+        if (exp > Level.getMaxLevel().getRequiredExp()) {
+            throw new GeneralException(ErrorStatus._EXP_NOT_EXCEED);
         }
     }
 }
