@@ -4,10 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
 class LevelTest {
     @Test
     void 최대레벨메서드테스트() {
