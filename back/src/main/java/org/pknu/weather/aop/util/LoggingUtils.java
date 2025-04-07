@@ -1,6 +1,5 @@
 package org.pknu.weather.aop.util;
 
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -19,7 +18,7 @@ public class LoggingUtils {
      * @param pjp  ProceedingJoinPoint
      * @param args 필요하다면 파라미터도 넘길 수 있다.
      */
-    public static void logBefore(ProceedingJoinPoint pjp, List<String> args) {
+    public static void logBefore(ProceedingJoinPoint pjp, Object[] args) {
         StringBuilder sb = new StringBuilder();
 
         Signature signature = pjp.getSignature();
