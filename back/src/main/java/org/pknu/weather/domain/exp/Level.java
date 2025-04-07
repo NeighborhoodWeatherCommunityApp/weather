@@ -22,7 +22,7 @@ public enum Level {
 
     public static Level getMaxLevel() {
         return Arrays.stream(Level.values())
-                .max(Comparator.comparingInt(l -> l.levelNumber))
+                .max(Comparator.comparingInt(Level::getLevelNumber))
                 .orElseThrow();
     }
 

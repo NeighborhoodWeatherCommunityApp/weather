@@ -1,14 +1,25 @@
 package org.pknu.weather.domain.exp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.util.Arrays;
+import java.util.Comparator;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class LevelTest {
-
     @Test
     void 최대레벨메서드테스트() {
-        Level maxLevel = Level.getMaxLevel();
-        assertEquals(Level.LV6, maxLevel, "최고레벨은 6레벨");
+        // given
+        Level maxLevel = Arrays.stream(Level.values())
+                .max(Comparator.comparingInt(Level::getLevelNumber))
+                .get();
+
+        // when
+        Level getMaxLevel = Level.getMaxLevel();
+
+        // then
+        Assertions.assertThat(maxLevel).isEqualTo(getMaxLevel);
     }
 }
