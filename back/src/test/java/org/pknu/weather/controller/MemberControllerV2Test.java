@@ -63,8 +63,8 @@ public class MemberControllerV2Test {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.email").value(member.getEmail()))
                 .andExpect(jsonPath("$.result.nickname").value(member.getNickname()))
-                .andExpect(jsonPath("$.result.levelName").value(member.getLevel().name()))
-                .andExpect(jsonPath("$.result.levelTitle").value(member.getLevel().getTitle()))
+                .andExpect(jsonPath("$.result.levelKey").value(member.getLevel().name()))
+                .andExpect(jsonPath("$.result.rankName").value(member.getLevel().getRankName()))
                 .andExpect(jsonPath("$.result.exp").value(member.getExp()))
                 .andExpect(jsonPath("$.result.nextLevelRequiredExp").value(
                         Level.getNextLevel(member.getLevel()).getRequiredExp()));

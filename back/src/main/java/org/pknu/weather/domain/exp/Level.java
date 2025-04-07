@@ -1,5 +1,7 @@
 package org.pknu.weather.domain.exp;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,13 +16,14 @@ public enum Level {
     LV6(6, 20000L, "태풍"),
     ;
 
-    private final Integer level;
+    private final Integer levelNumber;
     private final Long requiredExp;
-    private final String title;
+    private final String rankName;
 
     public static Level getMaxLevel() {
-        Level[] values = Level.values();
-        return values[values.length - 1];
+        return Arrays.stream(Level.values())
+                .max(Comparator.comparingInt(l -> l.levelNumber))
+                .orElseThrow();
     }
 
     public static Level getNextLevel(Level currentLevel) {

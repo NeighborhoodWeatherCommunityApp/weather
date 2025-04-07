@@ -50,9 +50,9 @@ public class MemberResponse {
 
         private String street;
 
-        private String levelName;
+        private String levelKey;
 
-        private String levelTitle;
+        private String rankName;
 
         private Long exp;
 

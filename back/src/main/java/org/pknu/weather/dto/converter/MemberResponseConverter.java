@@ -27,8 +27,8 @@ public class MemberResponseConverter {
                 .sensitivity(member.getSensitivity())
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
-                .levelName(member.getLevel().name())
-                .levelTitle(member.getLevel().getTitle())
+                .levelKey(member.getLevel().name())
+                .rankName(member.getLevel().getRankName())
                 .exp(member.getExp())
                 .nextLevelRequiredExp(Level.getNextLevel(member.getLevel()).getRequiredExp())
                 .build();

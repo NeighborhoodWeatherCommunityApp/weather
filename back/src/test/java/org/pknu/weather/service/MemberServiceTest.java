@@ -43,8 +43,8 @@ class MemberServiceTest {
         assertThat(result.getNickname()).isEqualTo(member.getNickname());
         assertThat(result.getEmail()).isEqualTo(member.getEmail());
         assertThat(result.getSensitivity()).isEqualTo(member.getSensitivity());
-        assertThat(result.getLevelName()).isEqualTo(member.getLevel().name());
-        assertThat(result.getLevelTitle()).isEqualTo(member.getLevel().getTitle());
+        assertThat(result.getLevelKey()).isEqualTo(member.getLevel().name());
+        assertThat(result.getRankName()).isEqualTo(member.getLevel().getRankName());
         assertThat(result.getExp()).isEqualTo(member.getExp());
         assertThat(result.getNextLevelRequiredExp()).isEqualTo(Level.getNextLevel(member.getLevel()).getRequiredExp());
     }
