@@ -58,7 +58,7 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                 .withSecond(0)
                 .withNano(0);
 
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime();
+        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(LocalDateTime.now());
 
         LocalDateTime weatherBaseTime = jpaQueryFactory
                 .select(weather.basetime)

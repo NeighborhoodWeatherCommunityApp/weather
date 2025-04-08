@@ -43,7 +43,8 @@ class LocationRepositoryTest {
             Weather weather = Weather.builder()
                     .basetime(LocalDateTime.now())
                     .presentationTime(
-                            DateTimeFormatter.formattedDateTime2LocalDateTime(DateTimeFormatter.getFormattedLocalDate(),
+                            DateTimeFormatter.formattedDateTime2LocalDateTime(
+                                    DateTimeFormatter.getFormattedLocalDate(LocalDate.now()),
                                     DateTimeFormatter.getFormattedTimeByOneHour(LocalTime.of(i, 0))))
                     .temperature(14)
                     .humidity(50)

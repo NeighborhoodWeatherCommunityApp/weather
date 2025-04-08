@@ -5,8 +5,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.common.WeatherParamsFactory;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
@@ -14,10 +16,12 @@ import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.WeatherApiResponse;
 import org.pknu.weather.dto.WeatherApiResponse.Response.Body.Items.Item;
+import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.feignClient.WeatherFeignClient;
 import org.pknu.weather.feignClient.dto.PointDTO;
 import org.pknu.weather.feignClient.dto.WeatherParams;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,8 +34,10 @@ public class WeatherFeignClientUtils {
     @Value("${api.weather.service-key}")
     private String weatherServiceKey;
 
+    private final RetryTemplate retryTemplate;
+
     /**
-     * 사용자의 위도 경도 및 기타 정보를 받아와 weather로 반환한다.
+     * 사용자의 위도 경도 및 기타 정보를 받아와 weather로 반환한다. api 호출 실패시 baseTime을 3시간 늦추고 재시도합니다
      *
      * @return now ~ 24 시간의 Wether 엔티티를 담고있는 List
      * @Location 사용자 위치 엔티티
@@ -41,19 +47,36 @@ public class WeatherFeignClientUtils {
         float lat = location.getLatitude().floatValue();
 
         PointDTO pointDTO = GeometryUtils.coordinateToPoint(lon, lat);
-        String date = DateTimeFormatter.getFormattedBaseDate();
-        String time = DateTimeFormatter.getFormattedBaseTime();
+        LocalDateTime baseLocalDateTime = LocalDateTime.now();
 
-        WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
-        log.info(String.format("\t\t x:%s y:%s date:%s time:%s"), pointDTO.getX(), pointDTO.getY(), date, time);
+        return retryTemplate.execute(context -> {
+            int retryCount = context.getRetryCount();
 
-        WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
-        List<WeatherApiResponse.Response.Body.Items.Item> itemList = weatherApiResponse.getResponse()
-                .getBody()
-                .getItems()
-                .getItemList();
+            LocalDateTime newBaseLocalDateTime = baseLocalDateTime;
+            if (retryCount > 0) {
+                newBaseLocalDateTime = baseLocalDateTime.minusHours(3L * retryCount);
+            }
 
-        return WeatherFeignClientUtils.responseProcess(itemList, date, time);
+            String date = DateTimeFormatter.getFormattedBaseDate(newBaseLocalDateTime);
+            String time = DateTimeFormatter.getFormattedBaseTime(newBaseLocalDateTime);
+
+            WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
+
+            log.info(String.format("\t\t x:%s y:%s date:%s time:%s",
+                    pointDTO.getX() != null ? String.valueOf(pointDTO.getX()) : "N/A",
+                    pointDTO.getY() != null ? String.valueOf(pointDTO.getY()) : "N/A",
+                    date != null ? date : "N/A",
+                    time != null ? time : "N/A"));
+
+            WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
+            List<Item> itemList = Optional.ofNullable(weatherApiResponse.getResponse()
+                            .getBody()
+                            .getItems()
+                            .getItemList())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus._API_SERVER_ERROR));
+
+            return WeatherFeignClientUtils.responseProcess(itemList, date, time);
+        });
     }
 
     /**

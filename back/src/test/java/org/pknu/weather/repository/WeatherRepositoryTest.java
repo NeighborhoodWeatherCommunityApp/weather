@@ -1,5 +1,10 @@
 package org.pknu.weather.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
@@ -11,12 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
@@ -65,7 +64,7 @@ class WeatherRepositoryTest {
     @Transactional
     void 특정_지역의_날씨_갱신_시각이_지나_업데이트_되었다면_true() {
         // given
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime();
+        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(LocalDateTime.now());
 
         Weather weather = Weather.builder()
                 .basetime(baseTime)
@@ -103,7 +102,7 @@ class WeatherRepositoryTest {
     @Transactional
     void 특정_지역의_날씨가_등록되어_있다면_true() {
         // give
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime();
+        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(LocalDateTime.now());
 
         Weather weather = Weather.builder()
                 .basetime(baseTime)

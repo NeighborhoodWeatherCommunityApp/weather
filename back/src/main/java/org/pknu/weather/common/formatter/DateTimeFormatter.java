@@ -10,7 +10,8 @@ import java.util.List;
 public final class DateTimeFormatter {
     static java.time.format.DateTimeFormatter yyyyMMdd = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
     static java.time.format.DateTimeFormatter hhmm = java.time.format.DateTimeFormatter.ofPattern("HHmm");
-    static java.time.format.DateTimeFormatter yyyyMMddHHmm = java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+    static java.time.format.DateTimeFormatter yyyyMMddHHmm = java.time.format.DateTimeFormatter.ofPattern(
+            "yyyyMMddHHmm");
 
     /**
      * post의 생성 시각과 현재와의 차이를 String으로 반환합니다.
@@ -37,52 +38,32 @@ public final class DateTimeFormatter {
      *
      * @return string yyyyMMdd
      */
-    public static String getFormattedLocalDate() {
-        return getFormattedLocalDate(LocalDate.now());
-    }
-
     public static String getFormattedLocalDate(LocalDate currentDate) {
         return currentDate.format(yyyyMMdd);
     }
 
     /**
-     * basetime(0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300)에 해당하는 LocalDate 값을 yyyyMMdd 형태로 반환합니다.
-     * basedate을 계산할 때 사용한다.
-     *
+     * basetime(0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300)에 해당하는 LocalDate 값을 yyyyMMdd 형태로 반환합니다. basedate을 계산할 때
+     * 사용한다.
+     * <p>
      * 주의 00시 ~ 1시59분 사이에는 LocalDateTime.minusDay(1) 의 값이 변환된 스트링이 반환된다.
      *
      * @return yyyyMMdd 형태의 날짜 스트링
      */
-    public static String getFormattedBaseDate() {
-        return getFormattedBaseDate(getBaseLocalDateTime().toLocalDate());
-    }
-
-    public static String getFormattedBaseDate(LocalDate currentDate) {
-        return currentDate.format(yyyyMMdd);
+    public static String getFormattedBaseDate(LocalDateTime localDateTime) {
+        LocalDateTime currentLocalDateTime = getBaseLocalDateTime(localDateTime);
+        return currentLocalDateTime.toLocalDate().format(yyyyMMdd);
     }
 
     /**
-     * LocalTime을 HHmm 형태로 반환합니다. 0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300
-     * 중 현재보다 과거이면서 가장가까운 값을 반환합니다.
+     * LocalTime을 HHmm 형태로 반환합니다. 0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300 중에서
      *
-     * @return HHmm, String 형태의 formatted time
+     * @param localDateTime 보다 과거이면서 가장가까운 값을 반환합니다.
+     * @return HHmm (ex. 0200)
      */
-    public static String getFormattedBaseTime() {
-        return getFormattedBaseTime(getBaseLocalDateTime());
-    }
-
     public static String getFormattedBaseTime(LocalDateTime localDateTime) {
         LocalDateTime currentLocalDateTime = getBaseLocalDateTime(localDateTime);
         return currentLocalDateTime.format(hhmm);
-    }
-
-    /**
-     * LocalTime을 HHmm 형태로 반환합니다. 1시간 단위로 반환합니다.
-     *
-     * @return HHmm, String 형태의 formatted time
-     */
-    public static String getFormattedTimeByOneHour() {
-        return getFormattedTimeByOneHour(LocalTime.now());
     }
 
     /**
@@ -111,10 +92,6 @@ public final class DateTimeFormatter {
      *
      * @return LocalDateTime
      */
-    public static LocalDateTime getBaseLocalDateTime() {
-        return findLocalDateTimeCloseToNow(LocalDateTime.now());
-    }
-
     public static LocalDateTime getBaseLocalDateTime(LocalDateTime currentLocalDateTime) {
         return findLocalDateTimeCloseToNow(currentLocalDateTime);
     }
