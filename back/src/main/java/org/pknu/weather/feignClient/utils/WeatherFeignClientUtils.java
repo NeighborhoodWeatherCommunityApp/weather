@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.WeatherParamsFactory;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WeatherFeignClientUtils {
 
     private final WeatherFeignClient weatherFeignClient;
@@ -43,6 +45,7 @@ public class WeatherFeignClientUtils {
         String time = DateTimeFormatter.getFormattedBaseTime();
 
         WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
+        log.info(String.format("\t\t x:%s y:%s date:%s time:%s"), pointDTO.getX(), pointDTO.getY(), date, time);
 
         WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
         List<WeatherApiResponse.Response.Body.Items.Item> itemList = weatherApiResponse.getResponse()
