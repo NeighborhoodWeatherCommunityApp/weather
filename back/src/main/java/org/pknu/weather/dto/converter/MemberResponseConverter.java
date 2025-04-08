@@ -2,6 +2,7 @@ package org.pknu.weather.dto.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberResponse;
 
 @Slf4j
@@ -26,6 +27,10 @@ public class MemberResponseConverter {
                 .sensitivity(member.getSensitivity())
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
+                .levelKey(member.getLevel().name())
+                .rankName(member.getLevel().getRankName())
+                .exp(member.getExp())
+                .nextLevelRequiredExp(Level.getNextLevel(member.getLevel()).getRequiredExp())
                 .build();
     }
 }

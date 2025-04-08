@@ -1,5 +1,9 @@
 package org.pknu.weather.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +20,6 @@ import org.pknu.weather.repository.PostRepository;
 import org.pknu.weather.repository.RecommendationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest

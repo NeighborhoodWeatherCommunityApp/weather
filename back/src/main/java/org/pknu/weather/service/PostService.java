@@ -18,7 +18,6 @@ import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.PostRepository;
 import org.pknu.weather.repository.RecommendationRepository;
-import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final RecommendationRepository recommendationRepository;
     private final LocationRepository locationRepository;
-    private final WeatherRepository weatherRepository;
     private final EnumTagMapper enumTagMapper;
 
     @Transactional(readOnly = true)

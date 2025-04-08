@@ -61,12 +61,14 @@ public class WeatherFeignClientUtils {
             String time = DateTimeFormatter.getFormattedBaseTime(newBaseLocalDateTime);
 
             WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
-
+          
             log.info(String.format("\t\t x:%s y:%s date:%s time:%s",
                     pointDTO.getX() != null ? String.valueOf(pointDTO.getX()) : "N/A",
                     pointDTO.getY() != null ? String.valueOf(pointDTO.getY()) : "N/A",
                     date != null ? date : "N/A",
                     time != null ? time : "N/A"));
+
+            WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
 
             WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
             List<Item> itemList = Optional.ofNullable(weatherApiResponse.getResponse()

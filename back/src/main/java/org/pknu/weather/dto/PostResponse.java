@@ -59,5 +59,6 @@ public class PostResponse {
         private Sensitivity sensitivity;
         private String city;        // 구군면
         private String street;      // 읍면동
+        private String levelName;
     }
 }

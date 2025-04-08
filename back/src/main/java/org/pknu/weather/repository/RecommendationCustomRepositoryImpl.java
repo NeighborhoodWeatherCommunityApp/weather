@@ -1,9 +1,10 @@
 package org.pknu.weather.repository;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-
 import static org.pknu.weather.domain.QRecommendation.recommendation;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class RecommendationCustomRepositoryImpl implements RecommendationCustomRepository {
@@ -25,5 +26,22 @@ public class RecommendationCustomRepositoryImpl implements RecommendationCustomR
                         recommendation.member.id.eq(memberId)
                 )
                 .fetchOne() == null;
+    }
+
+    @Override
+    public int countTodayRecommendationByMemberId(Long memberId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1);
+
+        return jpaQueryFactory
+                .selectFrom(recommendation)
+                .where(
+                        recommendation.member.id.eq(memberId),
+                        recommendation.createdAt.after(start),
+                        recommendation.createdAt.before(end)
+                )
+                .fetch()
+                .size();
     }
 }
