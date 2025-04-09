@@ -18,7 +18,6 @@ import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -77,7 +76,6 @@ public class WeatherService {
      * @param forecast 공공데이터 API에서 받아온 단기날씨예보 값 list
      */
     @Async("threadPoolTaskExecutor")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveWeathersAsync(Location location, List<Weather> forecast) {
         weatherWriteService.saveWeathersAsync(location, forecast);
     }
