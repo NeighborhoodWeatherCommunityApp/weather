@@ -1,12 +1,27 @@
 package org.pknu.weather.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.pknu.weather.domain.common.PostType;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.pknu.weather.domain.common.PostType;
 
 @Entity
 @Getter
@@ -26,7 +41,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "post_id", nullable = true)
     private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,12 +59,6 @@ public class Post extends BaseEntity {
     private PostType postType = PostType.WEATHER;
 
     public void addTag(Tag tag) {
-        if(this.tag != null) {
-            this.tag.addPost(this);
-        }
         this.tag = tag;
-        if(tag != null) {
-            tag.addPost(this);
-        }
     }
 }
