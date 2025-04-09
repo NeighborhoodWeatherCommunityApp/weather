@@ -1,5 +1,6 @@
 package org.pknu.weather.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
@@ -9,11 +10,6 @@ import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +27,7 @@ public class WeatherWriteService {
      */
     @Transactional
     public void saveWeathersAsync(Location loc, List<Weather> forecast) {
-        Location location = locationRepository.safeFindById(loc.getId());
 
-        List<Weather> weatherList = new ArrayList<>(forecast).stream()
-                .peek(weather -> weather.addLocation(location))
-                .toList();
-
-        weatherRepository.saveAll(weatherList);
     }
 
     /**
@@ -48,19 +38,6 @@ public class WeatherWriteService {
      */
     @Transactional
     public void updateWeathersAsync(Long locationId) {
-        Location location = locationRepository.safeFindById(locationId);
-        Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
 
-        weatherFeignClientUtils.getVillageShortTermForecast(location)
-                .forEach(newWeather -> {
-                    LocalDateTime presentationTime = newWeather.getPresentationTime();
-                    if (oldWeatherMap.containsKey(presentationTime)) {
-                        Weather oldWeather = oldWeatherMap.get(presentationTime);
-                        oldWeather.updateWeather(newWeather);
-                    } else {
-                        newWeather.addLocation(location);
-                        weatherRepository.save(newWeather);
-                    }
-                });
     }
 }

@@ -1,5 +1,14 @@
 package org.pknu.weather.service;
 
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
+import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
@@ -20,18 +29,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class WeatherService {
     private final WeatherFeignClientUtils weatherFeignClientUtils;
     private final WeatherRepository weatherRepository;
@@ -39,7 +40,6 @@ public class WeatherService {
     private final MemberRepository memberRepository;
     private final ExtraWeatherApiUtils extraWeatherApiUtils;
     private final LocationRepository locationRepository;
-    private final WeatherWriteService weatherWriteService;
 
     /**
      * TODO: 성능 개선 필요
@@ -72,12 +72,19 @@ public class WeatherService {
     /**
      * 날씨 정보를 저장합니다. 비동기적으로 동작합니다.
      *
-     * @param location member.getLocation()
-     * @param forecast 공공데이터 API에서 받아온 단기날씨예보 값 list
+     * @param locationId
+     * @param forecast   공공데이터 API에서 받아온 단기날씨예보 값 list
      */
     @Async("threadPoolTaskExecutor")
-    public void saveWeathersAsync(Location location, List<Weather> forecast) {
-        weatherWriteService.saveWeathersAsync(location, forecast);
+    @Transactional
+    public void saveWeathersAsync(Long locationId, List<Weather> forecast) {
+        Location location = locationRepository.safeFindById(locationId);
+
+        List<Weather> weatherList = new ArrayList<>(forecast).stream()
+                .peek(weather -> weather.addLocation(location))
+                .toList();
+
+        weatherRepository.saveAll(weatherList);
     }
 
     /**
@@ -87,8 +94,22 @@ public class WeatherService {
      * @return 해당 위치의 날씨 데이터 List
      */
     @Async("threadPoolTaskExecutor")
+    @Transactional
     public void updateWeathersAsync(Long locationId) {
-        weatherWriteService.updateWeathersAsync(locationId);
+        Location location = locationRepository.safeFindById(locationId);
+        Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
+
+        weatherFeignClientUtils.getVillageShortTermForecast(location)
+                .forEach(newWeather -> {
+                    LocalDateTime presentationTime = newWeather.getPresentationTime();
+                    if (oldWeatherMap.containsKey(presentationTime)) {
+                        Weather oldWeather = oldWeatherMap.get(presentationTime);
+                        oldWeather.updateWeather(newWeather);
+                    } else {
+                        newWeather.addLocation(location);
+                        weatherRepository.save(newWeather);
+                    }
+                });
     }
 
     /**
