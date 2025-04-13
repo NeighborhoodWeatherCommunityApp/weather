@@ -34,9 +34,6 @@ class WeatherServiceTest {
     @Autowired
     WeatherService weatherService;
 
-    @SpyBean
-    WeatherWriteService weatherWriteService;
-
     @Autowired
     LocationRepository locationRepository;
 
