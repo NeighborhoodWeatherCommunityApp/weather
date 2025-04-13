@@ -1,9 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,15 +13,16 @@ import org.pknu.weather.domain.exp.CreatePostExpRewardLimitPolicy;
 import org.pknu.weather.domain.exp.ExpEvent;
 import org.pknu.weather.domain.exp.ExpRewardLimitPolicy;
 import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.repository.PostRepository;
+
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ExpRewardServiceTest {
     @Mock
     MemberRepository memberRepository;
-
-    @Mock
-    PostRepository postRepository;
 
     @Mock
     CreatePostExpRewardLimitPolicy createPostExpRewardLimitPolicy;
