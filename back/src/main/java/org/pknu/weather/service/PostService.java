@@ -1,15 +1,11 @@
 package org.pknu.weather.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.mapper.EnumTagMapper;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.Post;
-import org.pknu.weather.domain.Recommendation;
-import org.pknu.weather.domain.Tag;
+import org.pknu.weather.domain.*;
 import org.pknu.weather.domain.common.PostType;
+import org.pknu.weather.domain.exp.ExpEvent;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostConverter;
 import org.pknu.weather.dto.converter.RecommendationConverter;
@@ -21,6 +17,9 @@ import org.pknu.weather.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,6 +29,7 @@ public class PostService {
     private final RecommendationRepository recommendationRepository;
     private final LocationRepository locationRepository;
     private final EnumTagMapper enumTagMapper;
+    private final ExpRewardService expRewardService;
 
     @Transactional(readOnly = true)
     public List<Post> getPosts(Long memberId, Long lastPostId, Long size, String postType, Long locationId) {
@@ -111,24 +111,35 @@ public class PostService {
     /**
      * 좋아요, 좋아요 취소를 수행합니다.
      *
-     * @param email
+     * @param senderEmail
      * @param postId
      * @return
      */
     @Transactional
-    public boolean addRecommendation(String email, Long postId) {
-        Member member = memberRepository.safeFindByEmail(email);
-        Boolean isRecommended = recommendationRepository.isRecommended(member.getId(), postId);
+    public boolean addRecommendation(String senderEmail, Long postId) {
+        Member member = memberRepository.safeFindByEmail(senderEmail);
+        Optional<Recommendation> optionalRecommendation = recommendationRepository.findByMemberIdAndPostId(member.getId(), postId);
 
-        if (!isRecommended) {
-            recommendationRepository.deleteByMemberAndPostId(member, postId);
+        if (optionalRecommendation.isEmpty()) {
+            // 좋아요를 눌렀는데 다시 눌렀을 때 = 좋아요 취소
+            recommendationRepository.softDeleteByMemberAndPostId(member, postId);
+            return true;
+        }
+
+        if (optionalRecommendation.isPresent()) {
+            // 좋아요를 취소했는데 다시 좋아요를 눌렀을 때
+            optionalRecommendation.get().undoDelete();
             return true;
         }
 
         Post post = postRepository.safeFindById(postId);
         Recommendation recommendation = RecommendationConverter.toRecommendation(member, post);
-
         recommendationRepository.save(recommendation);
+
+        // TODO: 이벤트 방식으로 변경
+        expRewardService.rewardExp(senderEmail, ExpEvent.RECOMMEND);
+        expRewardService.rewardExp(post.getMember().getEmail(), ExpEvent.RECOMMENDED);
+
         return true;
     }
 }

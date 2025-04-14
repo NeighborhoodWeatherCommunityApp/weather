@@ -1,10 +1,12 @@
 package org.pknu.weather.repository;
 
-import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Recommendation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long>, RecommendationCustomRepository {
 
-    void deleteByMemberAndPostId(Member member, Long postId);
+    Optional<Recommendation> findByMemberIdAndPostId(Long memberId, Long postId);
+
 }

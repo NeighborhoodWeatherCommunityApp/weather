@@ -42,8 +42,8 @@ public class PostControllerV1 {
     @PostMapping("/post/recommendation")
     public ApiResponse<Object> addRecommendation(@RequestHeader("Authorization") String authorization,
                                                  @IsPositive Long postId) {
-        String email = TokenConverter.getEmailByToken(authorization);
-        boolean result = postService.addRecommendation(email, postId);
+        String senderEmail = TokenConverter.getEmailByToken(authorization);
+        boolean result = postService.addRecommendation(senderEmail, postId);
         return ApiResponse.of(result);
     }
 }
