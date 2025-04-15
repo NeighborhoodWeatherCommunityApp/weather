@@ -1,6 +1,10 @@
 package org.pknu.weather.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,18 +16,21 @@ import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Post;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.PostType;
-import org.pknu.weather.domain.tag.*;
+import org.pknu.weather.domain.tag.DustTag;
+import org.pknu.weather.domain.tag.HumidityTag;
+import org.pknu.weather.domain.tag.SkyTag;
+import org.pknu.weather.domain.tag.TemperatureTag;
+import org.pknu.weather.domain.tag.WindTag;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.PostRequest.HobbyParams;
-import org.pknu.weather.repository.*;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.repository.PostRepository;
+import org.pknu.weather.repository.RecommendationRepository;
+import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Slf4j
@@ -46,6 +53,9 @@ class PostServiceTest {
 
     @Autowired
     WeatherRepository weatherRepository;
+
+    @Autowired
+    RecommendationService recommendationService;
 
     @Autowired
     EntityManager em;
@@ -238,15 +248,15 @@ class PostServiceTest {
         Post post = postRepository.save(TestDataCreator.getPost(member1));
 
         // when
-        postService.addRecommendation(member1.getEmail(), post.getId());
-        postService.addRecommendation(member2.getEmail(), post.getId());
+        recommendationService.addRecommendation(member1.getEmail(), post.getId());
+        recommendationService.addRecommendation(member2.getEmail(), post.getId());
         em.flush();
         em.clear();
 
         post = postRepository.safeFindById(post.getId());
         assertThat(post.getRecommendationList().size()).isEqualTo(2);
 
-        postService.addRecommendation(member1.getEmail(), post.getId());
+        recommendationService.addRecommendation(member1.getEmail(), post.getId());
         em.flush();
         em.clear();
 
