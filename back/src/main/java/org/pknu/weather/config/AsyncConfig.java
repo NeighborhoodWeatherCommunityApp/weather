@@ -10,24 +10,24 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 public class AsyncConfig {
 
-    @Bean(name = "threadPoolTaskExecutor")
-    public Executor getAsyncExecutor() {
+    @Bean(name = "WeatherCUDExecutor")
+    public Executor getWeatherAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("Executor-");
+        executor.setThreadNamePrefix("Weather Executor-");
         executor.initialize();
         return executor;
     }
 
-    @Bean(name = "threadPoolDeleteTaskExecutor")
-    public Executor getDeleteAsyncExecutor() {
+    @Bean(name = "ExpCUDExecutor")
+    public Executor getExpAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(1);
-        executor.setMaxPoolSize(2);
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
         executor.setQueueCapacity(10);
-        executor.setThreadNamePrefix("DeleteExecutor-");
+        executor.setThreadNamePrefix("Exp Executor-");
         executor.initialize();
         return executor;
     }

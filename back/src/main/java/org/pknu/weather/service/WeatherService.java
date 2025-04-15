@@ -75,7 +75,7 @@ public class WeatherService {
      * @param locationId
      * @param forecast   공공데이터 API에서 받아온 단기날씨예보 값 list
      */
-    @Async("threadPoolTaskExecutor")
+    @Async("WeatherCUDExecutor")
     @Transactional
     public void saveWeathersAsync(Long locationId, List<Weather> forecast) {
         Location location = locationRepository.safeFindById(locationId);
@@ -93,7 +93,7 @@ public class WeatherService {
      * @param locationId API를 호출한 사용자의 Location id
      * @return 해당 위치의 날씨 데이터 List
      */
-    @Async("threadPoolTaskExecutor")
+    @Async("WeatherCUDExecutor")
     @Transactional
     public void updateWeathersAsync(Long locationId) {
         Location location = locationRepository.safeFindById(locationId);
@@ -115,7 +115,7 @@ public class WeatherService {
     /**
      * 예보 시간이 현재 보다 과거이면 모두 삭제합니다.v
      */
-    @Async("threadPoolDeleteTaskExecutor")
+    @Async("WeatherCUDExecutor")
     public void bulkDeletePastWeather() {
         weatherRepository.bulkDeletePastWeathers();
     }

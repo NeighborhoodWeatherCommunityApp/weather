@@ -11,7 +11,7 @@ public class CreatePostExpRewardLimitPolicy implements ExpRewardLimitPolicy {
 
     @Override
     public boolean canReward(Long memberId) {
-        int DAILY_REWARD_LIMIT = 5;
+        int DAILY_REWARD_LIMIT = 3;
         return postRepository.countTodayPostByMemberId(memberId) <= DAILY_REWARD_LIMIT;
     }
 }
