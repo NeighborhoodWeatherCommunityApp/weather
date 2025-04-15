@@ -7,6 +7,7 @@ import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostRequestConverter;
 import org.pknu.weather.service.PostService;
+import org.pknu.weather.service.RecommendationService;
 import org.pknu.weather.validation.annotation.IsPositive;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class PostControllerV1 {
     private final PostService postService;
+    private final RecommendationService recommendationService;
 
     @PostMapping("/post")
     public ApiResponse<Object> createWeatherPost(@RequestHeader("Authorization") String authorization,
@@ -39,11 +41,12 @@ public class PostControllerV1 {
         return ApiResponse.of(isSuccess);
     }
 
+    // TODO: RecommendationController 로 분리
     @PostMapping("/post/recommendation")
     public ApiResponse<Object> addRecommendation(@RequestHeader("Authorization") String authorization,
                                                  @IsPositive Long postId) {
         String senderEmail = TokenConverter.getEmailByToken(authorization);
-        boolean result = postService.addRecommendation(senderEmail, postId);
+        boolean result = recommendationService.addRecommendation(senderEmail, postId);
         return ApiResponse.of(result);
     }
 }
