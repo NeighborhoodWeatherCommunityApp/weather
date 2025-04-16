@@ -4,16 +4,11 @@ package org.pknu.weather.controller;
 import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
 
 import jakarta.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.domain.exp.ExpEvent;
 import org.pknu.weather.dto.ExpEventRequestDto;
-import org.pknu.weather.dto.ExpEventResponseDto;
-import org.pknu.weather.dto.converter.ExpEventResponseConverter;
 import org.pknu.weather.service.ExpRewardService;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,26 +29,10 @@ public class ExpRewardControllerV1 {
         return ApiResponse.onSuccess();
     }
 
-    @GetMapping("/exp/events/available")
-    public ApiResponse<List<ExpEventResponseDto>> getExpEventAvailableList(
-            @RequestHeader("Authorization") String authorization) {
-        List<ExpEventResponseDto> expEventResponseDtoList = Arrays.stream(ExpEvent.values())
-                .filter(ExpEvent::getAllowApiRequest)
-                .map(ExpEventResponseConverter::toExpResponseDto)
-                .toList();
-
-        return ApiResponse.onSuccess(expEventResponseDtoList);
-    }
-
-    @GetMapping("/exp/events/all")
-    public ApiResponse<List<ExpEventResponseDto>> getExpEventList(
-            @RequestHeader("Authorization") String authorization) {
-
-        List<ExpEventResponseDto> expEventResponseDtoList = Arrays.stream(ExpEvent.values())
-                .filter(ExpEvent::getAllowApiRequest)
-                .map(ExpEventResponseConverter::toExpResponseDto)
-                .toList();
-
-        return ApiResponse.onSuccess(expEventResponseDtoList);
+    @PostMapping("/epx/events/share-kakao")
+    public ApiResponse<Object> shareKakaoEvent(@RequestHeader("Authorization") String authorization) {
+        String email = getEmailByToken(authorization);
+        expRewardService.rewardExp(email, ExpEvent.SHARE_KAKAO);
+        return ApiResponse.onSuccess();
     }
 }
