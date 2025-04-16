@@ -42,6 +42,28 @@ public class TestDataCreator {
                 .build();
     }
 
+    public static Member getBusanMember(Long id, String nickname) {
+        return Member.builder()
+                .id(id)
+                .location(getBusanLocation())
+                .email(nickname + "@naver.com")
+                .profileImage("http://test.png")
+                .sensitivity(Sensitivity.HOT)
+                .nickname(nickname)
+                .build();
+    }
+
+    public static Member getMember(Long id, String nickname, Location location) {
+        return Member.builder()
+                .id(id)
+                .location(location)
+                .email(nickname + "@naver.com")
+                .profileImage("http://test.png")
+                .sensitivity(Sensitivity.HOT)
+                .nickname(nickname)
+                .build();
+    }
+
     public static Post getPost(Member member) {
         return Post.builder()
                 .location(member.getLocation())

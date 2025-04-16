@@ -1,5 +1,13 @@
 package org.pknu.weather.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,12 +20,8 @@ import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.exp.CreatePostExpRewardLimitPolicy;
 import org.pknu.weather.domain.exp.ExpEvent;
 import org.pknu.weather.domain.exp.ExpRewardLimitPolicy;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.repository.MemberRepository;
-
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ExpRewardServiceTest {
@@ -76,5 +80,39 @@ public class ExpRewardServiceTest {
 
         // then
         assertThat(member.getExp()).isEqualTo(ExpEvent.CREATE_POST.getRewardExpAmount());
+    }
+
+    @Test
+    void 경험치_하락_테스트() {
+        // given
+        Member member = TestDataCreator.getBusanMember();
+        member.addExp(Level.LV2.getRequiredExp() + ExpEvent.INACTIVE_7_DAYS.getRewardExpAmount() * (-1));
+        List<Member> inactiveMemberList = new ArrayList<>();
+        inactiveMemberList.add(member);
+
+        when(memberRepository.findMembersInactiveSince(any(LocalDateTime.class))).thenReturn(inactiveMemberList);
+
+        // when
+        expRewardService.decreaseExp();
+
+        // then
+        assertThat(member.getExp()).isEqualTo(Level.LV2.getRequiredExp());
+    }
+
+    @Test
+    void 경험치_하락_테스트_레벨이_하락하진_않음() {
+        // given
+        Member member = TestDataCreator.getBusanMember();
+        member.addExp(Level.LV2.getRequiredExp());
+        List<Member> inactiveMemberList = new ArrayList<>();
+        inactiveMemberList.add(member);
+
+        when(memberRepository.findMembersInactiveSince(any(LocalDateTime.class))).thenReturn(inactiveMemberList);
+
+        // when
+        expRewardService.decreaseExp();
+
+        // then
+        assertThat(member.getExp()).isEqualTo(Level.LV2.getRequiredExp());
     }
 }

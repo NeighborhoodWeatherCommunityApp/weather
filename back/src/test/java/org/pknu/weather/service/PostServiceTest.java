@@ -14,6 +14,7 @@ import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Post;
+import org.pknu.weather.domain.Recommendation;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.PostType;
 import org.pknu.weather.domain.tag.DustTag;
@@ -261,6 +262,10 @@ class PostServiceTest {
         em.clear();
 
         post = postRepository.safeFindById(post.getId());
-        assertThat(post.getRecommendationList().size()).isEqualTo(1);
+        assertThat(
+                post.getRecommendationList().stream()
+                        .filter(Recommendation::isNotDeleted)
+                        .count())
+                .isEqualTo(1L);
     }
 }

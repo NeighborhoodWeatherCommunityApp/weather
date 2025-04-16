@@ -24,7 +24,7 @@ class CreatePostExpRewardLimitPolicyTest {
 
     @Test
     void 게시글_작성_5회_미만이면_보상된다() {
-        when(postRepository.countTodayPostByMemberId(1L)).thenReturn(5);
+        when(postRepository.countTodayPostByMemberId(1L)).thenReturn(3);
 
         boolean result = policy.canReward(1L);
 
@@ -33,7 +33,7 @@ class CreatePostExpRewardLimitPolicyTest {
 
     @Test
     void 게시글_작성_5회_이상이면_보상되지_않는다() {
-        when(postRepository.countTodayPostByMemberId(1L)).thenReturn(6);
+        when(postRepository.countTodayPostByMemberId(1L)).thenReturn(4);
 
         boolean result = policy.canReward(1L);
 

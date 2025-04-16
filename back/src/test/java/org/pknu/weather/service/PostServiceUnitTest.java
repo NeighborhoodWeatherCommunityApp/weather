@@ -38,19 +38,16 @@ class PostServiceUnitTest {
     MemberRepository memberRepository;
 
     @Mock
-    RecommendationService recommendationService;
-
-    @Mock
     ExpRewardService expRewardService;
 
     @InjectMocks
-    PostService postService;
+    RecommendationService recommendationService;
 
     @Test
     void 추천자가_좋아요를_눌렀을때_추천자와_피추천자는_각각_경험치를_획득합니다() {
         // given
-        Member sender = TestDataCreator.getBusanMember("sender");   // 좋아요 주는 사람
-        Member receiver = TestDataCreator.getBusanMember("receiver"); // 받는 사람
+        Member sender = TestDataCreator.getBusanMember(1L, "sender");   // 좋아요 주는 사람
+        Member receiver = TestDataCreator.getBusanMember(2L, "receiver"); // 받는 사람
         Post post = Post.builder()
                 .id(1L)
                 .location(receiver.getLocation())
@@ -72,6 +69,9 @@ class PostServiceUnitTest {
         });
 
         when(postRepository.safeFindById(post.getId())).thenReturn(post);
+
+        when(recommendationRepository.findByMemberIdAndPostId(sender.getId(), post.getId()))
+                .thenReturn(Optional.empty());
 
         // rewardExp() 호출 시 직접 경험치 증가시키는 로직을 스텁
         doAnswer(invocation -> {
@@ -97,8 +97,8 @@ class PostServiceUnitTest {
     @Test
     void 좋아요를_클릭한_유저가_좋아요를_취소하고_다시_좋아요를_눌러도_좋아요를_받는쪽과_클릭한쪽_모두_경험치를_획득하지_못합니다() {
         // given
-        Member sender = TestDataCreator.getBusanMember("sender");   // 좋아요 주는 사람
-        Member receiver = TestDataCreator.getBusanMember("receiver"); // 받는 사람
+        Member sender = TestDataCreator.getBusanMember(1L, "sender");   // 좋아요 주는 사람
+        Member receiver = TestDataCreator.getBusanMember(2L, "receiver"); // 받는 사람
 
         Post post = Post.builder()
                 .id(1L)
@@ -132,6 +132,9 @@ class PostServiceUnitTest {
             }
         });
 
+//        when(recommendationRepository.findByMemberIdAndPostId(sender.getId(), post.getId()).isPresent())
+//                .thenReturn()
+
         when(postRepository.safeFindById(post.getId())).thenReturn(post);
 
         // when
@@ -160,17 +163,8 @@ class PostServiceUnitTest {
                 .postType(PostType.WEATHER)
                 .build();
 
-        Recommendation recommendation = Recommendation.builder()
-                .member(receiver)       // 작성자가 본인 게시글에 좋아요 클릭
-                .post(post)
-                .deleted(false)
-                .build();
-
-        // 첫 호출: 존재하지 않음 → 새로 생성
-        when(recommendationRepository.findByMemberIdAndPostId(receiver.getId(), post.getId()))
-                .thenReturn(Optional.of(recommendation));
-
         when(memberRepository.safeFindByEmail(receiver.getEmail())).thenReturn(receiver);
+        when(postRepository.safeFindById(post.getId())).thenReturn(post);
 
         // when
         recommendationService.addRecommendation(receiver.getEmail(), post.getId()); // 좋아요 클릭

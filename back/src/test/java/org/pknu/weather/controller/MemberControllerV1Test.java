@@ -1,5 +1,6 @@
 package org.pknu.weather.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,10 +19,12 @@ import javax.imageio.ImageIO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
+import org.pknu.weather.common.TestUtil;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.MemberTerms;
 import org.pknu.weather.domain.Terms;
 import org.pknu.weather.domain.common.TermsType;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberJoinDTO;
 import org.pknu.weather.dto.TermsDto;
 import org.pknu.weather.repository.MemberRepository;
@@ -35,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -183,13 +187,33 @@ class MemberControllerV1Test {
                 .termsType(TermsType.PUSH_NOTIFICATION)
                 .termsVersion(1)
                 .build());
-
-        memberRepository.save(TestDataCreator.getBusanMember());
     }
 
     private String generateJwtToken(Long id, String email) {
         // JWT 토큰을 생성하는 메서드
         Map<String, Object> claims = Map.of("id", id, "email", email);
         return "Bearer " + jwtUtil.generateToken(claims, 1);
+    }
+
+    @Test
+    void 사용자정보조회성공() throws Exception {
+        // given
+        Member member = memberRepository.save(TestDataCreator.getBusanMember());
+        String jwt = TestUtil.generateJwtToken(jwtUtil, member);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/v1/member/info")
+                .header("Authorization", jwt));
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.email").value(member.getEmail()))
+                .andExpect(jsonPath("$.result.nickname").value(member.getNickname()))
+                .andExpect(jsonPath("$.result.levelKey").value(member.getLevel().name()))
+                .andExpect(jsonPath("$.result.rankName").value(member.getLevel().getRankName()))
+                .andExpect(jsonPath("$.result.exp").value(member.getExp()))
+                .andExpect(jsonPath("$.result.nextLevelRequiredExp").value(
+                        Level.getNextLevel(member.getLevel()).getRequiredExp()));
     }
 }

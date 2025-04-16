@@ -90,7 +90,7 @@ class MemberRepositoryTest {
         // given
         Member member = TestDataCreator.getBusanMember();
         member.addExp(level.getRequiredExp() + 50);
-        member.minusExp(maxMinusExp);
+        member.decreaseExp(maxMinusExp);
 
         // when
         Member result = memberRepository.save(member);
@@ -99,6 +99,7 @@ class MemberRepositoryTest {
         assertThat(result.getLevel()).isEqualTo(level);
         assertThat(result.getExp()).isEqualTo(level.getRequiredExp());
     }
+
 
     static Stream<Arguments> minusExpProvider() {
         Long maxMinusExp = Level.getMaxLevel().getRequiredExp() * (-1L);
@@ -110,6 +111,21 @@ class MemberRepositoryTest {
                 Arguments.of(Level.LV5, maxMinusExp),
                 Arguments.of(Level.LV6, maxMinusExp)
         );
+    }
+
+    @Test
+    void 경험치_하락_테스트() {
+        // given
+        Member member = TestDataCreator.getBusanMember();
+        member.addExp(Level.LV3.getRequiredExp() + 50);
+        member.decreaseExp(-40L);
+
+        // when
+        Member result = memberRepository.save(member);
+
+        // then
+        assertThat(result.getLevel()).isEqualTo(Level.LV3);
+        assertThat(result.getExp()).isEqualTo(Level.LV3.getRequiredExp() + 10);
     }
 
     @Test
