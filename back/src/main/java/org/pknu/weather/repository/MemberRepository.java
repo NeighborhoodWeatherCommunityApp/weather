@@ -1,5 +1,6 @@
 package org.pknu.weather.repository;
 
+import java.util.Optional;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.exception.GeneralException;
@@ -7,10 +8,8 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
 
-
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
 
     @EntityGraph(attributePaths = {"location"})
     Optional<Member> findById(Long id);

@@ -126,13 +126,13 @@ public class Member extends BaseEntity {
         }
     }
 
-    public void minusExp(Long minusExp) {
+    public void decreaseExp(Long minusExp) {
         Long currentLevelMinimumExp = level.getRequiredExp();
 
         if ((exp + minusExp) < currentLevelMinimumExp) {
             exp = currentLevelMinimumExp;
         } else {
-            exp -= minusExp;
+            exp += minusExp;
         }
 
         levelUpdateCheck();
