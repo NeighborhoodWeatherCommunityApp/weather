@@ -39,7 +39,7 @@ public class RecommendationService {
         if (recommendation == null) {
             createRecommendation(sender, post);
             rewardRecommendation(sender, post);
-        } else if (recommendation.isSoftDeleted()) {
+        } else if (recommendation.isDeleted()) {
             recommendation.undoSoftDelete();
         } else {
             recommendation.softDelete();

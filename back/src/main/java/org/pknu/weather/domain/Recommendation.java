@@ -38,14 +38,18 @@ public class Recommendation extends BaseEntity {
     private Boolean deleted = false;
 
     public void softDelete() {
-        deleted = false;
-    }
-
-    public void undoSoftDelete() {
         deleted = true;
     }
 
-    public boolean isSoftDeleted() {
+    public void undoSoftDelete() {
+        deleted = false;
+    }
+
+    public boolean isDeleted() {
         return deleted;
+    }
+
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 }
