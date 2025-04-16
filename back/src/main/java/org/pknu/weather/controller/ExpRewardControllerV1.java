@@ -29,7 +29,7 @@ public class ExpRewardControllerV1 {
         return ApiResponse.onSuccess();
     }
 
-    @PostMapping("/epx/events/share-kakao")
+    @PostMapping("/epx/rewards/share-kakao")
     public ApiResponse<Object> shareKakaoEvent(@RequestHeader("Authorization") String authorization) {
         String email = getEmailByToken(authorization);
         expRewardService.rewardExp(email, ExpEvent.SHARE_KAKAO);
