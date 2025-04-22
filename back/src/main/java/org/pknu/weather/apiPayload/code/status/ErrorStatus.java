@@ -15,7 +15,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_400_1", "잘못된 요청입니다."),
     _JSON_BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_400_2", "요청 JSON의 형식이나 값이 잘못되었습니다."),
-    _MUST_BE_POSITIVE(HttpStatus.BAD_REQUEST, "COMMON_400_2", "Id는 1이상이어야 합니다."),
+    _MUST_BE_POSITIVE(HttpStatus.BAD_REQUEST, "COMMON_400_3", "Id는 1이상이어야 합니다."),
+    _BAD_REQUEST_DUPLICATED(HttpStatus.BAD_REQUEST, "COMMON_400_4", "중복 요청입니다."),
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON_401", "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_403", "금지된 요청입니다."),
 
