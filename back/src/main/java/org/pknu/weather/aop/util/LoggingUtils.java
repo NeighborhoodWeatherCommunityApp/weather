@@ -79,14 +79,15 @@ public class LoggingUtils {
         String className = fullName.substring(fullName.lastIndexOf(".") + 1);
         String methodName = signature.getName();
 
-        int currentDepth = depth.get();
-        depth.remove();
-
+        int currentDepth = setCurrentDepthMinus();
         sb.append(String.format("\n[%s] %s%s %s.%s ",
                 traceId, DEPTH_PREFIX.repeat(currentDepth), ERROR_PREFIX, className, methodName
         ));
-        log.info(sb.toString());
-        threadLocalSb.remove();
+
+        if (currentDepth == 0) {
+            log.info(sb.toString());
+            threadLocalSb.remove();
+        }
     }
 
     private static int setCurrentDepthMinus() {

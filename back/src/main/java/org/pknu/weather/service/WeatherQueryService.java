@@ -49,7 +49,7 @@ public class WeatherQueryService {
         }
 
         boolean value = weatherRepository.weatherHasBeenUpdated(location);
-        if (!value) {
+        if (value) {
             cache.put(location.getId(), true);
         }
 
@@ -71,7 +71,7 @@ public class WeatherQueryService {
         }
 
         boolean value = weatherRepository.weatherHasBeenCreated(location);
-        if (!value) {
+        if (value) {
             cache.put(location.getId(), true);
         }
 
