@@ -72,6 +72,7 @@ class MemberRepositoryTest {
         // given
         Member member = TestDataCreator.getBusanMember();
         member.addExp(level.getRequiredExp());
+        member.levelUpCheckAndReturn();
 
         // when
         Member result = memberRepository.save(member);
@@ -90,6 +91,7 @@ class MemberRepositoryTest {
         // given
         Member member = TestDataCreator.getBusanMember();
         member.addExp(level.getRequiredExp() + 50);
+        member.levelUpCheckAndReturn();
         member.decreaseExp(maxMinusExp);
 
         // when
@@ -118,6 +120,7 @@ class MemberRepositoryTest {
         // given
         Member member = TestDataCreator.getBusanMember();
         member.addExp(Level.LV3.getRequiredExp() + 50);
+        member.levelUpCheckAndReturn();
         member.decreaseExp(-40L);
 
         // when

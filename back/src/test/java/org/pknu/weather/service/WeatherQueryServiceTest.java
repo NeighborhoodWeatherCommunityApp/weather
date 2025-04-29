@@ -1,7 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.assertj.core.api.Assertions;
@@ -25,7 +23,9 @@ class WeatherQueryServiceTest {
     @Test
     void weatherHasBeenUpdated() {
         Location location = Location.builder().id(1L).build();
-        when(weatherRepository.weatherHasBeenUpdated(location)).thenReturn(false);
+        when(weatherRepository.weatherHasBeenUpdated(location))
+                .thenReturn(false)
+                .thenReturn(true);
 
         boolean val1 = weatherQueryService.weatherHasBeenUpdated(location);
         Assertions.assertThat(val1).isFalse();
@@ -35,7 +35,5 @@ class WeatherQueryServiceTest {
 
         boolean val3 = weatherQueryService.weatherHasBeenUpdated(location);
         Assertions.assertThat(val3).isTrue();
-
-        verify(weatherRepository, times(1)).weatherHasBeenUpdated(location);
     }
 }

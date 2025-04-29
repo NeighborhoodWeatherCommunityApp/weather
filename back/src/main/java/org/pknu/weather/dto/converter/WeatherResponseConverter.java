@@ -3,6 +3,7 @@ package org.pknu.weather.dto.converter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.pknu.weather.common.utils.TagUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
@@ -43,10 +44,8 @@ public class WeatherResponseConverter {
     }
 
     public static WeatherResponse.WeatherPerHour toWeatherPerHour(Weather weather, Member member) {
-//        RainTag rainTag = (RainTag) TagUtils.rainType2RainTag(weather);
-//        TemperatureTag temperatureTag = TagUtils.tmp2TemperatureTag(weather.getTemperature(), member.getSensitivity());
-        RainTag rainTag = RainTag.EXTREME_RAIN;
-        TemperatureTag temperatureTag = TemperatureTag.COLD;
+        RainTag rainTag = (RainTag) TagUtils.rainType2RainTag(weather);
+        TemperatureTag temperatureTag = TagUtils.tmp2TemperatureTag(weather.getTemperature(), member.getSensitivity());
 
         return WeatherResponse.WeatherPerHour.builder()
                 .hour(weather.getPresentationTime())

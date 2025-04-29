@@ -104,6 +104,7 @@ public class ExpRewardServiceTest {
         // given
         Member member = TestDataCreator.getBusanMember();
         member.addExp(Level.LV2.getRequiredExp());
+        member.levelUpCheckAndReturn();
         List<Member> inactiveMemberList = new ArrayList<>();
         inactiveMemberList.add(member);
 

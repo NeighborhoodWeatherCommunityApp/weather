@@ -1,19 +1,25 @@
 package org.pknu.weather.controller;
 
+import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
+import static org.pknu.weather.common.converter.TokenConverter.getMemberInfoFromAuth;
+
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.dto.MemberJoinDTO;
 import org.pknu.weather.dto.MemberResponse;
+import org.pknu.weather.dto.MemberResponse.MemberLevelUpDTO;
 import org.pknu.weather.dto.TermsDto;
 import org.pknu.weather.service.MemberService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-
-import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
-import static org.pknu.weather.common.converter.TokenConverter.getMemberInfoFromAuth;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -45,6 +51,13 @@ public class MemberControllerV1 {
         MemberResponse.MemberResponseWithAddressDTO fullMemberInfo = memberService.findFullMemberInfoByEmail(email);
 
         return ApiResponse.onSuccess(fullMemberInfo);
+    }
+
+    @PostMapping("/level")
+    public ApiResponse<MemberLevelUpDTO> checkLevelUp(@RequestHeader("Authorization") String authorization) {
+        String email = getEmailByToken(authorization);
+        MemberLevelUpDTO memberLevelUpDTO = memberService.checkLevelUp(email);
+        return ApiResponse.onSuccess(memberLevelUpDTO);
     }
 
     @DeleteMapping

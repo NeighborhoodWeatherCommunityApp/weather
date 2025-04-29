@@ -60,4 +60,15 @@ public class MemberResponse {
 
     }
 
+    @Getter
+    @Builder
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberLevelUpDTO {
+        private Boolean isLevelUp;
+        private String previousLevelRankName;
+        private String currentLevelRankName;
+    }
+
 }

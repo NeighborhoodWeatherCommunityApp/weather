@@ -1,5 +1,6 @@
 package org.pknu.weather.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Member;
@@ -27,8 +28,8 @@ public class RecommendationService {
         Member sender = memberRepository.safeFindByEmail(senderEmail);
         Post post = postRepository.safeFindById(postId);
 
-        // 자기 자신의 글인 경우: 추천은 되지만 경험치는 지급되지 않음
         if (post.getMember().equals(sender)) {
+            // 자기 자신의 글인 경우: 추천은 되지만 경험치는 지급되지 않음
             createRecommendationIfNotExists(sender, post);
             return true;
         }
@@ -54,10 +55,19 @@ public class RecommendationService {
     }
 
     private void createRecommendationIfNotExists(Member sender, Post post) {
-        boolean alreadyExists = recommendationRepository
-                .findByMemberIdAndPostId(sender.getId(), post.getId()).isPresent();
-        if (!alreadyExists) {
+        Optional<Recommendation> optionalRecommendation = recommendationRepository
+                .findByMemberIdAndPostId(sender.getId(), post.getId());
+
+        if (optionalRecommendation.isEmpty()) {
             createRecommendation(sender, post);
+            return;
+        }
+
+        Recommendation recommendation = optionalRecommendation.get();
+        if (recommendation.isDeleted()) {
+            recommendation.undoSoftDelete();
+        } else {
+            recommendation.softDelete();
         }
     }
 

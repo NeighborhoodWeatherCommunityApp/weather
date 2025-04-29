@@ -114,16 +114,15 @@ public class Member extends BaseEntity {
         } else {
             exp += addedExp;
         }
-
-        levelUpdateCheck();
     }
 
-    private void levelUpdateCheck() {
+    public Level levelUpCheckAndReturn() {
         for (Level level : Level.values()) {
             if (this.exp >= level.getRequiredExp()) {
                 this.level = level;
             }
         }
+        return level;
     }
 
     public void decreaseExp(Long minusExp) {
@@ -134,8 +133,6 @@ public class Member extends BaseEntity {
         } else {
             exp += minusExp;
         }
-
-        levelUpdateCheck();
     }
 
     @PrePersist

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberResponse;
+import org.pknu.weather.dto.MemberResponse.MemberLevelUpDTO;
 
 @Slf4j
 public class MemberResponseConverter {
@@ -31,6 +32,14 @@ public class MemberResponseConverter {
                 .rankName(member.getLevel().getRankName())
                 .exp(member.getExp())
                 .nextLevelRequiredExp(Level.getNextLevel(member.getLevel()).getRequiredExp())
+                .build();
+    }
+
+    public static MemberLevelUpDTO toMemberLevelDTO(Level prevLevel, Level currentLevel) {
+        return MemberLevelUpDTO.builder()
+                .isLevelUp(prevLevel != currentLevel)
+                .currentLevelRankName(currentLevel.getRankName())
+                .previousLevelRankName(prevLevel.getRankName())
                 .build();
     }
 }
