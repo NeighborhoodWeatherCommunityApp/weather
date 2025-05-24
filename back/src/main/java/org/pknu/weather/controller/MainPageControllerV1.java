@@ -35,11 +35,7 @@ public class MainPageControllerV1 {
             @RequestParam(required = false) Long locationId) {
 
         String email = TokenConverter.getEmailByToken(authorization);
-        long start = System.currentTimeMillis();
-
         WeatherResponse.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(email, locationId);
-        long afterMinMax = System.currentTimeMillis();
-        log.info("getWeatherInfo 시간: {}ms", (afterMinMax - start));
 
         return ApiResponse.onSuccess(weatherInfo);
     }

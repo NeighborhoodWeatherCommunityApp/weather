@@ -41,28 +41,38 @@ public class MainPageService {
      */
     public WeatherResponse.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
         Member member = memberRepository.safeFindByEmail(email);
+        Location location = resolveLocation(member, locationId);
 
-        Location location;
-        if (locationId != null) {
-            location = locationRepository.safeFindById(locationId);
-        } else {
-            location = member.getLocation();
-        }
-
-        // 해당 지역에 날씨 예보가 있는지 없는지 체크
-        if (!weatherQueryService.weatherHasBeenCreated(location)) {
-            List<Weather> weatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
-            weatherService.saveWeathersAsync(location.getId(), weatherList);
+        List<Weather> weatherList = createWeatherIfRequired(location, member);
+        if (weatherList != null) {
             return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
         }
 
-        // 예보를 갱신할 시간이 되었는지 체크
+        updateWeatherIfRequired(location);
+        weatherList = weatherService.getWeathers(location);
+
+        return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
+    }
+
+    private Location resolveLocation(Member member, Long locationId) {
+        return locationId != null
+                ? locationRepository.safeFindById(locationId)
+                : member.getLocation();
+    }
+
+    private List<Weather> createWeatherIfRequired(Location location, Member member) {
+        if (!weatherQueryService.weatherHasBeenCreated(location)) {
+            List<Weather> weatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            weatherService.bulkSaveWeathersAsync(location.getId(), weatherList);
+            return weatherList;
+        }
+        return null;
+    }
+
+    private void updateWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenUpdated(location)) {
             weatherService.updateWeathersAsync(location.getId());
         }
-
-        List<Weather> weatherList = weatherService.getWeathers(location);
-        return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
     }
 
     /**
