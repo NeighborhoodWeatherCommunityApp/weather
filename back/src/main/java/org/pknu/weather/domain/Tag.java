@@ -29,7 +29,7 @@ import org.pknu.weather.domain.tag.WindTag;
 public class Tag extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
     private Long id;
 
