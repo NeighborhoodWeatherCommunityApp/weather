@@ -1,15 +1,6 @@
 package org.pknu.weather.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-
 import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +18,12 @@ import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest
 @Slf4j
@@ -211,7 +208,21 @@ class WeatherServiceTest {
 
         // then
         Thread.sleep(1000);
-        List<Weather> weatherList = weatherRepository.findAll();
+        List<Weather> weatherList = weatherRepository.findAll().stream()
+                .sorted(Comparator.comparing(Weather::getPresentationTime))
+                .toList();
+
+        weatherList.forEach(weather -> {
+            log.info("Weather[basetime={}, presentationTime={}, location={}, rainType={}, " +
+                            "rain={}, rainProb={}, temperature={}, humidity={}, windSpeed={}, " +
+                            "snowCover={}, skyType={}]",
+                    weather.getBasetime(), weather.getPresentationTime(),
+                    "location", weather.getRainType(),
+                    weather.getRain(), weather.getRainProb(),
+                    weather.getTemperature(), weather.getHumidity(),
+                    weather.getWindSpeed(), weather.getSnowCover(),
+                    weather.getSkyType());
+        });
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
     }
 

@@ -1,17 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
@@ -33,6 +21,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
+import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -147,6 +148,7 @@ public class WeatherService {
             LocalDateTime presentationTime = newWeather.getPresentationTime();
             if (oldWeatherMap.containsKey(presentationTime)) {
                 // 이미 존재하는 데이터 갱신
+//                oldWeatherMap.put(presentationTime, newWeather);
                 Weather oldWeather = oldWeatherMap.get(presentationTime);
                 oldWeather.updateWeather(newWeather);
             } else {
