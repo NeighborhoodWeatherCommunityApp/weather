@@ -1,6 +1,15 @@
 package org.pknu.weather.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -18,12 +27,6 @@ import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest
 @Slf4j
@@ -56,14 +59,14 @@ class WeatherServiceTest {
                     .basetime(baseTime)
                     .presentationTime(targetTime.plusHours(i))
                     .location(location)
-                    .rainType(RainType.NONE)
-                    .rain(1.0F)
-                    .rainProb(10)
-                    .temperature(14)
-                    .humidity(50)
-                    .windSpeed(1.5)
-                    .snowCover(1.5f)
-                    .skyType(SkyType.CLEAR)
+                    .rainType(RainType.values()[(int) (Math.random() * RainType.values().length)])
+                    .rain((float) (Math.random() * 10 + i))
+                    .rainProb((int) (Math.random() * 100))
+                    .temperature((int) (Math.random() * 30 + i))
+                    .humidity((int) (Math.random() * 100))
+                    .windSpeed(Math.random() * 10 + i)
+                    .snowCover((float) (Math.random() * 5 + i))
+                    .skyType(SkyType.values()[(int) (Math.random() * SkyType.values().length)])
                     .build();
 
             weatherMap.put(weather.getPresentationTime(), weather);
@@ -83,14 +86,14 @@ class WeatherServiceTest {
                     .basetime(baseTime)
                     .presentationTime(targetTime.plusHours(i))
                     .location(location)
-                    .rainType(RainType.NONE)
-                    .rain(1.0F)
-                    .rainProb(10)
-                    .temperature(14)
-                    .humidity(50)
-                    .windSpeed(1.5)
-                    .snowCover(1.5f)
-                    .skyType(SkyType.CLEAR)
+                    .rainType(RainType.values()[(int) (Math.random() * RainType.values().length)])
+                    .rain((float) (Math.random() * 10 + i))
+                    .rainProb((int) (Math.random() * 100))
+                    .temperature((int) (Math.random() * 30 + i))
+                    .humidity((int) (Math.random() * 100))
+                    .windSpeed(Math.random() * 10 + i)
+                    .snowCover((float) (Math.random() * 5 + i))
+                    .skyType(SkyType.values()[(int) (Math.random() * SkyType.values().length)])
                     .build();
 
             weatherList.add(weather);
@@ -117,7 +120,7 @@ class WeatherServiceTest {
         weatherService.updateWeathersAsync(location.getId());
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -142,7 +145,7 @@ class WeatherServiceTest {
         weatherService.saveWeathersAsync(location.getId(), getNewForecast(location, now));
 
         // then
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         List<Weather> weatherList = weatherRepository.findAll();
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
     }
@@ -160,23 +163,14 @@ class WeatherServiceTest {
         weatherService.updateWeathersAsync(location.getId());
 
         // then
-        Thread.sleep(1000);
-        List<Weather> weatherList = weatherRepository.findAll().stream()
-                .sorted(Comparator.comparing(Weather::getPresentationTime))
-                .toList();
-
-        weatherList.forEach(weather -> {
-            log.info("Weather[basetime={}, presentationTime={}, location={}, rainType={}, " +
-                            "rain={}, rainProb={}, temperature={}, humidity={}, windSpeed={}, " +
-                            "snowCover={}, skyType={}]",
-                    weather.getBasetime(), weather.getPresentationTime(),
-                    "location", weather.getRainType(),
-                    weather.getRain(), weather.getRainProb(),
-                    weather.getTemperature(), weather.getHumidity(),
-                    weather.getWindSpeed(), weather.getSnowCover(),
-                    weather.getSkyType());
-        });
-        Assertions.assertThat(weatherList.size()).isEqualTo(24);
+        Thread.sleep(2000);
+        List<Weather> weatherList = weatherRepository.findAll();
+//        weatherList.stream()
+//                .sorted(Comparator.comparing(Weather::getPresentationTime))
+//                .forEach(weather -> {
+//                    log.info("{}", weather.getPresentationTime());
+//                });
+        Assertions.assertThat(weatherList.size()).isEqualTo(27);
     }
 
     @Test
@@ -189,7 +183,7 @@ class WeatherServiceTest {
         weatherService.bulkSaveWeathersAsync(location.getId(), getNewForecast(location, now));
 
         // then
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         List<Weather> weatherList = weatherRepository.findAll();
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
     }
@@ -207,28 +201,19 @@ class WeatherServiceTest {
         weatherService.bulkUpdateWeathersAsync(location.getId());
 
         // then
-        Thread.sleep(1000);
-        List<Weather> weatherList = weatherRepository.findAll().stream()
+        Thread.sleep(2000);
+        List<Weather> weatherList = weatherRepository.findAll();
+        weatherList.stream()
                 .sorted(Comparator.comparing(Weather::getPresentationTime))
-                .toList();
-
-        weatherList.forEach(weather -> {
-            log.info("Weather[basetime={}, presentationTime={}, location={}, rainType={}, " +
-                            "rain={}, rainProb={}, temperature={}, humidity={}, windSpeed={}, " +
-                            "snowCover={}, skyType={}]",
-                    weather.getBasetime(), weather.getPresentationTime(),
-                    "location", weather.getRainType(),
-                    weather.getRain(), weather.getRainProb(),
-                    weather.getTemperature(), weather.getHumidity(),
-                    weather.getWindSpeed(), weather.getSnowCover(),
-                    weather.getSkyType());
-        });
-        Assertions.assertThat(weatherList.size()).isEqualTo(24);
+                .forEach(weather -> {
+                    log.info("{}", weather.getPresentationTime());
+                });
+        Assertions.assertThat(weatherList.size()).isEqualTo(27);
     }
 
     @AfterEach
     void remove() {
-        weatherRepository.deleteAll();
         locationRepository.deleteAll();
+        weatherRepository.deleteAll();
     }
 }

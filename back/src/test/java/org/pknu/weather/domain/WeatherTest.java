@@ -1,6 +1,7 @@
 package org.pknu.weather.domain;
 
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ class WeatherTest {
                 .temperature(14)
                 .humidity(50)
                 .windSpeed(1.5)
+                .presentationTime(LocalDateTime.now())
                 .build();
 
         // when
