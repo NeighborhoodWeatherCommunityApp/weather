@@ -1,5 +1,14 @@
 package org.pknu.weather.service;
 
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
+import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
@@ -16,24 +25,9 @@ import org.pknu.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +40,7 @@ public class WeatherService {
     private final MemberRepository memberRepository;
     private final ExtraWeatherApiUtils extraWeatherApiUtils;
     private final LocationRepository locationRepository;
-    private final JdbcTemplate jdbcTemplate;
+
 
     /**
      * TODO: 성능 개선 필요
@@ -104,11 +98,7 @@ public class WeatherService {
     @Transactional
     public void bulkSaveWeathersAsync(Long locationId, List<Weather> newForecast) {
         Location location = locationRepository.safeFindById(locationId);
-        String query =
-                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        batchUpdateWeathers(query, newForecast, location);
+        weatherRepository.batchSave(newForecast, location);
     }
 
     /**
@@ -123,8 +113,8 @@ public class WeatherService {
         Location location = locationRepository.safeFindById(locationId);
         Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
         List<Weather> newWeatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
-        List<Weather> weatherList = updateWeathers(oldWeatherMap, newWeatherList, location);
-        weatherRepository.saveAll(weatherList);
+        List<Weather> weathersList = updateWeathers(oldWeatherMap, newWeatherList, location);
+        weatherRepository.saveAll(weathersList);
     }
 
     @Async("WeatherCUDExecutor")
@@ -134,21 +124,15 @@ public class WeatherService {
         Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
         List<Weather> newWeatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
         List<Weather> weathersList = updateWeathers(oldWeatherMap, newWeatherList, location);
-        String query =
-                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                        + "ON DUPLICATE KEY UPDATE "
-                        + "wind_speed = VALUES(wind_speed), humidity = VALUES(humidity), rain_prob = VALUES(rain_prob), rain = VALUES(rain), rain_type = VALUES(rain_type), sensible_temperature = VALUES(sensible_temperature), snow_cover = VALUES(snow_cover), sky_type = VALUES(sky_type), presentation_time = VALUES(presentation_time)";
-        batchUpdateWeathers(query, weathersList, location);
+        weatherRepository.batchUpdate(weathersList, location);
     }
 
     private List<Weather> updateWeathers(Map<LocalDateTime, Weather> oldWeatherMap, List<Weather> newWeatherList,
                                          Location location) {
+        log.debug("oldWeatherMap size: " + oldWeatherMap.size());
         newWeatherList.forEach(newWeather -> {
             LocalDateTime presentationTime = newWeather.getPresentationTime();
             if (oldWeatherMap.containsKey(presentationTime)) {
-                // 이미 존재하는 데이터 갱신
-//                oldWeatherMap.put(presentationTime, newWeather);
                 Weather oldWeather = oldWeatherMap.get(presentationTime);
                 oldWeather.updateWeather(newWeather);
             } else {
@@ -157,39 +141,10 @@ public class WeatherService {
             }
         });
 
-        return new ArrayList<>(oldWeatherMap.values());
+        log.debug("oldWeatherMap size: " + oldWeatherMap.size());
+        return oldWeatherMap.values().stream().toList();
     }
 
-    private void batchUpdateWeathers(String query, List<Weather> forecast, Location location) {
-        jdbcTemplate.batchUpdate(query,
-                new BatchPreparedStatementSetter() {
-
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        Weather w = forecast.get(i);
-                        w.updateSensibleTemperature();
-
-                        ps.setTimestamp(1, Timestamp.valueOf(w.getBasetime()));
-                        ps.setLong(2, location.getId());
-                        ps.setDouble(3, w.getWindSpeed());
-                        ps.setInt(4, w.getHumidity());
-                        ps.setInt(5, w.getRainProb());
-                        ps.setFloat(6, w.getRain());
-                        ps.setInt(7, w.getRainType().ordinal());
-                        ps.setInt(8, w.getTemperature());
-                        ps.setDouble(9, w.getSensibleTemperature());
-                        ps.setFloat(10, w.getSnowCover());
-                        ps.setInt(11, w.getSkyType().ordinal());
-                        ps.setObject(12, w.getPresentationTime());
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        log.debug("batch size : {}", forecast.size());
-                        return forecast.size();
-                    }
-                });
-    }
 
     /**
      * 예보 시간이 현재 보다 과거이면 모두 삭제합니다.v

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.WeatherQueryResult;
@@ -22,4 +21,8 @@ public interface WeatherCustomRepository {
     Map<LocalDateTime, Weather> findAllByLocationAfterNow(Location location);
 
     List<WeatherSummaryDTO> findWeatherSummary(Set<Long> locationIds);
+
+    void batchUpdate(List<Weather> weatherList, Location location);
+
+    void batchSave(List<Weather> newForecast, Location location);
 }

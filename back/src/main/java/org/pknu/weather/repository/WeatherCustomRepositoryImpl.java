@@ -9,12 +9,17 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.QueryUtils;
 import org.pknu.weather.domain.Location;
@@ -24,11 +29,16 @@ import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+@Slf4j
 @RequiredArgsConstructor
 public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final JdbcTemplate jdbcTemplate;
+    private final EntityManager em;
 
 
     /**
@@ -157,10 +167,14 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
         BooleanExpression isRainAndSnow = weather.rainType.eq(RainType.RAIN_AND_SNOW);
         BooleanExpression isNotNone = weather.rainType.ne(RainType.NONE);
 
-        NumberTemplate<Integer> rainCount = Expressions.numberTemplate(Integer.class, "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainOrShower);
-        NumberTemplate<Integer> snowCount = Expressions.numberTemplate(Integer.class, "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isSnow);
-        NumberTemplate<Integer> rainAndSnowCount = Expressions.numberTemplate(Integer.class, "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainAndSnow);
-        NumberTemplate<Integer> notNoneCount = Expressions.numberTemplate(Integer.class, "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isNotNone);
+        NumberTemplate<Integer> rainCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainOrShower);
+        NumberTemplate<Integer> snowCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isSnow);
+        NumberTemplate<Integer> rainAndSnowCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainAndSnow);
+        NumberTemplate<Integer> notNoneCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isNotNone);
 
         StringExpression rainStatus = new CaseBuilder()
                 .when(rainAndSnowCount.gt(0)).then("RAIN_AND_SNOW")
@@ -184,5 +198,61 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                                 .and(location.id.in(locationIds)))
                 .groupBy(location.id)
                 .fetch();
+    }
+
+    @Override
+    public void batchSave(List<Weather> newForecast, Location location) {
+        String query =
+                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        batchUpdateWeathers(query, newForecast, location);
+    }
+
+
+    @Override
+    public void batchUpdate(List<Weather> weatherList, Location location) {
+        String query =
+                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                        + "ON DUPLICATE KEY UPDATE "
+                        + "basetime = VALUES(basetime), wind_speed = VALUES(wind_speed), humidity = VALUES(humidity), rain_prob = VALUES(rain_prob), rain = VALUES(rain), rain_type = VALUES(rain_type), sensible_temperature = VALUES(sensible_temperature), snow_cover = VALUES(snow_cover), sky_type = VALUES(sky_type), presentation_time = VALUES(presentation_time)";
+        batchUpdateWeathers(query, weatherList, location);
+        em.clear();
+    }
+
+    private void batchUpdateWeathers(String query, List<Weather> forecast, Location location) {
+        jdbcTemplate.batchUpdate(query,
+                new BatchPreparedStatementSetter() {
+
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        Weather w = forecast.get(i);
+                        w.updateSensibleTemperature();
+
+                        ps.setTimestamp(1, Timestamp.valueOf(w.getBasetime()));
+                        ps.setLong(2, location.getId());
+                        ps.setDouble(3, w.getWindSpeed());
+                        ps.setInt(4, w.getHumidity());
+                        ps.setInt(5, w.getRainProb());
+                        ps.setFloat(6, w.getRain());
+                        ps.setInt(7, w.getRainType().ordinal());
+                        ps.setInt(8, w.getTemperature());
+                        ps.setDouble(9, w.getSensibleTemperature());
+                        ps.setFloat(10, w.getSnowCover());
+                        ps.setInt(11, w.getSkyType().ordinal());
+                        ps.setObject(12, w.getPresentationTime());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        if (forecast == null || forecast.isEmpty()) {
+                            log.warn("빈 날씨 데이터 리스트를 입력함.");
+                            return 0;
+                        }
+
+                        log.debug("Batch size: {}", forecast.size());
+                        return forecast.size();
+                    }
+                });
     }
 }
