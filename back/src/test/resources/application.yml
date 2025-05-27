@@ -5,7 +5,7 @@ spring:
     init:
       mode: never
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;TRACE_LEVEL_FILE=4;MODE=MYSQL
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -18,7 +18,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
-        use_sql_comments: true
+        #        use_sql_comments: true
         default_batch_fetch_size: 500
     hibernate:
       ddl-auto: create
