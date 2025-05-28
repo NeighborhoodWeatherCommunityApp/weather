@@ -21,7 +21,7 @@ spring:
         default_batch_fetch_size: 500
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     open-in-view: false   # osiv 설정
   jwt:
     key: ${JWT_KEY}
