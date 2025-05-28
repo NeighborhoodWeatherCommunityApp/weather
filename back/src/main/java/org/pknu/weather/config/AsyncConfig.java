@@ -1,6 +1,7 @@
 package org.pknu.weather.config;
 
 import java.util.concurrent.Executor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AsyncConfig {
 
     @Bean(name = "WeatherCUDExecutor")
+    @ConditionalOnMissingBean(name = "WeatherCUDExecutor")
     public Executor getWeatherAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
@@ -22,6 +24,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "ExpCUDExecutor")
+    @ConditionalOnMissingBean(name = "ExpCUDExecutor")
     public Executor getExpAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(1);
