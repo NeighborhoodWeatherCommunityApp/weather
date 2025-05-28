@@ -109,6 +109,7 @@ public class WeatherService {
      */
     @Async("WeatherCUDExecutor")
     @Transactional
+    @Deprecated
     public void updateWeathersAsync(Long locationId) {
         Location location = locationRepository.safeFindById(locationId);
         Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
