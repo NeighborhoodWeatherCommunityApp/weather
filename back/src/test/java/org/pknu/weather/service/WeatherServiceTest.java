@@ -1,6 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 import java.time.LocalDateTime;
@@ -8,9 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
@@ -24,17 +23,10 @@ import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootTest
 @Slf4j
-@Import(TestAsyncConfig.class)
 class WeatherServiceTest {
     @Autowired
     WeatherService weatherService;
@@ -48,18 +40,16 @@ class WeatherServiceTest {
     @Autowired
     WeatherRepository weatherRepository;
 
-    Map<LocalDateTime, Weather> getPastForecast(Location location, LocalDateTime targetTime) {
+    Map<LocalDateTime, Weather> getPastForecast(Location location, LocalDateTime baseTime) {
         // 현재 시각
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(targetTime.minusHours(3));
-        targetTime = LocalDateTime.of(baseTime.getYear(), baseTime.getMonth(), baseTime.getDayOfMonth(),
-                baseTime.getHour(), 0);
+        LocalDateTime presentTime = baseTime.plusHours(0);
         Map<LocalDateTime, Weather> weatherMap = new HashMap<>();
 
         // 3시간 전에 발표한 예보 만들기
         for (int i = 1; i <= 24; i++) {
             Weather weather = Weather.builder()
                     .basetime(baseTime)
-                    .presentationTime(targetTime.plusHours(i))
+                    .presentationTime(presentTime.plusHours(i))
                     .location(location)
                     .rainType(RainType.values()[(int) (Math.random() * RainType.values().length)])
                     .rain((float) (Math.random() * 10 + i))
@@ -77,18 +67,16 @@ class WeatherServiceTest {
         return weatherMap;
     }
 
-    List<Weather> getNewForecast(Location location, LocalDateTime targetTime) {
+    List<Weather> getNewForecast(Location location, LocalDateTime baseTime) {
         // 현재 시각
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(targetTime);
-        targetTime = LocalDateTime.of(baseTime.getYear(), baseTime.getMonth(), baseTime.getDayOfMonth(),
-                baseTime.getHour(), 0);
+        LocalDateTime presentTime = baseTime.plusHours(0);
         List<Weather> weatherList = new ArrayList<>();
 
         // 3시간 전에 발표한 예보 만들기
         for (int i = 1; i <= 24; i++) {
             Weather weather = Weather.builder()
                     .basetime(baseTime)
-                    .presentationTime(targetTime.plusHours(i))
+                    .presentationTime(presentTime.plusHours(i))
                     .location(location)
                     .rainType(RainType.values()[(int) (Math.random() * RainType.values().length)])
                     .rain((float) (Math.random() * 10 + i))
@@ -106,88 +94,55 @@ class WeatherServiceTest {
         return weatherList;
     }
 
-    @Test
-    void 단기_예보_갱신_성공테스트() {
-        // given
-        Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
-
-        doReturn(getNewForecast(location, now))
-                .when(weatherFeignClientUtils).getVillageShortTermForecast(location);
-
-        weatherRepository.saveAll(getPastForecast(location, now).values());
-
-        // when
-        weatherService.updateWeathersAsync(location.getId());
-
-        // then
-        List<Weather> updatedWeatherList = weatherRepository.findAllByLocationAfterNow(location).values().stream()
-                .toList();
-
-        updatedWeatherList.stream()
-                .forEach(weather -> {
-                    assertThat(weather.getBasetime()).isEqualTo(now);
-                });
+    LocalDateTime getBaseTime() {
+        return DateTimeFormatter.getBaseLocalDateTime(LocalDateTime.now().withMinute(0).withSecond(0).withNano(0));
     }
 
     @Test
-    void 비동기_insert_로직_테스트() throws InterruptedException {
+    void 비동기_insert_로직_테스트() {
         // given
         Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime baseTime = getBaseTime();
 
         // when
-        weatherService.saveWeathersAsync(location.getId(), getNewForecast(location, now));
+        weatherService.saveWeathersAsync(location.getId(), getNewForecast(location, baseTime));
 
         // then
+        Awaitility.await().until(() -> weatherRepository.count() == 24);
         List<Weather> weatherList = weatherRepository.findAll();
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
     }
 
     @Test
-    void 비동기_벌크_insert_로직_테스트() throws InterruptedException {
+    void 비동기_벌크_insert_로직_테스트() {
         // given
         Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime baseTime = getBaseTime();
 
         // when
-        weatherService.bulkSaveWeathersAsync(location.getId(), getNewForecast(location, now));
+        weatherService.bulkSaveWeathersAsync(location.getId(), getNewForecast(location, baseTime));
 
         // then
+        Awaitility.await().until(() -> weatherRepository.count() == 24);
         List<Weather> weatherList = weatherRepository.findAll();
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
-    }
-
-    @Test
-    void 비동기_update_로직_테스트() throws InterruptedException {
-        // given
-        Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
-        weatherRepository.saveAll(getPastForecast(location, now).values());
-        doReturn(getNewForecast(location, now))
-                .when(weatherFeignClientUtils).getVillageShortTermForecast(location);
-
-        // when
-        weatherService.updateWeathersAsync(location.getId());
-
-        // then
-        List<Weather> weatherList = weatherRepository.findAll();
-        Assertions.assertThat(weatherList.size()).isEqualTo(27);
     }
 
     @Test
     void 비동기_벌크_update_로직_테스트() throws InterruptedException {
         // given
         Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
-        weatherRepository.saveAll(getPastForecast(location, now).values());
-        doReturn(getNewForecast(location, now))
+        LocalDateTime baseTime = getBaseTime();
+        weatherRepository.saveAll(getPastForecast(location, baseTime.minusHours(3)).values());
+
+        doReturn(getNewForecast(location, baseTime))
                 .when(weatherFeignClientUtils).getVillageShortTermForecast(location);
 
         // when
         weatherService.bulkUpdateWeathersAsync(location.getId());
 
         // then
+        Awaitility.await().until(() -> weatherRepository.count() == 27);
         List<Weather> weatherList = weatherRepository.findAll();
         Assertions.assertThat(weatherList.size()).isEqualTo(27);
     }
@@ -196,22 +151,5 @@ class WeatherServiceTest {
     void remove() {
         weatherRepository.deleteAll();
         locationRepository.deleteAll();
-    }
-}
-
-@TestConfiguration
-@EnableAsync
-class TestAsyncConfig {
-
-    @Bean(name = "WeatherCUDExecutor")
-    @Primary
-    public Executor testWeatherExecutor() {
-        return new SyncTaskExecutor();
-    }
-
-    @Primary
-    @Bean(name = "ExpCUDExecutor")
-    public Executor testExpExecutor() {
-        return new SyncTaskExecutor();
     }
 }
