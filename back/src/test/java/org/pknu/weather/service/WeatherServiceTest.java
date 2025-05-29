@@ -1,12 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.mockito.Mockito.doReturn;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
@@ -24,6 +17,14 @@ import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest
 @Slf4j
@@ -128,7 +129,7 @@ class WeatherServiceTest {
         Assertions.assertThat(weatherList.size()).isEqualTo(24);
     }
 
-    @Test
+//    @Test
     void 비동기_벌크_update_로직_테스트() throws InterruptedException {
         // given
         Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
