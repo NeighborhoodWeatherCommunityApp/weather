@@ -13,7 +13,7 @@ import org.pknu.weather.domain.tag.SkyTag;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostConverter;
 import org.pknu.weather.dto.converter.TagConverter;
-import org.pknu.weather.event.PostCreatedEvent;
+import org.pknu.weather.event.exp.PostCreatedEvent;
 import org.pknu.weather.event.alarm.LiveRainAlarmCreatedEvent;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;

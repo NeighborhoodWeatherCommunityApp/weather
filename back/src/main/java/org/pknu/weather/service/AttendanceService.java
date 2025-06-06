@@ -1,16 +1,17 @@
 package org.pknu.weather.service;
 
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Attendance;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.event.AttendanceCheckedEvent;
+import org.pknu.weather.event.exp.AttendanceCheckedEvent;
 import org.pknu.weather.repository.AttendanceRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Slf4j
 @Service
