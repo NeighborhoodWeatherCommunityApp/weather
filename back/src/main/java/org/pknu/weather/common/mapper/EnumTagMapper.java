@@ -1,13 +1,10 @@
 package org.pknu.weather.common.mapper;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EnumTagMapper {
     private final Map<String, EnumTag> map = new HashMap<>();
@@ -56,7 +53,7 @@ public class EnumTagMapper {
         });
 
         list.forEach((s, dtoList) -> {
-            dtoList.sort((o1, o2) -> o1.getCode() - o2.getCode());
+            dtoList.sort(Comparator.comparingInt(TagDto::getCode));
         });
 
         return list;
