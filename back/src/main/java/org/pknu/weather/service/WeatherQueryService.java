@@ -8,11 +8,14 @@ import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
+import org.pknu.weather.event.weather.WeatherCreateEvent;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,8 @@ import java.util.Optional;
 public class WeatherQueryService {
     private final MemberRepository memberRepository;
     private final WeatherRepository weatherRepository;
+    private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final ApplicationEventPublisher eventPublisher;
     private final CacheManager cm;
     private final String LOCATION_UPDATE_STORE = "locationUpdateStore";
     private final String LOCATION_CREATE_STORE = "locationCreateStore";
@@ -40,11 +45,22 @@ public class WeatherQueryService {
      * @param locationId
      * @return
      */
-    @Transactional(readOnly = true)
     public List<Weather> getWeathers(Long locationId) {
         return weatherRepository.findAllWithLocation(locationId, LocalDateTime.now().plusHours(24)).stream()
                 .sorted(Comparator.comparing(Weather::getPresentationTime))
                 .toList();
+    }
+
+    public Weather getNearestWeatherForecastToNow(Location location) {
+        Optional<Weather> optionalWeather = weatherRepository.findWeatherByClosestPresentationTime(location);
+
+        if (optionalWeather.isEmpty()) {
+            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            return newForecast.get(0);
+        }
+
+        return optionalWeather.get();
     }
 
     public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
