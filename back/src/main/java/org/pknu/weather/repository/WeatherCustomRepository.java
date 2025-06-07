@@ -18,7 +18,7 @@ public interface WeatherCustomRepository {
 
     WeatherQueryResult.SimpleRainInfo getSimpleRainInfo(Location locationEntity);
 
-    Optional<Weather> findByLocationClosePresentationTime(Location location);
+    Optional<Weather> findWeatherByClosestPresentationTime(Location location);
 
     Map<LocalDateTime, Weather> findAllByLocationAfterNow(Location location);
 

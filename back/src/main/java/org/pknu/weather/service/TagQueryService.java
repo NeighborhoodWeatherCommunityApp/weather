@@ -10,16 +10,12 @@ import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.TagQueryResult;
-import org.pknu.weather.dto.TagWithSelectedOrNotDto;
+import org.pknu.weather.dto.TagWithSelectedStatus;
 import org.pknu.weather.dto.TotalWeatherDto;
 import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.dto.converter.TagResponseConverter;
-import org.pknu.weather.event.weather.WeatherCreateEvent;
-import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.TagRepository;
-import org.pknu.weather.repository.WeatherRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +28,9 @@ import java.util.*;
 public class TagQueryService {
     private final TagRepository tagRepository;
     private final MemberRepository memberRepository;
-    private final WeatherRepository weatherRepository;
     private final WeatherService weatherService;
     private final EnumTagMapper enumTagMapper;
-    private final WeatherFeignClientUtils weatherFeignClientUtils;
-    private final ApplicationEventPublisher eventPublisher;
+    private final WeatherQueryService weatherQueryService;
 
     /**
      * 간단 날씨 보기 기능에서 태그 정보를 불러온다.
@@ -73,16 +67,16 @@ public class TagQueryService {
 
     }
 
-    public Map<String, List<TagWithSelectedOrNotDto>> getTagsWithSelectedOrNot(String email) {
+    public Map<String, List<TagWithSelectedStatus>> getTagsWithSelectionStatus(String email) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
-        Weather weather = getWeatherClosePresentationTime(location);
+        Weather weather = weatherQueryService.getNearestWeatherForecastToNow(location);
         ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(member.getEmail(), location.getId());
         TotalWeatherDto totalWeatherDto = new TotalWeatherDto(weather, extraWeatherInfo);
-        Map<String, List<TagWithSelectedOrNotDto>> map = new HashMap<>();
+        Map<String, List<TagWithSelectedStatus>> map = new HashMap<>();
 
         enumTagMapper.getAll().forEach((key, enumTag) -> {
-            TagWithSelectedOrNotDto tagWithSelectedOrNotDto = TagResponseConverter.toTagSelectedOrNotDto(enumTag,
+            TagWithSelectedStatus tagWithSelectedStatus = TagResponseConverter.toTagSelectedOrNotDto(enumTag,
                     totalWeatherDto);
 
             String tagName = enumTag.getTagName();
@@ -91,25 +85,13 @@ public class TagQueryService {
                 map.put(tagName, new ArrayList<>());
             }
 
-            map.get(tagName).add(tagWithSelectedOrNotDto);
+            map.get(tagName).add(tagWithSelectedStatus);
         });
 
         map.forEach((s, dtoList) -> {
-            dtoList.sort(Comparator.comparingInt(TagWithSelectedOrNotDto::getCode));
+            dtoList.sort(Comparator.comparingInt(TagWithSelectedStatus::getCode));
         });
 
         return map;
-    }
-
-    private Weather getWeatherClosePresentationTime(Location location) {
-        Optional<Weather> optionalWeather = weatherRepository.findByLocationClosePresentationTime(location);
-
-        if (optionalWeather.isEmpty()) {
-            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
-            eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
-            return newForecast.get(0);
-        }
-
-        return optionalWeather.get();
     }
 }

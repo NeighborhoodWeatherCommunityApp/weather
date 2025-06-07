@@ -5,7 +5,7 @@ import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.common.mapper.EnumTagMapper;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.dto.TagWithSelectedOrNotDto;
+import org.pknu.weather.dto.TagWithSelectedStatus;
 import org.pknu.weather.service.TagQueryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,10 +29,10 @@ public class TagControllerV1 {
     }
 
     @GetMapping("/selected-tags")
-    public ApiResponse<Map<String, List<TagWithSelectedOrNotDto>>> getSelectedOrNotTagList(
+    public ApiResponse<Map<String, List<TagWithSelectedStatus>>> getSelectedOrNotTagList(
             @RequestHeader("Authorization") String authorization) {
         String email = TokenConverter.getEmailByToken(authorization);
-        Map<String, List<TagWithSelectedOrNotDto>> selectedOrNotTags = tagQueryService.getTagsWithSelectedOrNot(email);
+        Map<String, List<TagWithSelectedStatus>> selectedOrNotTags = tagQueryService.getTagsWithSelectionStatus(email);
         return ApiResponse.onSuccess(selectedOrNotTags);
     }
 }

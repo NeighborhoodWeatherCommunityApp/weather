@@ -5,14 +5,14 @@ import lombok.Getter;
 import org.pknu.weather.domain.tag.EnumTag;
 
 @Getter
-public class TagWithSelectedOrNotDto {
+public class TagWithSelectedStatus {
     private final String key;
     private final String text;
     private final Integer code;
     private final Boolean selected;
 
 //    @Builder
-//    public TagWithSelectedOrNotDto(TagDto tagDto, Boolean selected) {
+//    public TagWithSelectedStatus(TagDto tagDto, Boolean selected) {
 //        key = tagDto.getKey();
 //        text = tagDto.getText();
 //        code = tagDto.getCode();
@@ -20,7 +20,7 @@ public class TagWithSelectedOrNotDto {
 //    }
 
     @Builder
-    public TagWithSelectedOrNotDto(EnumTag enumTag, Boolean selected) {
+    public TagWithSelectedStatus(EnumTag enumTag, Boolean selected) {
         key = enumTag.getKey();
         text = enumTag.toText();
         code = enumTag.getCode();

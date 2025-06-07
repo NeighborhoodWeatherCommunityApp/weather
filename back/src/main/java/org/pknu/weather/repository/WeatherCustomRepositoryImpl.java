@@ -115,7 +115,7 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
     }
 
     @Override
-    public Optional<Weather> findByLocationClosePresentationTime(Location location) {
+    public Optional<Weather> findWeatherByClosestPresentationTime(Location location) {
         LocalDateTime now = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
         return Optional.ofNullable(jpaQueryFactory
