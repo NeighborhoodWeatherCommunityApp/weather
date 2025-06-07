@@ -10,7 +10,7 @@ import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.TagQueryResult;
-import org.pknu.weather.dto.TagWithSelectedStatus;
+import org.pknu.weather.dto.TagWithSelectedStatusDto;
 import org.pknu.weather.dto.TotalWeatherDto;
 import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.dto.converter.TagResponseConverter;
@@ -67,16 +67,16 @@ public class TagQueryService {
 
     }
 
-    public Map<String, List<TagWithSelectedStatus>> getTagsWithSelectionStatus(String email) {
+    public Map<String, List<TagWithSelectedStatusDto>> getTagsWithSelectionStatus(String email) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
         Weather weather = weatherQueryService.getNearestWeatherForecastToNow(location);
         ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(member.getEmail(), location.getId());
         TotalWeatherDto totalWeatherDto = new TotalWeatherDto(weather, extraWeatherInfo);
-        Map<String, List<TagWithSelectedStatus>> map = new HashMap<>();
+        Map<String, List<TagWithSelectedStatusDto>> map = new HashMap<>();
 
         enumTagMapper.getAll().forEach((key, enumTag) -> {
-            TagWithSelectedStatus tagWithSelectedStatus = TagResponseConverter.toTagSelectedOrNotDto(enumTag,
+            TagWithSelectedStatusDto tagWithSelectedStatusDto = TagResponseConverter.toTagSelectedOrNotDto(enumTag,
                     totalWeatherDto);
 
             String tagName = enumTag.getTagName();
@@ -85,11 +85,11 @@ public class TagQueryService {
                 map.put(tagName, new ArrayList<>());
             }
 
-            map.get(tagName).add(tagWithSelectedStatus);
+            map.get(tagName).add(tagWithSelectedStatusDto);
         });
 
         map.forEach((s, dtoList) -> {
-            dtoList.sort(Comparator.comparingInt(TagWithSelectedStatus::getCode));
+            dtoList.sort(Comparator.comparingInt(TagWithSelectedStatusDto::getCode));
         });
 
         return map;
