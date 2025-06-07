@@ -1,23 +1,9 @@
 package org.pknu.weather.repository;
 
-import static org.pknu.weather.domain.QWeather.weather;
-
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
@@ -31,6 +17,18 @@ import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherSummaryDTO;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.pknu.weather.domain.QWeather.weather;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -117,16 +115,16 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
     }
 
     @Override
-    public Weather findByLocationClosePresentationTime(Location location) {
+    public Optional<Weather> findByLocationClosePresentationTime(Location location) {
         LocalDateTime now = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
-        return jpaQueryFactory
+        return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(weather)
                 .where(
                         weather.location.eq(location),
                         weather.presentationTime.eq(now)
                 )
-                .fetchOne();
+                .fetchOne());
     }
 
     /**
