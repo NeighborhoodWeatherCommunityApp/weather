@@ -9,9 +9,12 @@ import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
+import org.pknu.weather.event.weather.WeatherCreateEvent;
+import org.pknu.weather.event.weather.WeatherUpdateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +30,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MainPageService {
     private final MemberRepository memberRepository;
-    private final WeatherService weatherService;
     private final WeatherQueryService weatherQueryService;
     private final LocationRepository locationRepository;
     private final PostQueryService postQueryService;
     private final TagQueryService tagQueryService;
     private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 메인 페이지에 날씨와 관련된 데이터를 반환한다. 만약 해당 지역의 날씨의 갱신 시간이 지났다면 갱신을 시도하고 반환한다. 만약 해당 지역의 날씨 정보가 없다면 저장하고 반환한다.
@@ -50,7 +53,7 @@ public class MainPageService {
         }
 
         updateWeatherIfRequired(location);
-        weatherList = weatherService.getWeathers(location.getId());
+        weatherList = weatherQueryService.getWeathers(location.getId());
 
         return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
     }
@@ -63,16 +66,16 @@ public class MainPageService {
 
     private List<Weather> createWeatherIfRequired(Location location, Member member) {
         if (!weatherQueryService.weatherHasBeenCreated(location)) {
-            List<Weather> weatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
-            weatherService.bulkSaveWeathersAsync(location.getId(), weatherList);
-            return weatherList;
+            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            return newForecast;
         }
         return null;
     }
 
     private void updateWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenUpdated(location)) {
-            weatherService.bulkUpdateWeathersAsync(location.getId());
+            eventPublisher.publishEvent(new WeatherUpdateEvent(location.getId()));
         }
     }
 
