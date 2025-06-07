@@ -1,14 +1,5 @@
 package org.pknu.weather.service;
 
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
@@ -29,6 +20,15 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
+import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
+import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,20 +41,6 @@ public class WeatherService {
     private final ExtraWeatherApiUtils extraWeatherApiUtils;
     private final LocationRepository locationRepository;
 
-
-    /**
-     * TODO: 성능 개선 필요
-     * 현재 ~ +24시간 까지의 날씨 정보를 불러옵니다.
-     *
-     * @param location
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public List<Weather> getWeathers(Location location) {
-        return weatherRepository.findAllWithLocation(location.getId(), LocalDateTime.now().plusHours(24)).stream()
-                .sorted(Comparator.comparing(Weather::getPresentationTime))
-                .toList();
-    }
 
     /**
      * 위도와 경도에 해당하는 지역(읍면동)의 24시간치 날씨 단기 예보 정보를 저장합니다.
@@ -91,8 +77,8 @@ public class WeatherService {
     /**
      * 날씨 정보를 저장합니다. 비동기적으로 동작합니다.
      *
-     * @param locationId
-     * @param newForecast 공공데이터 API에서 받아온 단기날씨예보 값 list
+     * @param locationId 날씨 데이터를 저장할 지역의 id
+     * @param newForecast 공공데이터 단기날씨예보 API에서 받아온 날씨 예보 List
      */
     @Async("WeatherCUDExecutor")
     @Transactional

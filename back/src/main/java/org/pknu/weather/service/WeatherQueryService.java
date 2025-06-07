@@ -1,10 +1,10 @@
 package org.pknu.weather.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
@@ -15,6 +15,11 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,20 @@ public class WeatherQueryService {
     private final CacheManager cm;
     private final String LOCATION_UPDATE_STORE = "locationUpdateStore";
     private final String LOCATION_CREATE_STORE = "locationCreateStore";
+
+    /**
+     * TODO: 성능 개선 필요
+     * 현재 ~ +24시간 까지의 날씨 정보를 불러옵니다.
+     *
+     * @param locationId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<Weather> getWeathers(Long locationId) {
+        return weatherRepository.findAllWithLocation(locationId, LocalDateTime.now().plusHours(24)).stream()
+                .sorted(Comparator.comparing(Weather::getPresentationTime))
+                .toList();
+    }
 
     public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
         Member member = memberRepository.safeFindByEmail(email);
