@@ -2,6 +2,7 @@ package org.pknu.weather.service.message;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class WeatherAlarmMessageBuilder {
     private String rainStatus;
@@ -68,18 +69,14 @@ public class WeatherAlarmMessageBuilder {
     }
 
     private String formatMessage(List<String> messageParts) {
-        StringBuilder alarmMessage = new StringBuilder();
 
-        for (int i = 0; i < messageParts.size(); i++) {
+        StringJoiner stringJoiner = new StringJoiner("\n");
 
-            alarmMessage.append(messageParts.get(i));
-
-            if ((i < messageParts.size() - 1) && (i % 2 == 1)) {
-                alarmMessage.append("\n");
-            }
+        for (String part : messageParts) {
+            stringJoiner.add(part);
         }
 
-        return alarmMessage.toString().trim();
+        return stringJoiner.toString().trim();
     }
 
     private String getDustLevel(int pm10) {
