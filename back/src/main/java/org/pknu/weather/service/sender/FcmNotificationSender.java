@@ -51,7 +51,6 @@ public class FcmNotificationSender implements NotificationSender {
                 .setApnsConfig(ApnsConfig.builder()
                         .putHeader("apns-priority", "10")
                         .setAps(Aps.builder()
-                                .setBadge(1)
                                 .setSound("default")
                                 .build())
                         .build())
