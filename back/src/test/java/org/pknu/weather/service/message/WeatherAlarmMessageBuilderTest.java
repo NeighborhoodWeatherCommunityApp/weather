@@ -22,9 +22,9 @@ class WeatherAlarmMessageBuilderTest {
         String message = builder.build();
 
         // Then
-        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 15 + "°C / " + 25 + "°C") +
-                "☔️ " + String.format(STRING_FORMAT, "강수 상태: 맑음") + '\n' +
-                "🌫️ " + String.format(STRING_FORMAT, "미세먼지: 보통") +
+        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 15 + "°C / " + 25 + "°C") + "\n" +
+                "☔️ " + String.format(STRING_FORMAT, "강수 상태: 맑음") + "\n" +
+                "🌫️ " + String.format(STRING_FORMAT, "미세먼지: 보통") + "\n" +
                 "🌞 " + String.format(STRING_FORMAT, "자외선: 나쁨" + " - " + 12 + "시").trim();
 
         assertThat(message).isEqualTo(expectedMessage);
@@ -41,7 +41,7 @@ class WeatherAlarmMessageBuilderTest {
         String message = builder.build();
 
         // Then
-        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 10 + "°C / " + 20 + "°C") +
+        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 10 + "°C / " + 20 + "°C") + "\n" +
                 "🌫️ " + String.format(STRING_FORMAT, "미세먼지: 보통").trim();
 
         assertThat(message).isEqualTo(expectedMessage);
@@ -58,7 +58,7 @@ class WeatherAlarmMessageBuilderTest {
         String message = builder.build();
 
         // Then
-        String expectedMessage = "☔️ " + String.format(STRING_FORMAT, "강수 상태: 비") +
+        String expectedMessage = "☔️ " + String.format(STRING_FORMAT, "강수 상태: 비") + "\n" +
                 "🌞 " + String.format(STRING_FORMAT, "자외선: 나쁨" + " - " + 15 + "시").trim();
 
         assertThat(message).isEqualTo(expectedMessage);
@@ -104,8 +104,8 @@ class WeatherAlarmMessageBuilderTest {
         String message = builder.build();
 
         // Then
-        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 5 + "°C / " + 10 + "°C") +
-                "☔️ " + String.format(STRING_FORMAT, "강수 상태: 흐림") + '\n' +
+        String expectedMessage = "🌡️ " + String.format(STRING_FORMAT, "기온: " + 5 + "°C / " + 10 + "°C") + "\n" +
+                "☔️ " + String.format(STRING_FORMAT, "강수 상태: 흐림") + "\n" +
                 "🌫️ " + String.format(STRING_FORMAT, "미세먼지: 좋음").trim();
 
         assertThat(message).isEqualTo(expectedMessage);
