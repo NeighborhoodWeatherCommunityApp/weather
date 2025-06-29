@@ -19,7 +19,13 @@ const {width, height} = Dimensions.get('window');
 
 const aspectRatio = height / width;
 
-const PostScroll = ({accessToken, refreshPosts, onRefreshComplete}) => {
+const PostScroll = ({
+  accessToken,
+  refreshPosts,
+  onRefreshComplete,
+  refreshing = false,
+  onRefresh,
+}) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const postType = 'WEATHER';
@@ -194,6 +200,8 @@ const PostScroll = ({accessToken, refreshPosts, onRefreshComplete}) => {
       data={posts}
       renderItem={renderPost}
       keyExtractor={item => item.postInfo.postId.toString()}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
       contentContainerStyle={[
         styles.contentContainer,
         posts.length === 0 && !loading ? styles.emptyContainer : null,

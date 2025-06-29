@@ -823,3 +823,104 @@ export const checkLevelUp = async accessToken => {
     throw error;
   }
 };
+
+// 알림 기능 관련
+// 알림 생성 API
+export const createAlarmSetting = async (accessToken, alarmData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alarmData),
+    });
+
+    const responseData = await response.json();
+    console.log('[POST] 알림 생성 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('알림 생성 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 알림 조회 API
+export const fetchAlarmSetting = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const responseData = await response.json();
+    console.log('[GET] 알림 조회 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData.result;
+  } catch (error) {
+    console.error('알림 조회 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 알림 수정 API
+export const updateAlarmSetting = async (accessToken, alarmData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alarmData),
+    });
+
+    const responseData = await response.json();
+    console.log('[PATCH] 알림 수정 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('알림 수정 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 테스트 알림 호출 API
+export const sendTestAlarm = async (accessToken, fcmToken) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/testAlarm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({fcmToken}),
+    });
+
+    const result = await response.json();
+    console.log('테스트 알림 호출 API 응답:', result);
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return result;
+  } catch (error) {
+    console.error('테스트 알림 API 호출 실패:', error);
+    throw error;
+  }
+};

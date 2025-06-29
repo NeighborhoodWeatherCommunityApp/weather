@@ -1,5 +1,6 @@
 import {Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CryptoJS from 'crypto-js';
 import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from '@env';
 
 const CLIENT_ID = GOOGLE_CLIENT_ID; // OAuth Client ID
@@ -113,9 +114,12 @@ export const logUserAction = async (userInfo, actionName) => {
   const {email, nickname, exp, levelKey, rankName, province, city, street} =
     userInfo;
 
+  // 이메일 SHA-256 해싱
+  const hashedEmail = CryptoJS.SHA256(email).toString(CryptoJS.enc.Hex);
+
   await appendToGoogleSheet([
     getKSTTimestamp(),
-    email,
+    hashedEmail,
     actionName,
     nickname,
     exp,

@@ -15,7 +15,7 @@ const {width, height} = Dimensions.get('window');
 const aspectRatio = height / width;
 const isIpad = aspectRatio < 1.78;
 
-const WeatherHeaderCommunity = ({accessToken, refreshing}) => {
+const WeatherHeaderCommunity = ({accessToken, refreshing, onWeatherData}) => {
   const [userLocation, setUserLocation] = useState({city: '', street: ''});
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +55,8 @@ const WeatherHeaderCommunity = ({accessToken, refreshing}) => {
       });
       setWeatherData(weather?.result || null);
       updateBackgroundColors(weather?.result || null);
+
+      onWeatherData?.(weather?.result);
     } catch (error) {
       console.error('Error fetching data:', error.message);
     } finally {
@@ -126,7 +128,8 @@ const WeatherHeaderCommunity = ({accessToken, refreshing}) => {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, {backgroundColor: '#405063'}]}>
+      // 시간별 배경 색상 확인 필요
+      <View style={[styles.headerContainer, {backgroundColor: '#405063'}]}>
         <ActivityIndicator size="large" color="#fff" />
       </View>
     );

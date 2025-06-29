@@ -158,7 +158,7 @@ const WeatherHeader = ({
             setRefresh(true);
           } catch (error) {
             console.error('Error sending location to backend:', error.message);
-            Alert.alert('위치 전송 실패', '나중에 다시 시도해 주세요.');
+            // Alert.alert('위치 전송 실패', '나중에 다시 시도해 주세요.');
           } finally {
             setLoadingLocation(false);
           }
@@ -294,7 +294,10 @@ const WeatherHeader = ({
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       style={styles.headerContainer}>
-      <CopilotStep text="날씨 정보를 전환할 수 있어요!" order={1} name="toggle">
+      <CopilotStep
+        text="텍스트로 직관적인 날씨를 볼 수 있어요"
+        order={1}
+        name="toggle">
         <CopilotView style={styles.switch}>
           <Switch value={isToggled} onValueChange={handleToggle} />
         </CopilotView>
@@ -326,7 +329,7 @@ const WeatherHeader = ({
       />
 
       <CopilotStep
-        text="날씨 정보를 태그로 간략하게 보여드려요"
+        text="태그로 빠르고 간편하게 날씨를 알 수 있어요"
         order={2}
         name="weatherTags">
         <CopilotView style={styles.tagsContainer}>

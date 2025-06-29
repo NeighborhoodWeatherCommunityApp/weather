@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Alert, Dimensions, Platform} from 'react-native';
 import {Button} from 'react-native-elements';
-import LinearGradient from 'react-native-linear-gradient';
 import KakaoShareLink from 'react-native-kakao-share-link';
 import {
   fetchWeatherData,
@@ -73,8 +72,8 @@ const KakaoShareButton = ({accessToken}) => {
         content: {
           title: `${weatherEmoji} ${city} ${street} 날씨입니다!`,
           description: `현재 ${currentTmp}°C   (↑)${maxTmp}° (↓)${minTmp}°\n${rainComment} ${weatherEmoji}`,
-          // 업데이트 되었나 봄. 기본값으로 라이언 이미지 나옴 -> 상의 후 설정 필요
-          // imageUrl: 'https://이미지 추가할 경우.png',
+          imageUrl:
+            'https://raw.githubusercontent.com/NeighborhoodWeatherCommunityApp/weather/main/front/assets/images/icon_app.png',
           link: {
             mobileWebUrl: 'https://링크 추가.com',
             webUrl: 'https://링크 추가.com',
@@ -109,16 +108,12 @@ const KakaoShareButton = ({accessToken}) => {
   return (
     <View style={styles.container}>
       <View style={styles.shadowContainer}>
-        <LinearGradient
-          colors={['#FDFCF0', '#f5f4d0']}
-          style={styles.gradientButton}>
-          <Button
-            title="카카오톡 친구에게 날씨 공유하기"
-            onPress={shareWeatherInfo}
-            buttonStyle={styles.button}
-            titleStyle={styles.buttonTitle}
-          />
-        </LinearGradient>
+        <Button
+          title="카카오톡 친구에게 날씨 공유하기"
+          onPress={shareWeatherInfo}
+          buttonStyle={styles.kakaoButton}
+          titleStyle={styles.kakaoTitle}
+        />
       </View>
     </View>
   );
@@ -147,15 +142,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 1,
   },
-  button: {
-    backgroundColor: 'transparent',
+  kakaoButton: {
+    backgroundColor: '#FEE500',
     borderRadius: 8,
     height: 50,
+    justifyContent: 'center',
   },
-  buttonTitle: {
-    fontSize: 14,
-    color: Platform.OS === 'ios' ? '#6B7280' : '#6B7280',
+  kakaoTitle: {
+    fontSize: 15,
     fontWeight: 'bold',
+    color: '#3C1E1E',
   },
 });
 

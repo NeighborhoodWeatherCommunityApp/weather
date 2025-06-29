@@ -36,8 +36,16 @@ const HomeScreen = ({accessToken, navigation}) => {
   const [showText, setShowText] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#3f7dfd');
+  const [isFetchingWeather, setIsFetchingWeather] = useState(false); // 중복 호출 방지
+  const [hasStartedTutorial, setHasStartedTutorial] = useState(false); // 튜토리얼
 
   const fetchWeather = async () => {
+    if (isFetchingWeather) {
+      console.log('날씨 데이터 중복 호출 방지');
+      return;
+    }
+
+    setIsFetchingWeather(true);
     try {
       const data = await fetchWeatherData(accessToken);
 
@@ -64,6 +72,8 @@ const HomeScreen = ({accessToken, navigation}) => {
       }
     } catch (error) {
       console.error('Error fetching weather data:', error);
+    } finally {
+      setIsFetchingWeather(false);
     }
   };
 
@@ -146,20 +156,42 @@ const HomeScreen = ({accessToken, navigation}) => {
     return kstNow.toISOString().split('T')[0];
   };
 
-  // 튜토리얼 시작 조건 및 실행
   useEffect(() => {
-    const tryStartTutorial = async () => {
-      const done = await AsyncStorage.getItem(TUTORIAL_COMPLETED_KEY);
-      if (!done && !hasStartedTutorial) {
-        setHasStartedTutorial(true); // 중복 방지
+    const runOnce = async () => {
+      const done = await AsyncStorage.getItem('homeTutorialCompleted');
+
+      if (!done) {
+        // 튜토리얼 시작
         InteractionManager.runAfterInteractions(() => {
           start();
-          AsyncStorage.setItem(TUTORIAL_COMPLETED_KEY, 'true');
         });
+        // 실행 플래그를 저장해서 다음번엔 실행되지 않도록
+        await AsyncStorage.setItem('homeTutorialCompleted', 'true');
       }
     };
-    tryStartTutorial();
+
+    runOnce();
   }, [start]);
+
+  // 튜토리얼 시작 조건 및 실행 - 테스트
+  // useEffect(() => {
+  //   const tryStartTutorial = async () => {
+  //     const done = await AsyncStorage.getItem(TUTORIAL_COMPLETED_KEY);
+  //     if (!done && !hasStartedTutorial) {
+  //       setHasStartedTutorial(true); // 중복 방지
+  //       InteractionManager.runAfterInteractions(() => {
+  //         start();
+  //         AsyncStorage.setItem(TUTORIAL_COMPLETED_KEY, 'true');
+  //       });
+  //     }
+  //   };
+  //   tryStartTutorial();
+  // }, [start]);
+
+  // // 테스트용 - 앱 재실행 시 튜토리얼 시작 (추후 제거)
+  // useEffect(() => {
+  //   AsyncStorage.removeItem('homeTutorialCompleted');
+  // }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -179,11 +211,6 @@ const HomeScreen = ({accessToken, navigation}) => {
     }, [start]),
   );
 
-  // 테스트용 - 앱 재실행 시 튜토리얼 시작 (추후 제거)
-  useEffect(() => {
-    AsyncStorage.removeItem('homeTutorialCompleted');
-  }, []);
-
   useEffect(() => {
     if (refresh) {
       console.log('Refresh HomeScreen');
@@ -202,13 +229,11 @@ const HomeScreen = ({accessToken, navigation}) => {
     setRefreshing(false);
   };
 
-  /*
-  useFocusEffect(
-    useCallback(() => {
-      fetchWeather();
-    }, []),
-  );
-  */
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchWeather();
+  //   }, []),
+  // );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -270,7 +295,10 @@ const HomeScreen = ({accessToken, navigation}) => {
         <View style={styles.emptyContainer} />
       )}
 
-      <CopilotStep text="게시글을 작성해 보세요!" order={0} name="write">
+      <CopilotStep
+        text="우리 동네 날씨를 공유해 보세요!"
+        order={0}
+        name="write">
         <CopilotView style={styles.floatingButtonWrapper}>
           <TouchableOpacity
             style={[
@@ -284,6 +312,16 @@ const HomeScreen = ({accessToken, navigation}) => {
             />
           </TouchableOpacity>
         </CopilotView>
+      </CopilotStep>
+      <CopilotStep
+        // text={`카카오톡으로 지금 날씨를 공유해 보세요!\n열심히 활동하면 레벨이 올라가요!`.replace(
+        //   /\n/g,
+        //   '\n',
+        // )}
+        text="카카오톡으로 지금 날씨를 공유해 보세요!"
+        order={4}
+        name="share">
+        <CopilotView style={styles.bottomGuideDummy} />
       </CopilotStep>
     </View>
   );
@@ -302,10 +340,10 @@ const styles = StyleSheet.create({
     right: width * 0.05,
     width: width * 0.16,
     height: width * 0.16,
-    zIndex: 9999, // 👈 Copilot 위치 표시를 방해하지 않도록
+    zIndex: 9999,
   },
   floatingButton: {
-    flex: 1, // 👈 부모인 CopilotView에 맞게 채우기
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 999,
@@ -320,8 +358,14 @@ const styles = StyleSheet.create({
     height: 25,
     tintColor: '#FFFFFF',
   },
+  bottomGuideDummy: {
+    position: 'absolute',
+    bottom: height * 0.01,
+    left: 0,
+    right: 0,
+    height: 0,
+    zIndex: 9999,
+  },
 });
 
 export default HomeScreen;
-
-// 수정 시작

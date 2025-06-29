@@ -10,12 +10,15 @@ import {
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {CopilotStep, walkthroughable} from 'react-native-copilot';
 import {fetchPopularPosts, toggleLikePost} from '../api/api';
 
 const {width} = Dimensions.get('window');
 
 const CARD_WIDTH = width * 0.92;
 const CARD_MARGIN = 10;
+
+const CopilotView = walkthroughable(View);
 
 const Posts = ({accessToken, refreshing}) => {
   const navigation = useNavigation();
@@ -30,6 +33,11 @@ const Posts = ({accessToken, refreshing}) => {
     LV5: require('../../assets/images/LV5.png'),
     LV6: require('../../assets/images/LV6.png'),
   };
+
+  const tutorialText = `
+  현재 레벨과 날씨 체감 유형을 볼 수 있어요.
+  열심히 활동하면 레벨이 올라가요!
+  `.trim();
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -147,6 +155,8 @@ const Posts = ({accessToken, refreshing}) => {
             style={styles.profileImage}
             onError={() => {}}
           />
+
+          {/* default 게시글 확인*/}
           <View style={styles.userInfo}>
             <View style={styles.userRow}>
               <Text style={styles.username}>{item.memberInfo.memberName}</Text>
@@ -208,29 +218,35 @@ const Posts = ({accessToken, refreshing}) => {
   );
 
   return (
-    <FlatList
-      data={newPosts}
-      keyExtractor={item => item.postInfo.postId.toString()}
-      renderItem={renderPost}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      snapToInterval={CARD_WIDTH + CARD_MARGIN}
-      snapToAlignment="start"
-      decelerationRate="fast"
-      contentContainerStyle={{paddingHorizontal: CARD_MARGIN / 2}}
-      ItemSeparatorComponent={() => <View style={{width: CARD_MARGIN}} />}
-      ListFooterComponent={
-        <View style={styles.footerShadowContainer}>
-          <View style={styles.card}>
-            <TouchableOpacity
-              style={styles.moreContainer}
-              onPress={() => navigation.navigate('Community')}>
-              <Text style={styles.moreText}>더 보기</Text>
-            </TouchableOpacity>
+    <View style={{flex: 1, position: 'relative'}}>
+      <CopilotStep name="posts" order={3} text={tutorialText}>
+        <CopilotView style={styles.fixedTutorialWrapper} />
+      </CopilotStep>
+
+      <FlatList
+        data={newPosts}
+        keyExtractor={item => item.postInfo.postId.toString()}
+        renderItem={renderPost}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_WIDTH + CARD_MARGIN}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        contentContainerStyle={{paddingHorizontal: CARD_MARGIN / 2}}
+        ItemSeparatorComponent={() => <View style={{width: CARD_MARGIN}} />}
+        ListFooterComponent={
+          <View style={styles.footerShadowContainer}>
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={styles.moreContainer}
+                onPress={() => navigation.navigate('Community')}>
+                <Text style={styles.moreText}>더 보기</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      }
-    />
+        }
+      />
+    </View>
   );
 };
 
@@ -293,6 +309,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  userRowInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    flexShrink: 1,
+  },
   username: {
     color: '#333',
     fontWeight: 'bold',
@@ -340,7 +362,7 @@ const styles = StyleSheet.create({
   },
   sensitivityBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2,
     borderRadius: 12,
     marginLeft: -2,
   },
@@ -352,6 +374,16 @@ const styles = StyleSheet.create({
     width: 36,
     height: 16,
     marginLeft: -7,
+  },
+  fixedTutorialWrapper: {
+    position: 'absolute',
+    top: 10,
+    width: CARD_WIDTH,
+    height: 60, // 하이라이트 높이
+    alignSelf: 'center',
+    marginTop: 0, // 카드 첫 항목과 동일한 여백
+    backgroundColor: 'transparent',
+    // zIndex: 100,
   },
 });
 

@@ -75,15 +75,17 @@ const CommunityScreen = ({accessToken, navigation}) => {
   };
 
   const loadWeatherData = async () => {
+    if (isFetchingWeather) return; // 중복 방지
+
     try {
+      setIsFetchingWeather(true);
       const data = await fetchWeatherData(accessToken);
       setWeatherData(data);
-      console.log('(중복 호출 문제 해결) Weather data fetched and saved.');
+      console.log('(중복 호출 방지됨) Weather data fetched and saved.');
     } catch (error) {
-      console.error(
-        '(중복 호출 문제 발생) Failed to fetch weather data:',
-        error,
-      );
+      console.error('(중복 호출 발생) Failed to fetch weather data:', error);
+    } finally {
+      setIsFetchingWeather(false);
     }
   };
 
@@ -104,7 +106,7 @@ const CommunityScreen = ({accessToken, navigation}) => {
   useFocusEffect(
     useCallback(() => {
       loadPosts(false);
-    }, [weatherData]),
+    }, []), // 무한 루프 방지
   );
 
   useEffect(() => {
@@ -128,27 +130,31 @@ const CommunityScreen = ({accessToken, navigation}) => {
     return () => clearInterval(interval);
   }, [weatherData]);
 
+  // CLOUDY 배경색 업데이트 관련
+  useEffect(() => {
+    if (weatherData) {
+      updateButtonBackgroundColor();
+    }
+  }, [weatherData]);
+
   return (
     <View style={styles.container}>
       <StatusBar hidden={true} />
       <WeatherHeaderCommunity
         accessToken={accessToken}
         refreshing={refreshing}
+        onWeatherData={data => {
+          setWeatherData({result: data}); // 기존 구조와 맞추기
+          // updateButtonBackgroundColor(); // 배경색 업데이트 - CLOUDY 배경색 업데이트 관련
+        }}
       />
-
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => loadPosts(true)}
-          />
-        }>
-        <PostScroll
-          accessToken={accessToken}
-          refreshPosts={refreshPosts}
-          onRefreshComplete={() => setRefreshPosts(false)}
-        />
-      </ScrollView>
+      <PostScroll
+        accessToken={accessToken}
+        refreshPosts={refreshPosts}
+        onRefreshComplete={() => setRefreshPosts(false)}
+        refreshing={refreshing}
+        onRefresh={() => loadPosts(true)}
+      />
 
       <TouchableOpacity
         style={[
