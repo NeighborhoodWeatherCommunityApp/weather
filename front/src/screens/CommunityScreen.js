@@ -23,6 +23,8 @@ const CommunityScreen = ({accessToken, navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#3f7dfd');
 
+  const [weatherData, setWeatherData] = useState(null);
+
   const isNightTime = () => {
     const currentHour = new Date().getHours();
     return currentHour >= 18 || currentHour < 6;
@@ -62,11 +64,9 @@ const CommunityScreen = ({accessToken, navigation}) => {
     return '#3f7dfd';
   };
 
-  const updateButtonBackgroundColor = async () => {
+  const updateButtonBackgroundColor = () => {
     try {
-      const weatherData = await fetchWeatherData(accessToken);
       const weatherPerHourList = weatherData?.result?.weatherPerHourList || [];
-
       const newBackgroundColor = determineBackgroundColor(weatherPerHourList);
       setButtonBackgroundColor(newBackgroundColor);
     } catch (error) {
@@ -74,11 +74,29 @@ const CommunityScreen = ({accessToken, navigation}) => {
     }
   };
 
+  const loadWeatherData = async () => {
+    if (isFetchingWeather) return; // 중복 방지
+
+    try {
+      setIsFetchingWeather(true);
+      const data = await fetchWeatherData(accessToken);
+      setWeatherData(data);
+      console.log('(중복 호출 방지됨) Weather data fetched and saved.');
+    } catch (error) {
+      console.error('(중복 호출 발생) Failed to fetch weather data:', error);
+    } finally {
+      setIsFetchingWeather(false);
+    }
+  };
+
   const loadPosts = async (showRefreshIndicator = false) => {
     if (showRefreshIndicator) {
       setRefreshing(true);
     }
-    await updateButtonBackgroundColor();
+    if (!weatherData) {
+      await loadWeatherData();
+    }
+    updateButtonBackgroundColor();
     setRefreshPosts(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setRefreshPosts(false);
@@ -88,7 +106,7 @@ const CommunityScreen = ({accessToken, navigation}) => {
   useFocusEffect(
     useCallback(() => {
       loadPosts(false);
-    }, []),
+    }, []), // 무한 루프 방지
   );
 
   useEffect(() => {
@@ -100,12 +118,24 @@ const CommunityScreen = ({accessToken, navigation}) => {
   }, [refresh]);
 
   useEffect(() => {
+    // 앱 시작 시 날씨 데이터 한 번만 가져오기
+    loadWeatherData();
+  }, [accessToken]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       console.log('Updating button background color in CommunityScreen...');
       updateButtonBackgroundColor();
-    }, 300000);
+    }, 300000); // 5분마다 배경색 업데이트
     return () => clearInterval(interval);
-  }, [accessToken]);
+  }, [weatherData]);
+
+  // CLOUDY 배경색 업데이트 관련
+  useEffect(() => {
+    if (weatherData) {
+      updateButtonBackgroundColor();
+    }
+  }, [weatherData]);
 
   return (
     <View style={styles.container}>
@@ -113,21 +143,18 @@ const CommunityScreen = ({accessToken, navigation}) => {
       <WeatherHeaderCommunity
         accessToken={accessToken}
         refreshing={refreshing}
+        onWeatherData={data => {
+          setWeatherData({result: data}); // 기존 구조와 맞추기
+          // updateButtonBackgroundColor(); // 배경색 업데이트 - CLOUDY 배경색 업데이트 관련
+        }}
       />
-
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => loadPosts(true)}
-          />
-        }>
-        <PostScroll
-          accessToken={accessToken}
-          refreshPosts={refreshPosts}
-          onRefreshComplete={() => setRefreshPosts(false)}
-        />
-      </ScrollView>
+      <PostScroll
+        accessToken={accessToken}
+        refreshPosts={refreshPosts}
+        onRefreshComplete={() => setRefreshPosts(false)}
+        refreshing={refreshing}
+        onRefresh={() => loadPosts(true)}
+      />
 
       <TouchableOpacity
         style={[

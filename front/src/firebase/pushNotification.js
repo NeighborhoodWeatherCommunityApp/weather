@@ -16,7 +16,7 @@ export const requestUserPermission = async () => {
   if (Platform.OS === 'ios') {
     const authStatus = await requestPermission(messaging, {
       alert: true,
-      badge: true,
+      badge: false,
       sound: true,
     });
 

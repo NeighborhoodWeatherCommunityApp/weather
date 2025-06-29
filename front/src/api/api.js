@@ -1,7 +1,7 @@
 /* 개발 서버 */
-/* const BASE_URL = 'https://weather-community.shop'; */
+const BASE_URL = 'https://weather-community.shop';
 /* 운영 서버 */
-const BASE_URL = 'https://weather-community.store';
+/* const BASE_URL = 'https://weather-community.store'; */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -717,6 +717,210 @@ export const registerTermsAgreement = async (accessToken, agreements) => {
     return responseData;
   } catch (error) {
     console.error('Error registering terms agreement:', error);
+    throw error;
+  }
+};
+
+// 출석 체크 API
+export const checkInAttendance = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/attendance/check-in`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+    if (result.isSuccess) {
+      console.log('출석 체크 API 호출 성공:', result);
+      return result;
+    } else {
+      console.warn('출석 체크 API 호출 실패 (isSuccess = false):', result);
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error('Error during attendance check-in:', error);
+    throw error;
+  }
+};
+
+// 카카오 공유 경험치 획득 API
+export const rewardKakaoShare = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/epx/rewards/share-kakao`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+    console.log('카카오 공유 경험치 지급 API 응답:', result);
+
+    if (result?.isSuccess) {
+      return result;
+    } else {
+      console.warn('카카오 공유 경험치 지급 실패:', result?.message);
+      throw new Error(result?.message || 'Unknown error');
+    }
+  } catch (error) {
+    console.error('카카오 공유 경험치 API 호출 오류:', error?.message || error);
+    throw error;
+  }
+};
+
+// 선택 여부가 포함된 태그 조회 API
+export const fetchSelectedTags = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/selected-tags`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.isSuccess) {
+      console.log('선택된 태그 조회 API 호출 성공:', result.result);
+      return result.result;
+    } else {
+      console.warn('선택된 태그 조회 API 호출 실패 (isSuccess=false):', result);
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error('선택된 태그 조회 API 호출 오류:', error);
+    throw error;
+  }
+};
+
+// 마이페이지 진입시 레벨업 여부를 확인 API
+export const checkLevelUp = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/member/level`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.isSuccess) {
+      console.log('레벨업 확인 API 호출 성공:', result.result);
+      return result.result;
+    } else {
+      console.warn('레벨업 확인 API 호출 실패 (isSuccess=false):', result);
+      throw new Error(result.message);
+    }
+  } catch (error) {
+    console.error('레벨업 확인 API 호출 오류:', error);
+    throw error;
+  }
+};
+
+// 알림 기능 관련
+// 알림 생성 API
+export const createAlarmSetting = async (accessToken, alarmData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alarmData),
+    });
+
+    const responseData = await response.json();
+    console.log('[POST] 알림 생성 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('알림 생성 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 알림 조회 API
+export const fetchAlarmSetting = async accessToken => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const responseData = await response.json();
+    console.log('[GET] 알림 조회 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData.result;
+  } catch (error) {
+    console.error('알림 조회 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 알림 수정 API
+export const updateAlarmSetting = async (accessToken, alarmData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alarmData),
+    });
+
+    const responseData = await response.json();
+    console.log('[PATCH] 알림 수정 API 응답:', responseData);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('알림 수정 API 호출 실패:', error);
+    throw error;
+  }
+};
+
+// 테스트 알림 호출 API
+export const sendTestAlarm = async (accessToken, fcmToken) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v2/testAlarm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({fcmToken}),
+    });
+
+    const result = await response.json();
+    console.log('테스트 알림 호출 API 응답:', result);
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return result;
+  } catch (error) {
+    console.error('테스트 알림 API 호출 실패:', error);
     throw error;
   }
 };
