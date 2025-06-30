@@ -880,7 +880,7 @@ export const fetchAlarmSetting = async accessToken => {
 export const updateAlarmSetting = async (accessToken, alarmData) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
-      method: 'PATCH',
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
