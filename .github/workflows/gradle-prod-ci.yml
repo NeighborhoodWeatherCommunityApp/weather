@@ -45,7 +45,7 @@ jobs:
           apple.key.id: ${{ secrets.APPLE_KEY_ID }}
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
-          fcm.service-account: ${{secret.FCM_CREDENTIAL}}
+          fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
 
       - name: Grant execute permission for gradlew
         run: chmod +x back/gradlew
