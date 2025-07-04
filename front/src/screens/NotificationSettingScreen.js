@@ -52,7 +52,8 @@ const NotificationSettingScreen = ({accessToken}) => {
 
   const loadAlarmSettings = async () => {
     try {
-      const res = await fetchAlarmSetting(accessToken);
+      const fcmToken = await getLatestFcmToken();
+      const res = await fetchAlarmSetting(accessToken, fcmToken);
       if (!res) return;
 
       const {
@@ -380,11 +381,11 @@ const NotificationSettingScreen = ({accessToken}) => {
         <Text style={styles.buttonText}>설정 저장</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.button, {marginTop: 12}]}
         onPress={handleTestAlarm}>
         <Text style={styles.buttonText}>테스트 알림 전송</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </ScrollView>
   );
 };

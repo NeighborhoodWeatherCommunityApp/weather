@@ -852,18 +852,19 @@ export const createAlarmSetting = async (accessToken, alarmData) => {
 };
 
 // 알림 조회 API
-export const fetchAlarmSetting = async accessToken => {
+export const fetchAlarmSetting = async (accessToken, fcmToken) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
-      method: 'GET',
+    const response = await fetch(`${BASE_URL}/api/v2/alarm/by-fcm`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({fcmToken}),
     });
 
     const responseData = await response.json();
-    console.log('[GET] 알림 조회 API 응답:', responseData);
+    console.log('[POST] 알림 조회 API 응답:', responseData);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -880,7 +881,7 @@ export const fetchAlarmSetting = async accessToken => {
 export const updateAlarmSetting = async (accessToken, alarmData) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v2/alarm`, {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',

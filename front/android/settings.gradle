@@ -5,18 +5,3 @@ rootProject.name = 'Weather2'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-include ':@notifee_react-native'
-project(':@notifee_react-native').projectDir = new File(
-  rootProject.projectDir, '../node_modules/@notifee/react-native/android'
-)
-
-dependencyResolutionManagement {
-  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
-  repositories {
-    google()
-    mavenCentral()
-    maven {
-      url("$rootDir/../node_modules/@notifee/react-native/android/libs")
-    }
-  }
-}

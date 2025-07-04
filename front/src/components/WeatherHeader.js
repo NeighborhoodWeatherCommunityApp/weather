@@ -295,7 +295,7 @@ const WeatherHeader = ({
       end={{x: 1, y: 1}}
       style={styles.headerContainer}>
       <CopilotStep
-        text="텍스트로 직관적인 날씨를 볼 수 있어요"
+        text="직관적인 텍스트로 날씨를 알 수 있어요"
         order={1}
         name="toggle">
         <CopilotView style={styles.switch}>
