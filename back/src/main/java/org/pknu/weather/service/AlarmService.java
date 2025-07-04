@@ -55,9 +55,10 @@ public class AlarmService {
         alarmRepository.saveAndFlush(modifiedAlarm);
     }
 
-    public AlarmResponseDTO getAlarm(String fcmToken) {
-        Alarm foundAlarm = alarmRepository.findByfcmTokenWithSummaryAlarmTimes(fcmToken)
-                .orElseThrow(() -> new GeneralException(ErrorStatus._ALARM_NOT_FOUND));
+    public AlarmResponseDTO getAlarm(String email, String fcmToken) {
+        Member member = memberRepository.safeFindByEmail(email);
+        Alarm foundAlarm = alarmRepository.findByFcmTokenAndMember(fcmToken,member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._FCMTOKEN_NOT_FOUND));
 
         return toAlarmResponseDto(foundAlarm);
     }
