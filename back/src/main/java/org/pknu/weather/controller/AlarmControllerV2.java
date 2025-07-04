@@ -42,10 +42,11 @@ public class AlarmControllerV2 {
         return ApiResponse.onSuccess();
     }
 
-    @GetMapping("/alarm")
-    public ApiResponse<Object> getAlarm(@RequestHeader("Authorization") String authorization) {
-        String email = TokenConverter.getEmailByToken(authorization);
-        AlarmResponseDTO foundAlarm = alarmService.getAlarm(email);
+    @PostMapping("/alarm/by-fcm")
+    public ApiResponse<Object> getAlarm(@RequestHeader("Authorization") String authorization,
+                                        @RequestBody Map<String, String> payload) {
+        String fcmToken = payload.get("fcmToken");
+        AlarmResponseDTO foundAlarm = alarmService.getAlarm(fcmToken);
         return ApiResponse.onSuccess(foundAlarm);
     }
 

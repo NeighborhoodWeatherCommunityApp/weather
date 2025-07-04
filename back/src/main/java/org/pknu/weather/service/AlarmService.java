@@ -55,9 +55,8 @@ public class AlarmService {
         alarmRepository.saveAndFlush(modifiedAlarm);
     }
 
-    public AlarmResponseDTO getAlarm(String email) {
-        Member member = memberRepository.findMemberByEmail(email).orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
-        Alarm foundAlarm = alarmRepository.findByMemberWithSummaryAlarmTimes(member)
+    public AlarmResponseDTO getAlarm(String fcmToken) {
+        Alarm foundAlarm = alarmRepository.findByfcmTokenWithSummaryAlarmTimes(fcmToken)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._ALARM_NOT_FOUND));
 
         return toAlarmResponseDto(foundAlarm);
