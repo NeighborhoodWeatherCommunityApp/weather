@@ -27,7 +27,7 @@ public class Post extends BaseEntity {
     private Location location;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_id", nullable = true)
+    @JoinColumn(name = "tag_id")
     private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +35,7 @@ public class Post extends BaseEntity {
     private Member member;
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Recommendation> recommendationList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

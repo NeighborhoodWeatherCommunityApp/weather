@@ -58,11 +58,11 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     private List<Recommendation> recommendationList = new ArrayList<>();
 
