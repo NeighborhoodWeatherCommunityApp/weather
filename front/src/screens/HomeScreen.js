@@ -20,24 +20,18 @@ import WeatherGraph from '../components/WeatherGraph';
 import Posts from '../components/Posts';
 import KakaoShareButton from '../components/KakaoShareButton';
 import globalStyles from '../globalStyles';
-import {useCopilot, CopilotStep, walkthroughable} from 'react-native-copilot';
 import {InteractionManager} from 'react-native';
 import {fetchWeatherData, checkInAttendance, fetchMemberInfo} from '../api/api';
 
 const {width, height} = Dimensions.get('window');
-const CopilotView = walkthroughable(View);
-const TUTORIAL_COMPLETED_KEY = 'homeTutorialCompleted';
 
 const HomeScreen = ({accessToken, navigation}) => {
-  const {start} = useCopilot();
-
   const {refresh, setRefresh} = useRefresh();
   const [weatherData, setWeatherData] = useState(null);
   const [showText, setShowText] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#3f7dfd');
   const [isFetchingWeather, setIsFetchingWeather] = useState(false); // 중복 호출 방지
-  const [hasStartedTutorial, setHasStartedTutorial] = useState(false); // 튜토리얼
 
   const fetchWeather = async () => {
     if (isFetchingWeather) {
@@ -156,59 +150,10 @@ const HomeScreen = ({accessToken, navigation}) => {
     return kstNow.toISOString().split('T')[0];
   };
 
-  useEffect(() => {
-    const runOnce = async () => {
-      const done = await AsyncStorage.getItem('homeTutorialCompleted');
-
-      if (!done) {
-        // 튜토리얼 시작
-        InteractionManager.runAfterInteractions(() => {
-          start();
-        });
-        // 실행 플래그를 저장해서 다음번엔 실행되지 않도록
-        await AsyncStorage.setItem('homeTutorialCompleted', 'true');
-      }
-    };
-
-    runOnce();
-  }, [start]);
-
-  // 튜토리얼 시작 조건 및 실행 - 테스트
-  // useEffect(() => {
-  //   const tryStartTutorial = async () => {
-  //     const done = await AsyncStorage.getItem(TUTORIAL_COMPLETED_KEY);
-  //     if (!done && !hasStartedTutorial) {
-  //       setHasStartedTutorial(true); // 중복 방지
-  //       InteractionManager.runAfterInteractions(() => {
-  //         start();
-  //         AsyncStorage.setItem(TUTORIAL_COMPLETED_KEY, 'true');
-  //       });
-  //     }
-  //   };
-  //   tryStartTutorial();
-  // }, [start]);
-
-  // // 테스트용 - 앱 재실행 시 튜토리얼 시작 (추후 제거)
-  // useEffect(() => {
-  //   AsyncStorage.removeItem('homeTutorialCompleted');
-  // }, []);
-
   useFocusEffect(
     useCallback(() => {
-      fetchWeather(); // 날씨 데이터
-
-      const tryStartTutorial = async () => {
-        const done = await AsyncStorage.getItem(TUTORIAL_COMPLETED_KEY);
-        if (!done) {
-          InteractionManager.runAfterInteractions(() => {
-            start();
-            AsyncStorage.setItem(TUTORIAL_COMPLETED_KEY, 'true');
-          });
-        }
-      };
-
-      tryStartTutorial();
-    }, [start]),
+      fetchWeather();
+    }, []),
   );
 
   useEffect(() => {
@@ -295,34 +240,19 @@ const HomeScreen = ({accessToken, navigation}) => {
         <View style={styles.emptyContainer} />
       )}
 
-      <CopilotStep
-        text="우리 동네 날씨를 공유해 보세요!"
-        order={0}
-        name="write">
-        <CopilotView style={styles.floatingButtonWrapper}>
-          <TouchableOpacity
-            style={[
-              styles.floatingButton,
-              {backgroundColor: buttonBackgroundColor},
-            ]}
-            onPress={() => navigation.navigate('PostCreationScreen')}>
-            <Image
-              source={require('../../assets/images/icon_pencil.png')}
-              style={styles.buttonIcon}
-            />
-          </TouchableOpacity>
-        </CopilotView>
-      </CopilotStep>
-      <CopilotStep
-        // text={`카카오톡으로 지금 날씨를 공유해 보세요!\n열심히 활동하면 레벨이 올라가요!`.replace(
-        //   /\n/g,
-        //   '\n',
-        // )}
-        text="카카오톡으로 지금 날씨를 공유해 보세요!"
-        order={4}
-        name="share">
-        <CopilotView style={styles.bottomGuideDummy} />
-      </CopilotStep>
+      <View style={styles.floatingButtonWrapper}>
+        <TouchableOpacity
+          style={[
+            styles.floatingButton,
+            {backgroundColor: buttonBackgroundColor},
+          ]}
+          onPress={() => navigation.navigate('PostCreationScreen')}>
+          <Image
+            source={require('../../assets/images/icon_pencil.png')}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -360,7 +290,7 @@ const styles = StyleSheet.create({
   },
   bottomGuideDummy: {
     position: 'absolute',
-    bottom: height * 0.01,
+    bottom: height * 0.002,
     left: 0,
     right: 0,
     height: 0,

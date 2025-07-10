@@ -32,10 +32,9 @@ import {
 import {useFcmTokenSync} from './src/firebase/pushNotification';
 import {LevelUpProvider} from './src/contexts/LevelUpContext';
 import LevelUpModal from './src/components/LevelUpModal';
-import {CopilotProvider} from 'react-native-copilot';
 import {refreshAccessToken, fetchMemberInfo} from './src/api/api';
 import {logUserAction} from './src/api/googleSheetLogger';
-import {GOOGLE_ACCESS_TOKEN, GOOGLE_REFRESH_TOKEN} from '@env';
+import OnboardingScreen from './src/screens/OnboardingScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -186,6 +185,8 @@ const App = () => {
   const [locationId, setLocationId] = useState(null);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isProfileCompleted, setIsProfileCompleted] = useState(true);
+
+  const [showOnboarding, setShowOnboarding] = useState(null);
 
   // useEffect(() => {
   //   const checkLoginStatus = async () => {
@@ -361,7 +362,15 @@ const App = () => {
           const memberData = memberInfoResponse.result;
           setAccessToken(validAccessToken);
           setIsLoggedIn(true);
-          await logUserAction(memberData, 'app_open');
+
+          try {
+            await logUserAction(memberData, 'app_open');
+          } catch (e) {
+            console.warn(
+              '[logUserAction] failed but ignored:',
+              e?.message || e,
+            );
+          }
         } else {
           console.log('최종적으로 유효한 토큰 없음, 로그인 필요');
           setIsLoggedIn(false);
@@ -377,53 +386,21 @@ const App = () => {
     checkLoginStatus();
   }, []);
 
-  // // Google Sheets
   // useEffect(() => {
-  //   const injectPlaygroundTokensOnce = async () => {
-  //     const existing = await AsyncStorage.getItem('googleRefreshToken');
-  //     if (!existing) {
-  //       // 토큰 재발급 받은 경우 수동 저장
-  //       await AsyncStorage.setItem('accessTokenForSheets', GOOGLE_ACCESS_TOKEN);
-  //       await AsyncStorage.setItem('googleRefreshToken', GOOGLE_REFRESH_TOKEN);
-  //       console.log('New Playground 토큰 저장 완료');
-  //     }
-  //   };
-
-  //   injectPlaygroundTokensOnce();
+  //   // ⭐️ 테스트용: 앱을 열 때마다 온보딩 플래그 초기화
+  //   // 배포 빌드에서 주석 처리 필요
+  //   AsyncStorage.removeItem('homeTutorialCompleted').then(() =>
+  //     console.log('homeTutorialCompleted 플래그 초기화 완료'),
+  //   );
   // }, []);
 
-  // // // Google Sheets - 토큰 제거용
-  // useEffect(() => {
-  //   const resetPlaygroundTokens = async () => {
-  //     await AsyncStorage.removeItem('accessTokenForSheets');
-  //     await AsyncStorage.removeItem('googleRefreshToken');
-  //     console.log('기존 토큰 제거 완료, 다음 실행 시 .env 값 반영');
-  //   };
-
-  //   resetPlaygroundTokens();
-  // }, []);
-
-  // Google Sheets
-  // 토큰이 없으면 .env 값을 저장, 이미 있으면 그대로 두기
+  // 온보딩 페이지 관련
   useEffect(() => {
-    const ensureSheetsTokens = async () => {
-      const [[, access], [, refresh]] = await AsyncStorage.multiGet([
-        'accessTokenForSheets',
-        'googleRefreshToken',
-      ]);
-
-      if (!access || !refresh) {
-        await AsyncStorage.multiSet([
-          ['accessTokenForSheets', GOOGLE_ACCESS_TOKEN],
-          ['googleRefreshToken', GOOGLE_REFRESH_TOKEN],
-        ]);
-        console.log('Google Sheets 토큰 초기화 완료');
-      } else {
-        console.log('Google Sheets 토큰 이미 존재, 초기화 생략');
-      }
+    const checkOnboardingCompleted = async () => {
+      const completed = await AsyncStorage.getItem('homeTutorialCompleted');
+      setShowOnboarding(completed !== 'true'); // 최초 실행이면 true
     };
-
-    ensureSheetsTokens();
+    checkOnboardingCompleted();
   }, []);
 
   useEffect(() => {
@@ -464,6 +441,17 @@ const App = () => {
     return <View style={styles.autoLoginBackground} />;
   }
 
+  if (showOnboarding) {
+    return (
+      <OnboardingScreen
+        onFinish={async () => {
+          await AsyncStorage.setItem('homeTutorialCompleted', 'true');
+          setShowOnboarding(false);
+        }}
+      />
+    );
+  }
+
   if (isDeleted || !isLoggedIn || !isProfileCompleted) {
     return (
       <NavigationContainer>
@@ -481,138 +469,130 @@ const App = () => {
 
   return (
     <>
-      <CopilotProvider
-        verticalOffset={verticalOffset}
-        tooltipStyle={{borderRadius: 10}}
-        overlay="svg"
-        animated
-        onStop={() => AsyncStorage.setItem('homeTutorialCompleted', 'true')}
-        onFinish={() => AsyncStorage.setItem('homeTutorialCompleted', 'true')}>
-        <LevelUpProvider>
-          <RefreshProvider>
-            <StatusBar
-              translucent
-              backgroundColor="transparent"
-              barStyle="dark-content"
-            />
-            <NavigationContainer>
-              {isLoggedIn ? (
-                isNewMember ? (
-                  <Stack.Navigator screenOptions={{headerShown: false}}>
-                    <Stack.Screen name="RegisterProfileScreen">
-                      {props => (
-                        <RegisterProfileScreen
-                          {...props}
-                          accessToken={accessToken}
-                          setIsNewMember={setIsNewMember}
-                          setIsLoggedIn={setIsLoggedIn}
-                          setIsProfileCompleted={setIsProfileCompleted}
-                          setIsDeleted={setIsDeleted}
-                        />
-                      )}
-                    </Stack.Screen>
-                  </Stack.Navigator>
-                ) : (
-                  <Tab.Navigator
-                    initialRouteName="Home"
-                    screenOptions={({route}) => ({
-                      headerShown: false,
-                      tabBarIcon: ({focused, color}) => {
-                        let iconSource;
-                        let size;
-
-                        switch (route.name) {
-                          case 'HomeStack':
-                            iconSource = require('./assets/images/icon_tab_home.png');
-                            size = 26;
-                            break;
-                          case 'Community':
-                            iconSource = require('./assets/images/icon_tab_community.png');
-                            size = 24;
-                            break;
-                          case 'My':
-                            iconSource = require('./assets/images/icon_tab_my.png');
-                            size = 29;
-                            break;
-                          default:
-                            size = 25;
-                        }
-
-                        return (
-                          <Image
-                            source={iconSource}
-                            style={{
-                              width: size,
-                              height: size,
-                              tintColor: focused ? '#3f51b5' : color,
-                            }}
-                          />
-                        );
-                      },
-                      tabBarActiveTintColor: '#3f51b5',
-                      tabBarInactiveTintColor: 'gray',
-                      tabBarStyle: {
-                        paddingTop: 5,
-                        paddingBottom: 10,
-                        height: 80,
-                      },
-                      tabBarLabelStyle: {
-                        fontSize: Platform.OS === 'ios' ? 10 : 12,
-                        paddingBottom: Platform.OS === 'ios' ? 18 : 10,
-                      },
-                    })}>
-                    <Tab.Screen
-                      name="HomeStack"
-                      options={{
-                        tabBarLabel: '홈',
-                      }}>
-                      {props => (
-                        <HomeStack {...props} accessToken={accessToken} />
-                      )}
-                    </Tab.Screen>
-                    <Tab.Screen
-                      name="Community"
-                      options={{
-                        tabBarLabel: '탐색',
-                      }}>
-                      {props => (
-                        <CommunityScreen {...props} accessToken={accessToken} />
-                      )}
-                    </Tab.Screen>
-                    <Tab.Screen
-                      name="My"
-                      options={{
-                        tabBarLabel: '프로필',
-                      }}>
-                      {props => (
-                        <MyStack
-                          {...props}
-                          accessToken={accessToken}
-                          setIsNewMember={setIsNewMember}
-                          setLocationId={setLocationId}
-                          setIsLoggedIn={setIsLoggedIn}
-                          setAccessToken={setAccessToken}
-                          setIsDeleted={setIsDeleted}
-                          setIsProfileCompleted={setIsProfileCompleted}
-                        />
-                      )}
-                    </Tab.Screen>
-                  </Tab.Navigator>
-                )
+      <LevelUpProvider>
+        <RefreshProvider>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle="dark-content"
+          />
+          <NavigationContainer>
+            {isLoggedIn ? (
+              isNewMember ? (
+                <Stack.Navigator screenOptions={{headerShown: false}}>
+                  <Stack.Screen name="RegisterProfileScreen">
+                    {props => (
+                      <RegisterProfileScreen
+                        {...props}
+                        accessToken={accessToken}
+                        setIsNewMember={setIsNewMember}
+                        setIsLoggedIn={setIsLoggedIn}
+                        setIsProfileCompleted={setIsProfileCompleted}
+                        setIsDeleted={setIsDeleted}
+                      />
+                    )}
+                  </Stack.Screen>
+                </Stack.Navigator>
               ) : (
-                <AuthStack
-                  setIsLoggedIn={setIsLoggedIn}
-                  setAccessToken={setAccessToken}
-                  setIsNewMember={setIsNewMember}
-                  setIsDeleted={setIsDeleted}
-                  setIsProfileCompleted={setIsProfileCompleted}
-                />
-              )}
-            </NavigationContainer>
-            <LevelUpModal />
-          </RefreshProvider>
-        </LevelUpProvider>
-      </CopilotProvider>
+                <Tab.Navigator
+                  initialRouteName="Home"
+                  screenOptions={({route}) => ({
+                    headerShown: false,
+                    tabBarIcon: ({focused, color}) => {
+                      let iconSource;
+                      let size;
+
+                      switch (route.name) {
+                        case 'HomeStack':
+                          iconSource = require('./assets/images/icon_tab_home.png');
+                          size = 26;
+                          break;
+                        case 'Community':
+                          iconSource = require('./assets/images/icon_tab_community.png');
+                          size = 24;
+                          break;
+                        case 'My':
+                          iconSource = require('./assets/images/icon_tab_my.png');
+                          size = 29;
+                          break;
+                        default:
+                          size = 25;
+                      }
+
+                      return (
+                        <Image
+                          source={iconSource}
+                          style={{
+                            width: size,
+                            height: size,
+                            tintColor: focused ? '#3f51b5' : color,
+                          }}
+                        />
+                      );
+                    },
+                    tabBarActiveTintColor: '#3f51b5',
+                    tabBarInactiveTintColor: 'gray',
+                    tabBarStyle: {
+                      paddingTop: 5,
+                      paddingBottom: 10,
+                      height: 80,
+                    },
+                    tabBarLabelStyle: {
+                      fontSize: Platform.OS === 'ios' ? 10 : 12,
+                      paddingBottom: Platform.OS === 'ios' ? 18 : 10,
+                    },
+                  })}>
+                  <Tab.Screen
+                    name="HomeStack"
+                    options={{
+                      tabBarLabel: '홈',
+                    }}>
+                    {props => (
+                      <HomeStack {...props} accessToken={accessToken} />
+                    )}
+                  </Tab.Screen>
+                  <Tab.Screen
+                    name="Community"
+                    options={{
+                      tabBarLabel: '탐색',
+                    }}>
+                    {props => (
+                      <CommunityScreen {...props} accessToken={accessToken} />
+                    )}
+                  </Tab.Screen>
+                  <Tab.Screen
+                    name="My"
+                    options={{
+                      tabBarLabel: '프로필',
+                    }}>
+                    {props => (
+                      <MyStack
+                        {...props}
+                        accessToken={accessToken}
+                        setIsNewMember={setIsNewMember}
+                        setLocationId={setLocationId}
+                        setIsLoggedIn={setIsLoggedIn}
+                        setAccessToken={setAccessToken}
+                        setIsDeleted={setIsDeleted}
+                        setIsProfileCompleted={setIsProfileCompleted}
+                      />
+                    )}
+                  </Tab.Screen>
+                </Tab.Navigator>
+              )
+            ) : (
+              <AuthStack
+                setIsLoggedIn={setIsLoggedIn}
+                setAccessToken={setAccessToken}
+                setIsNewMember={setIsNewMember}
+                setIsDeleted={setIsDeleted}
+                setIsProfileCompleted={setIsProfileCompleted}
+              />
+            )}
+          </NavigationContainer>
+          <LevelUpModal />
+        </RefreshProvider>
+      </LevelUpProvider>
     </>
   );
 };

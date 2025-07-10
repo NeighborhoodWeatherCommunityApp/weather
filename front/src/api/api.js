@@ -49,33 +49,49 @@ export const refreshAccessToken = async () => {
     const accessToken = await AsyncStorage.getItem('accessToken');
     const refreshToken = await AsyncStorage.getItem('refreshToken');
 
-    console.log('Retrieved accessToken:', accessToken);
-    console.log('Retrieved refreshToken:', refreshToken);
-
     if (!accessToken || !refreshToken) {
-      throw new Error('No access token or refresh token found');
+      throw new Error('로컬 토큰이 없습니다.');
     }
 
-    const response = await fetch(`${BASE_URL}/refreshToken`, {
+    console.log('[refreshAccessToken] sending →', {
+      accessToken,
+      refreshToken,
+    });
+
+    const res = await fetch(`${BASE_URL}/refreshToken`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({accessToken, refreshToken}),
     });
 
-    const result = await response.json();
+    const data = await res.json();
+    console.log('[refreshAccessToken] response', data);
 
-    console.log('Refresh Token API response:', JSON.stringify(result, null, 2));
-
-    if (result.isSuccess) {
-      await AsyncStorage.setItem('accessToken', result.result.accessToken);
-      return result.result.accessToken;
-    } else {
-      throw new Error(result.message || 'Failed to refresh access token');
+    if (!data?.isSuccess || !data?.result) {
+      throw new Error(data?.message || '토큰 재발급 실패');
     }
+
+    const {accessToken: newAccessToken, refreshToken: newRefreshToken} =
+      data.result;
+
+    if (!newAccessToken) throw new Error('accessToken 누락');
+
+    await AsyncStorage.setItem('accessToken', newAccessToken);
+
+    // 새 refreshToken 이 오면 만료 3 일 이하 ->  덮어쓰기
+    if (newRefreshToken) {
+      await AsyncStorage.setItem('refreshToken', newRefreshToken);
+      console.log('refreshToken 갱신 완료');
+    } else {
+      console.log('refreshToken 그대로 유지');
+    }
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken ?? refreshToken,
+    };
   } catch (err) {
-    console.error('Failed to refresh access token:', err);
+    console.error('[refreshAccessToken] 실패:', err);
     throw err;
   }
 };

@@ -16,6 +16,7 @@ import {
   createPost,
   fetchMemberInfo,
 } from '../api/api';
+import {logPostCreation} from '../api/googleSheetLogger';
 
 const PostCreationScreen = ({navigation, accessToken, route}) => {
   const {onPostCreated} = route.params || {};
@@ -35,6 +36,8 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
   const [nickname, setNickname] = useState('');
   const [profileImage, setProfileImage] = useState(null);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     const initializeData = async () => {
       try {
@@ -49,12 +52,6 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
           tags = await fetchWeatherTags(accessToken); // const tags = await fetchSelectedTags(accessToken);
         }
 
-        // setTemperatureTags(tags.TemperatureTag);
-        // setWeatherTags(tags.SkyTag);
-        // setHumidityTags(tags.HumidityTag);
-        // setWindTags(tags.WindTag);
-        // setAirQualityTags(tags.DustTag);
-        // ▸ 대/소문자 모두 확인하고, 없으면 []
         const tTemp = tags?.TemperatureTag ?? tags?.temperatureTag ?? [];
         const tSky = tags?.SkyTag ?? tags?.skyTag ?? [];
         const tHum = tags?.HumidityTag ?? tags?.humidityTag ?? [];
@@ -67,14 +64,6 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
         setWindTags(tWind);
         setAirQualityTags(tDust);
 
-        // setTemperature(
-        //   tags.TemperatureTag.find(tag => tag.selected)?.code || null,
-        // );
-        // setWeather(tags.SkyTag.find(tag => tag.selected)?.code || null);
-        // setHumidity(tags.HumidityTag.find(tag => tag.selected)?.code || null);
-        // setWind(tags.WindTag.find(tag => tag.selected)?.code || null);
-        // setAirQuality(tags.DustTag.find(tag => tag.selected)?.code || null);
-        // ▸ 선택된 태그 초기값도 같은 방식으로 보정
         setTemperature(tTemp.find(tag => tag.selected)?.code || null);
         setWeather(tSky.find(tag => tag.selected)?.code || null);
         setHumidity(tHum.find(tag => tag.selected)?.code || null);
@@ -124,10 +113,14 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (!temperature || !weather || !humidity || !wind || !airQuality) {
       Alert.alert('태그 선택', '아직 선택하지 않은 태그가 있어요.');
       return;
     }
+
+    setIsSubmitting(true);
 
     const postData = {
       content: description,
@@ -142,6 +135,12 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
       const response = await createPost(postData, accessToken);
       console.log('Post created successfully:', response);
 
+      const memberInfoRes = await fetchMemberInfo(accessToken);
+      if (memberInfoRes?.isSuccess) {
+        // 게시글 작성 로그 전송
+        await logPostCreation(memberInfoRes.result, 'post_creation');
+      }
+
       if (onPostCreated) {
         onPostCreated();
       }
@@ -150,6 +149,8 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
       navigation.jumpTo('Community');
     } catch (error) {
       console.error('Failed to create post:', error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -296,7 +297,10 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
         </ScrollView>
       </View>
 
-      <TouchableOpacity style={styles.shareButton} onPress={handleSubmit}>
+      <TouchableOpacity
+        style={[styles.shareButton, isSubmitting && {opacity: 0.5}]}
+        onPress={handleSubmit}
+        disabled={isSubmitting}>
         <Text style={styles.shareButtonText}>공유하기</Text>
       </TouchableOpacity>
     </ScrollView>

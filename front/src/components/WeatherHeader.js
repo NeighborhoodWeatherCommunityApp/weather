@@ -17,7 +17,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import Geolocation from 'react-native-geolocation-service';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {useRefresh} from '../contexts/RefreshContext';
-import {CopilotStep, walkthroughable} from 'react-native-copilot';
 import {
   fetchUserLocation,
   fetchWeatherTags,
@@ -28,8 +27,6 @@ const {width, height} = Dimensions.get('window');
 
 const aspectRatio = height / width;
 const isIpad = aspectRatio < 1.78;
-
-const CopilotView = walkthroughable(View);
 
 const WeatherHeader = ({
   accessToken,
@@ -294,15 +291,11 @@ const WeatherHeader = ({
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       style={styles.headerContainer}>
-      <CopilotStep
-        text="직관적인 텍스트로 날씨를 알 수 있어요"
-        order={1}
-        name="toggle">
-        <CopilotView style={styles.switch}>
-          <Switch value={isToggled} onValueChange={handleToggle} />
-        </CopilotView>
-      </CopilotStep>
-
+      <Switch
+        value={isToggled}
+        onValueChange={handleToggle}
+        style={styles.switch}
+      />
       <View style={styles.infoContainer}>
         <View style={styles.locationContainer}>
           <Image
@@ -328,31 +321,26 @@ const WeatherHeader = ({
         resizeMode="contain"
       />
 
-      <CopilotStep
-        text="태그로 빠르고 간편하게 날씨를 알 수 있어요"
-        order={2}
-        name="weatherTags">
-        <CopilotView style={styles.tagsContainer}>
-          {weatherTags.length > 0 ? (
-            weatherTags.map((tag, index) => (
-              <View key={index} style={styles.tag}>
-                <Text
-                  style={styles.tagText}
-                  numberOfLines={1}
-                  ellipsizeMode="tail">
-                  {tag.text}
-                </Text>
-              </View>
-            ))
-          ) : (
-            <View style={styles.tagNone}>
-              <Text style={styles.tagTextNone}>
-                게시글을 작성해서 태그를 공유해 주세요!
+      <View style={styles.tagsContainer}>
+        {weatherTags.length > 0 ? (
+          weatherTags.map((tag, index) => (
+            <View key={index} style={styles.tag}>
+              <Text
+                style={styles.tagText}
+                numberOfLines={1}
+                ellipsizeMode="tail">
+                {tag.text}
               </Text>
             </View>
-          )}
-        </CopilotView>
-      </CopilotStep>
+          ))
+        ) : (
+          <View style={styles.tagNone}>
+            <Text style={styles.tagTextNone}>
+              게시글을 작성해서 태그를 공유해 주세요!
+            </Text>
+          </View>
+        )}
+      </View>
     </LinearGradient>
   );
 };
