@@ -7,11 +7,13 @@ import org.pknu.weather.domain.Recommendation;
 public class RecommendationUtils {
 
     public static Integer likeCount(List<Recommendation> recommendationList) {
-        return recommendationList.size();
+        return Math.toIntExact(recommendationList.stream()
+                .filter(Recommendation::isNotDeleted).count());
     }
 
-    public static Boolean isClickable(List<Recommendation> recommendationList, Member member) {
+    public static Boolean isClickable(List<Recommendation> recommendationList, Member postViewer) {
         return recommendationList.stream()
-                .noneMatch(recommendation -> recommendation.getMember().getId().equals(member.getId()));
+                .filter(Recommendation::isNotDeleted)
+                .noneMatch(recommendation -> recommendation.getMember().equals(postViewer));
     }
 }

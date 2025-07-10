@@ -5,7 +5,7 @@ import {fetchExtraWeatherInfo} from '../api/api';
 
 const {width} = Dimensions.get('window');
 
-const AirQuality = ({accessToken, refreshing}) => {
+const AirQuality = ({accessToken, weatherData}) => {
   const [extraWeatherInfo, setExtraWeatherInfo] = useState({
     pm25Grade: 0,
     pm10Grade: 0,
@@ -14,7 +14,7 @@ const AirQuality = ({accessToken, refreshing}) => {
     pm10Value: null,
     pm25Value: null,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const getGradeText = grade => {
     if (grade === 0) return '좋음';
@@ -62,23 +62,25 @@ const AirQuality = ({accessToken, refreshing}) => {
     }
   };
 
-  useEffect(() => {
-    const loadExtraWeatherInfo = async () => {
-      try {
-        const data = await fetchExtraWeatherInfo(accessToken);
-        // console.log('Fetched extra weather info:', data);
-        setExtraWeatherInfo(data);
-      } catch (error) {
-        console.error('Error fetching extra weather info:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadExtraWeatherInfo = async () => {
+    if (loading || !accessToken) return;
+    setLoading(true);
+    try {
+      const data = await fetchExtraWeatherInfo(accessToken);
+      // console.log('Fetched extra weather info:', data);
+      setExtraWeatherInfo(data);
+    } catch (error) {
+      console.error('Error fetching extra weather info:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (accessToken) {
+  useEffect(() => {
+    if (weatherData) {
       loadExtraWeatherInfo();
     }
-  }, [accessToken, refreshing]);
+  }, [weatherData]);
 
   return (
     <View style={styles.container}>

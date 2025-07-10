@@ -1,19 +1,26 @@
 package org.pknu.weather.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.mapper.EnumTagMapper;
-import org.pknu.weather.domain.*;
+import org.pknu.weather.domain.Location;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Post;
+import org.pknu.weather.domain.Tag;
 import org.pknu.weather.domain.common.PostType;
+import org.pknu.weather.domain.tag.SkyTag;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.converter.PostConverter;
-import org.pknu.weather.dto.converter.RecommendationConverter;
 import org.pknu.weather.dto.converter.TagConverter;
-import org.pknu.weather.repository.*;
+import org.pknu.weather.event.exp.PostCreatedEvent;
+import org.pknu.weather.event.alarm.LiveRainAlarmCreatedEvent;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.repository.PostRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -21,10 +28,9 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final RecommendationRepository recommendationRepository;
     private final LocationRepository locationRepository;
-    private final WeatherRepository weatherRepository;
     private final EnumTagMapper enumTagMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<Post> getPosts(Long memberId, Long lastPostId, Long size, String postType, Long locationId) {
@@ -45,6 +51,7 @@ public class PostService {
 
     /**
      * 게시글과 날씨 태그를 생성합니다.
+     *
      * @param email
      * @param createPost
      * @return
@@ -57,40 +64,37 @@ public class PostService {
         Post post = PostConverter.toPost(member, tag, createPost.getContent());
 
         post.addTag(tag);
-        post = postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        eventPublisher.publishEvent(new PostCreatedEvent(member.getEmail()));
 
-        Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
+        if(tag.getSkyTag().equals(SkyTag.RAIN))
+            eventPublisher.publishEvent(new LiveRainAlarmCreatedEvent(savedPost.getId()));
 
         return true;
     }
-
 
     @Transactional
     public boolean createWeatherPostV2(String email, PostRequest.CreatePostAndTagParameters params) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
 
-        if(!params.parametersIsEmpty()) {
+        if (!params.parametersIsEmpty()) {
             Post post = PostConverter.toPost(member, params.getContent());
             Tag tag = TagConverter.toTag(params, location, enumTagMapper);
             post.addTag(tag);
             postRepository.save(post);
-
-            Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
             return true;
         }
 
-        if(params.contentIsEmpty()) {
+        if (params.contentIsEmpty()) {
             Post post = PostConverter.toContentEmptyPost(member);
             Tag tag = TagConverter.toTag(params, location, enumTagMapper);
             post.addTag(tag);
             postRepository.save(post);
-
-            Weather weather = weatherRepository.findByLocationClosePresentationTime(location);
             return true;
         }
 
-        if(params.tagKeyStringIsEmpty()) {
+        if (params.tagKeyStringIsEmpty()) {
             Post post = PostConverter.toPost(member, params.getContent());
             postRepository.save(post);
             return true;
@@ -105,29 +109,6 @@ public class PostService {
         Location location = locationRepository.safeFindById(params.getLocationId());
         Post post = PostConverter.toPost(member, params);
         postRepository.save(post);
-        return true;
-    }
-
-    /**
-     * 좋아요, 좋아요 취소를 수행합니다.
-     * @param email
-     * @param postId
-     * @return
-     */
-    @Transactional
-    public boolean addRecommendation(String email, Long postId) {
-        Member member = memberRepository.safeFindByEmail(email);
-        Boolean isRecommended = recommendationRepository.isRecommended(member.getId(), postId);
-
-        if (!isRecommended) {
-            recommendationRepository.deleteByMemberAndPostId(member, postId);
-            return true;
-        }
-
-        Post post = postRepository.safeFindById(postId);
-        Recommendation recommendation = RecommendationConverter.toRecommendation(member, post);
-
-        recommendationRepository.save(recommendation);
         return true;
     }
 }

@@ -22,6 +22,20 @@ const Posts = ({accessToken, refreshing}) => {
   const [newPosts, setNewPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const levelImages = {
+    LV1: require('../../assets/images/LV1.png'),
+    LV2: require('../../assets/images/LV2.png'),
+    LV3: require('../../assets/images/LV3.png'),
+    LV4: require('../../assets/images/LV4.png'),
+    LV5: require('../../assets/images/LV5.png'),
+    LV6: require('../../assets/images/LV6.png'),
+  };
+
+  const tutorialText = `
+  현재 레벨과 날씨 체감 유형을 볼 수 있어요.
+  열심히 활동하면 레벨이 올라가요!
+  `.trim();
+
   useEffect(() => {
     const loadPosts = async () => {
       try {
@@ -97,16 +111,27 @@ const Posts = ({accessToken, refreshing}) => {
     }
   };
 
-  const getUserIcon = sensitivity => {
+  const getSensitivityBadge = sensitivity => {
     switch (sensitivity) {
       case 'HOT':
-        return require('../../assets/images/icon_weather_clear.png');
-      case 'NONE':
-        return require('../../assets/images/icon_weather_partlycloudy.png');
+        return {
+          text: '더위를 잘 타는 유형',
+          backgroundColor: '#ffe5e5',
+          color: '#e74c3c',
+        };
       case 'COLD':
-        return require('../../assets/images/icon_weather_snow.png');
+        return {
+          text: '추위를 잘 타는 유형',
+          backgroundColor: '#e6f0ff',
+          color: '#3aa2e8',
+        };
+      case 'NONE':
       default:
-        return null;
+        return {
+          text: '평범한 유형',
+          backgroundColor: '#e8f9e3',
+          color: '#59bd83',
+        };
     }
   };
 
@@ -127,13 +152,38 @@ const Posts = ({accessToken, refreshing}) => {
             style={styles.profileImage}
             onError={() => {}}
           />
+
+          {/* default 게시글 확인*/}
           <View style={styles.userInfo}>
             <View style={styles.userRow}>
               <Text style={styles.username}>{item.memberInfo.memberName}</Text>
-              <Image
-                source={getUserIcon(item.memberInfo.sensitivity)}
-                style={styles.userIcon}
-              />
+              {item.memberInfo.levelName &&
+                levelImages[item.memberInfo.levelName] && (
+                  <Image
+                    source={levelImages[item.memberInfo.levelName]}
+                    style={styles.levelBadge}
+                    resizeMode="contain"
+                  />
+                )}
+
+              {item.postInfo.postId !== 'placeholder' &&
+                (() => {
+                  const badge = getSensitivityBadge(
+                    item.memberInfo.sensitivity,
+                  );
+                  return (
+                    <View
+                      style={[
+                        styles.sensitivityBadge,
+                        {backgroundColor: badge.backgroundColor},
+                      ]}>
+                      <Text
+                        style={[styles.sensitivityText, {color: badge.color}]}>
+                        {badge.text}
+                      </Text>
+                    </View>
+                  );
+                })()}
             </View>
             <Text style={styles.timeAgo}>{item.postInfo.createdAt}</Text>
           </View>
@@ -165,29 +215,31 @@ const Posts = ({accessToken, refreshing}) => {
   );
 
   return (
-    <FlatList
-      data={newPosts}
-      keyExtractor={item => item.postInfo.postId.toString()}
-      renderItem={renderPost}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      snapToInterval={CARD_WIDTH + CARD_MARGIN}
-      snapToAlignment="start"
-      decelerationRate="fast"
-      contentContainerStyle={{paddingHorizontal: CARD_MARGIN / 2}}
-      ItemSeparatorComponent={() => <View style={{width: CARD_MARGIN}} />}
-      ListFooterComponent={
-        <View style={styles.footerShadowContainer}>
-          <View style={styles.card}>
-            <TouchableOpacity
-              style={styles.moreContainer}
-              onPress={() => navigation.navigate('Community')}>
-              <Text style={styles.moreText}>더 보기</Text>
-            </TouchableOpacity>
+    <View style={{flex: 1, position: 'relative'}}>
+      <FlatList
+        data={newPosts}
+        keyExtractor={item => item.postInfo.postId.toString()}
+        renderItem={renderPost}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_WIDTH + CARD_MARGIN}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        contentContainerStyle={{paddingHorizontal: CARD_MARGIN / 2}}
+        ItemSeparatorComponent={() => <View style={{width: CARD_MARGIN}} />}
+        ListFooterComponent={
+          <View style={styles.footerShadowContainer}>
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={styles.moreContainer}
+                onPress={() => navigation.navigate('Community')}>
+                <Text style={styles.moreText}>더 보기</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      }
-    />
+        }
+      />
+    </View>
   );
 };
 
@@ -250,6 +302,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  userRowInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    flexShrink: 1,
+  },
   username: {
     color: '#333',
     fontWeight: 'bold',
@@ -294,6 +352,31 @@ const styles = StyleSheet.create({
     color: '#3f51b5',
     fontSize: 16,
     textAlign: 'center',
+  },
+  sensitivityBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: -2,
+  },
+  sensitivityText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  levelBadge: {
+    width: 36,
+    height: 16,
+    marginLeft: -7,
+  },
+  fixedTutorialWrapper: {
+    position: 'absolute',
+    top: 10,
+    width: CARD_WIDTH,
+    height: 60, // 하이라이트 높이
+    alignSelf: 'center',
+    marginTop: 0, // 카드 첫 항목과 동일한 여백
+    backgroundColor: 'transparent',
+    // zIndex: 100,
   },
 });
 

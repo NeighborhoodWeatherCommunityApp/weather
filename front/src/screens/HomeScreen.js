@@ -11,6 +11,8 @@ import {
   Dimensions,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Alert} from 'react-native';
 import WeatherHeader from '../components/WeatherHeader';
 import HourlyForecast from '../components/HourlyForecast';
 import AirQuality from '../components/AirQuality';
@@ -18,7 +20,8 @@ import WeatherGraph from '../components/WeatherGraph';
 import Posts from '../components/Posts';
 import KakaoShareButton from '../components/KakaoShareButton';
 import globalStyles from '../globalStyles';
-import {fetchWeatherData} from '../api/api';
+import {InteractionManager} from 'react-native';
+import {fetchWeatherData, checkInAttendance, fetchMemberInfo} from '../api/api';
 
 const {width, height} = Dimensions.get('window');
 
@@ -28,8 +31,15 @@ const HomeScreen = ({accessToken, navigation}) => {
   const [showText, setShowText] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [buttonBackgroundColor, setButtonBackgroundColor] = useState('#3f7dfd');
+  const [isFetchingWeather, setIsFetchingWeather] = useState(false); // 중복 호출 방지
 
   const fetchWeather = async () => {
+    if (isFetchingWeather) {
+      console.log('날씨 데이터 중복 호출 방지');
+      return;
+    }
+
+    setIsFetchingWeather(true);
     try {
       const data = await fetchWeatherData(accessToken);
 
@@ -56,6 +66,8 @@ const HomeScreen = ({accessToken, navigation}) => {
       }
     } catch (error) {
       console.error('Error fetching weather data:', error);
+    } finally {
+      setIsFetchingWeather(false);
     }
   };
 
@@ -95,6 +107,55 @@ const HomeScreen = ({accessToken, navigation}) => {
     }
   };
 
+  // 출석 체크 로직
+  const checkAttendanceOncePerDay = async () => {
+    const today = getKstToday(); // 한국 시간 기준 오늘 날짜 사용
+
+    try {
+      const memberInfo = await fetchMemberInfo(accessToken);
+      console.log('Fetched member info:', memberInfo);
+
+      const email = memberInfo?.result?.email;
+      if (!email) {
+        console.warn('이메일 정보를 가져오지 못했습니다.');
+        return;
+      }
+
+      const attendanceKey = `lastAttendanceDate_${email}`;
+      const lastCheckInDate = await AsyncStorage.getItem(attendanceKey);
+
+      if (lastCheckInDate === today) {
+        console.log(`이미 ${email} 계정으로 출석 완료된 날짜입니다:`, today);
+        return;
+      }
+
+      const result = await checkInAttendance(accessToken);
+      if (result?.isSuccess) {
+        console.log('출석 체크 성공:', result);
+        await AsyncStorage.setItem(attendanceKey, today);
+        Alert.alert('출석 완료', '오늘도 출석했습니다!');
+      } else {
+        throw new Error(result?.message || '출석 실패');
+      }
+    } catch (error) {
+      console.error('출석 체크 실패:', error.message);
+      Alert.alert('출석 실패', error.message || '오류가 발생했습니다.');
+    }
+  };
+
+  const getKstToday = () => {
+    const now = new Date();
+    const offsetMs = 9 * 60 * 60 * 1000;
+    const kstNow = new Date(now.getTime() + offsetMs);
+    return kstNow.toISOString().split('T')[0];
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchWeather();
+    }, []),
+  );
+
   useEffect(() => {
     if (refresh) {
       console.log('Refresh HomeScreen');
@@ -103,17 +164,21 @@ const HomeScreen = ({accessToken, navigation}) => {
     }
   }, [refresh]);
 
+  useEffect(() => {
+    checkAttendanceOncePerDay();
+  }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchWeather();
     setRefreshing(false);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchWeather();
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchWeather();
+  //   }, []),
+  // );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -175,17 +240,19 @@ const HomeScreen = ({accessToken, navigation}) => {
         <View style={styles.emptyContainer} />
       )}
 
-      <TouchableOpacity
-        style={[
-          styles.floatingButton,
-          {backgroundColor: buttonBackgroundColor},
-        ]}
-        onPress={() => navigation.navigate('PostCreationScreen')}>
-        <Image
-          source={require('../../assets/images/icon_pencil.png')}
-          style={styles.buttonIcon}
-        />
-      </TouchableOpacity>
+      <View style={styles.floatingButtonWrapper}>
+        <TouchableOpacity
+          style={[
+            styles.floatingButton,
+            {backgroundColor: buttonBackgroundColor},
+          ]}
+          onPress={() => navigation.navigate('PostCreationScreen')}>
+          <Image
+            source={require('../../assets/images/icon_pencil.png')}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -197,15 +264,19 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
   },
-  floatingButton: {
+  floatingButtonWrapper: {
     position: 'absolute',
     bottom: width * 0.05,
     right: width * 0.05,
     width: width * 0.16,
     height: width * 0.16,
-    borderRadius: 999,
+    zIndex: 9999,
+  },
+  floatingButton: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 999,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
@@ -216,6 +287,14 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     tintColor: '#FFFFFF',
+  },
+  bottomGuideDummy: {
+    position: 'absolute',
+    bottom: height * 0.002,
+    left: 0,
+    right: 0,
+    height: 0,
+    zIndex: 9999,
   },
 });
 

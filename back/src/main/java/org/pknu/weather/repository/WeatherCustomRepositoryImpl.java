@@ -1,24 +1,42 @@
 package org.pknu.weather.repository;
 
-import static org.pknu.weather.domain.QWeather.weather;
-
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.QueryUtils;
 import org.pknu.weather.domain.Location;
+import org.pknu.weather.domain.QLocation;
+import org.pknu.weather.domain.QWeather;
 import org.pknu.weather.domain.Weather;
+import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.dto.WeatherQueryResult;
+import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.pknu.weather.domain.QWeather.weather;
+
+@Slf4j
 @RequiredArgsConstructor
 public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final JdbcTemplate jdbcTemplate;
+    private final EntityManager em;
 
 
     /**
@@ -57,7 +75,7 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                 .withSecond(0)
                 .withNano(0);
 
-        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime();
+        LocalDateTime baseTime = DateTimeFormatter.getBaseLocalDateTime(LocalDateTime.now());
 
         LocalDateTime weatherBaseTime = jpaQueryFactory
                 .select(weather.basetime)
@@ -68,8 +86,7 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                 )
                 .fetchFirst();
 
-        assert weatherBaseTime != null;
-        return weatherBaseTime.isEqual(baseTime);
+        return weatherBaseTime != null && weatherBaseTime.isEqual(baseTime);
     }
 
     /**
@@ -98,16 +115,16 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
     }
 
     @Override
-    public Weather findByLocationClosePresentationTime(Location location) {
-        LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+    public Optional<Weather> findWeatherByClosestPresentationTime(Location location) {
+        LocalDateTime now = LocalDateTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0);
 
-        return jpaQueryFactory
+        return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(weather)
                 .where(
                         weather.location.eq(location),
                         weather.presentationTime.eq(now)
                 )
-                .fetchOne();
+                .fetchOne());
     }
 
     /**
@@ -132,5 +149,108 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                 .collect((Collectors.toMap(Weather::getPresentationTime,
                         weather -> weather,
                         (existing, replacement) -> existing)));
+    }
+
+    @Override
+    public List<WeatherSummaryDTO> findWeatherSummary(Set<Long> locationIds) {
+
+        QWeather weather = QWeather.weather;
+        QLocation location = QLocation.location;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDateTime = now.toLocalDate().plusDays(1).atStartOfDay();
+
+        BooleanExpression isRainOrShower = weather.rainType.in(RainType.RAIN, RainType.SHOWER);
+        BooleanExpression isSnow = weather.rainType.eq(RainType.SNOW);
+        BooleanExpression isRainAndSnow = weather.rainType.eq(RainType.RAIN_AND_SNOW);
+        BooleanExpression isNotNone = weather.rainType.ne(RainType.NONE);
+
+        NumberTemplate<Integer> rainCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainOrShower);
+        NumberTemplate<Integer> snowCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isSnow);
+        NumberTemplate<Integer> rainAndSnowCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isRainAndSnow);
+        NumberTemplate<Integer> notNoneCount = Expressions.numberTemplate(Integer.class,
+                "SUM(CASE WHEN {0} THEN 1 ELSE 0 END)", isNotNone);
+
+        StringExpression rainStatus = new CaseBuilder()
+                .when(rainAndSnowCount.gt(0)).then("RAIN_AND_SNOW")
+                .when(rainCount.gt(0).and(snowCount.eq(0))).then("RAIN")
+                .when(snowCount.gt(0).and(rainCount.eq(0))).then("SNOW")
+                .when(notNoneCount.eq(0)).then("NONE")
+                .otherwise("RAIN_AND_SNOW");
+
+        return jpaQueryFactory
+                .select(Projections.fields(
+                        WeatherSummaryDTO.class,
+                        location.id.as("locationId"),
+                        weather.temperature.max().as("maxTemp"),
+                        weather.temperature.min().as("minTemp"),
+                        rainStatus.as("rainStatus")
+                ))
+                .from(weather)
+                .join(weather.location, location)
+                .where(
+                        weather.presentationTime.between(now, endDateTime)
+                                .and(location.id.in(locationIds)))
+                .groupBy(location.id)
+                .fetch();
+    }
+
+    @Override
+    public void batchSave(List<Weather> newForecast, Location location) {
+        String query =
+                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        batchUpdateWeathers(query, newForecast, location);
+    }
+
+
+    @Override
+    public void batchUpdate(List<Weather> weatherList, Location location) {
+        String query =
+                "INSERT INTO weather(basetime, location_id, wind_speed, humidity, rain_prob, rain, rain_type, temperature, sensible_temperature, snow_cover, sky_type, presentation_time) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                        + "ON DUPLICATE KEY UPDATE "
+                        + "basetime = VALUES(basetime), wind_speed = VALUES(wind_speed), humidity = VALUES(humidity), rain_prob = VALUES(rain_prob), rain = VALUES(rain), rain_type = VALUES(rain_type), sensible_temperature = VALUES(sensible_temperature), snow_cover = VALUES(snow_cover), sky_type = VALUES(sky_type), presentation_time = VALUES(presentation_time)";
+        batchUpdateWeathers(query, weatherList, location);
+        em.clear();
+    }
+
+    private void batchUpdateWeathers(String query, List<Weather> forecast, Location location) {
+        jdbcTemplate.batchUpdate(query,
+                new BatchPreparedStatementSetter() {
+
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        Weather w = forecast.get(i);
+                        w.updateSensibleTemperature();
+
+                        ps.setTimestamp(1, Timestamp.valueOf(w.getBasetime()));
+                        ps.setLong(2, location.getId());
+                        ps.setDouble(3, w.getWindSpeed());
+                        ps.setInt(4, w.getHumidity());
+                        ps.setInt(5, w.getRainProb());
+                        ps.setFloat(6, w.getRain());
+                        ps.setInt(7, w.getRainType().ordinal());
+                        ps.setInt(8, w.getTemperature());
+                        ps.setDouble(9, w.getSensibleTemperature());
+                        ps.setFloat(10, w.getSnowCover());
+                        ps.setInt(11, w.getSkyType().ordinal());
+                        ps.setObject(12, w.getPresentationTime());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        if (forecast == null || forecast.isEmpty()) {
+                            log.warn("빈 날씨 데이터 리스트를 입력함.");
+                            return 0;
+                        }
+
+                        log.debug("Batch size: {}", forecast.size());
+                        return forecast.size();
+                    }
+                });
     }
 }

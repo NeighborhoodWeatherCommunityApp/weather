@@ -1,5 +1,7 @@
 package org.pknu.weather.dto.converter;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.RecommendationUtils;
 import org.pknu.weather.domain.Location;
@@ -8,14 +10,11 @@ import org.pknu.weather.domain.Post;
 import org.pknu.weather.domain.Recommendation;
 import org.pknu.weather.dto.PostResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PostResponseConverter {
     /**
      * @param postViewer 게시글을 조회한 사람
-     * @param postList post list
-     * @param hasNext 다음 게시글이 존재하는지 여부
+     * @param postList   post list
+     * @param hasNext    다음 게시글이 존재하는지 여부
      * @return PostResponse.PostList
      */
 
@@ -38,7 +37,7 @@ public class PostResponseConverter {
     }
 
     /**
-     * @param postViewer 게시글을 조회한 사람
+     * @param postViewer     게시글을 조회한 사람
      * @param latestPostList post list
      * @return List<PostResponse.Post> 형태로 반환합니다.
      */
@@ -51,7 +50,7 @@ public class PostResponseConverter {
     }
 
     private static PostResponse.Post toPost(Post post, Member postViewer) {
-        Member postAuthor  = post.getMember();
+        Member postAuthor = post.getMember();
 
         return PostResponse.Post.builder()
                 .postInfo(toPostInfo(post, postViewer))
@@ -67,6 +66,7 @@ public class PostResponseConverter {
                 .sensitivity(postAuthor.getSensitivity())
                 .city(location.getCity())
                 .street(location.getStreet())
+                .levelName(postAuthor.getLevel().name())
                 .build();
     }
 

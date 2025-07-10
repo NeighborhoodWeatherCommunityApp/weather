@@ -27,7 +27,7 @@ public class IntegrationLoggingAspect {
     @Around("org.pknu.weather.aop.Pointcuts.integrationLoggingPointcut()")
     public Object doLog(ProceedingJoinPoint pjp) throws Throwable {
         try {
-            LoggingUtils.logBefore(pjp, null);
+            LoggingUtils.logBefore(pjp, pjp.getArgs());
             long start = ExecutionTimerUtils.start();
 
             Object result = pjp.proceed();

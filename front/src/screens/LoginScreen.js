@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   Alert,
@@ -19,6 +19,7 @@ import {
   refreshAccessToken,
   fetchMemberInfo,
 } from '../api/api';
+import {Animated} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,6 +33,7 @@ const LoginScreen = ({
   isProfileCompleted,
 }) => {
   const [token, setToken] = useState('');
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const saveLoginMethod = async method => {
     try {
@@ -208,6 +210,14 @@ const LoginScreen = ({
   };
 
   useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  useEffect(() => {
     const checkStoredTokens = async () => {
       const logoutState = await AsyncStorage.getItem('logoutState');
       if (logoutState === 'true') {
@@ -285,17 +295,18 @@ const LoginScreen = ({
 
   return (
     <LinearGradient
-      colors={['#2F5AF4', '#0FA2AB']}
+      colors={['#f8fbff', '#dceeff']}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
       style={styles.container}>
-      <Image
-        source={require('../../assets/images/icon_app.png')}
-        style={styles.appIcon}
-      />
-
-      <Text style={styles.appTitle}>날씨 톡톡</Text>
-      <Text style={styles.appSubtitle}>우리 동네 날씨 커뮤니티</Text>
+      <Animated.View style={{opacity: fadeAnim, alignItems: 'center'}}>
+        <Image
+          source={require('../../assets/images/icon_app.png')}
+          style={styles.appIcon}
+        />
+        <Text style={styles.appTitle}>날씨톡톡</Text>
+        <Text style={styles.appSubtitle}>우리 동네 날씨 커뮤니티</Text>
+      </Animated.View>
 
       <TouchableHighlight style={styles.kakaoButton} onPress={handleKakaoLogin}>
         <Text style={styles.kakaoButtonText}>카카오톡으로 로그인</Text>
@@ -323,27 +334,30 @@ const LoginScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
   appIcon: {
-    width: width * 0.27,
-    height: width * 0.27,
-    marginTop: -width * 0.1,
-    marginBottom: 20,
-    borderRadius: 20,
+    width: width * 0.25,
+    height: width * 0.25,
+    borderRadius: 16,
+    marginBottom: height * 0.04,
   },
   appTitle: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: height * 0.01,
+    letterSpacing: 0.5,
   },
   appSubtitle: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: Platform.OS === 'ios' ? width * 0.53 : width * 0.7,
+    fontSize: 15,
+    color: '#555',
+    lineHeight: 25,
+    opacity: 0.85,
+    letterSpacing: 0.2,
+    marginBottom: height * 0.1,
   },
   title: {
     fontSize: 20,
@@ -368,6 +382,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: Platform.OS === 'ios' ? 20 : 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   kakaoButtonText: {
     fontSize: 16,
@@ -378,6 +397,11 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 45,
     borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   testAccountButton: {
     paddingVertical: 12,

@@ -16,7 +16,7 @@ export const requestUserPermission = async () => {
   if (Platform.OS === 'ios') {
     const authStatus = await requestPermission(messaging, {
       alert: true,
-      badge: true,
+      badge: false,
       sound: true,
     });
 
@@ -53,10 +53,11 @@ export const getFcmToken = async () => {
   try {
     const messaging = getMessaging();
     await messaging.registerDeviceForRemoteMessages();
-    // const token = await getToken(messaging);
+    const token = await getToken(messaging);
 
     if (token) {
       console.log('FCM Token:', token);
+      await AsyncStorage.setItem('fcmToken', token);
     } else {
       console.log('토큰이 생성되지 않았습니다.');
     }

@@ -1,6 +1,10 @@
 package org.pknu.weather.controller;
 
+import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.dto.PostResponse;
@@ -14,16 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
-
 /**
  * 메인 화면에 사용되는 API를 관리하는 컨트롤러. 화면용입니다.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/main")
+@Slf4j
 public class MainPageControllerV1 {
     private final MainPageService mainPageService;
     private final WeatherService weatherService;

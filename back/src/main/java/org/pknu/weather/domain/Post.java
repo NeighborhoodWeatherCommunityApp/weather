@@ -16,7 +16,7 @@ import java.util.List;
 public class Post extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
 
@@ -26,7 +26,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "tag_id")
     private Tag tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +35,7 @@ public class Post extends BaseEntity {
     private Member member;
 
     @Builder.Default
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Recommendation> recommendationList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -43,12 +44,6 @@ public class Post extends BaseEntity {
     private PostType postType = PostType.WEATHER;
 
     public void addTag(Tag tag) {
-        if(this.tag != null) {
-            this.tag.addPost(this);
-        }
         this.tag = tag;
-        if(tag != null) {
-            tag.addPost(this);
-        }
     }
 }

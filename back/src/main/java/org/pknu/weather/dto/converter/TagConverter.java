@@ -3,7 +3,11 @@ package org.pknu.weather.dto.converter;
 import org.pknu.weather.common.mapper.EnumTagMapper;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Tag;
-import org.pknu.weather.domain.tag.*;
+import org.pknu.weather.domain.tag.DustTag;
+import org.pknu.weather.domain.tag.HumidityTag;
+import org.pknu.weather.domain.tag.SkyTag;
+import org.pknu.weather.domain.tag.TemperatureTag;
+import org.pknu.weather.domain.tag.WindTag;
 import org.pknu.weather.dto.PostRequest;
 
 public class TagConverter {
@@ -19,7 +23,8 @@ public class TagConverter {
                 .build();
     }
 
-    public static Tag toTag(PostRequest.CreatePostAndTagParameters parameters, Location location, EnumTagMapper enumTagMapper) {
+    public static Tag toTag(PostRequest.CreatePostAndTagParameters parameters, Location location,
+                            EnumTagMapper enumTagMapper) {
         return Tag.builder()
                 .location(location)
                 .temperTag((TemperatureTag) enumTagMapper.get(parameters.getTemperatureTagKey()))
