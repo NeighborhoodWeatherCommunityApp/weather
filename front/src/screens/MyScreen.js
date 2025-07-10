@@ -1,4 +1,3 @@
-// 앱 버전 1.0.12 or 1.1.0
 import React, {useEffect, useState} from 'react';
 import {
   ScrollView,
@@ -337,7 +336,7 @@ const MyScreen = ({
           <Text style={styles.email}>{email}</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
-          <Text style={styles.profileEdit}>프로필 수정</Text>
+          <Text style={styles.profileEdit}>프로필 설정</Text>
         </TouchableOpacity>
       </View>
 

@@ -10,15 +10,12 @@ import {
   Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {CopilotStep, walkthroughable} from 'react-native-copilot';
 import {fetchPopularPosts, toggleLikePost} from '../api/api';
 
 const {width} = Dimensions.get('window');
 
 const CARD_WIDTH = width * 0.92;
 const CARD_MARGIN = 10;
-
-const CopilotView = walkthroughable(View);
 
 const Posts = ({accessToken, refreshing}) => {
   const navigation = useNavigation();
@@ -219,10 +216,6 @@ const Posts = ({accessToken, refreshing}) => {
 
   return (
     <View style={{flex: 1, position: 'relative'}}>
-      <CopilotStep name="posts" order={3} text={tutorialText}>
-        <CopilotView style={styles.fixedTutorialWrapper} />
-      </CopilotStep>
-
       <FlatList
         data={newPosts}
         keyExtractor={item => item.postInfo.postId.toString()}

@@ -20,6 +20,8 @@ import {
 } from '../api/api';
 import messaging from '@react-native-firebase/messaging';
 import {PermissionsAndroid} from 'react-native';
+import {getLatestFcmToken} from '../utils/fcm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('window');
 
@@ -50,7 +52,8 @@ const NotificationSettingScreen = ({accessToken}) => {
 
   const loadAlarmSettings = async () => {
     try {
-      const res = await fetchAlarmSetting(accessToken);
+      const fcmToken = await getLatestFcmToken();
+      const res = await fetchAlarmSetting(accessToken, fcmToken);
       if (!res) return;
 
       const {
@@ -84,6 +87,11 @@ const NotificationSettingScreen = ({accessToken}) => {
   useEffect(() => {
     checkPermission();
     loadAlarmSettings();
+
+    getLatestFcmToken().then(token => {
+      console.log('[NotificationSettingScreen] 현재 FCM 토큰:', token);
+    });
+
     const subscription = AppState.addEventListener(
       'change',
       handleAppStateChange,
@@ -169,7 +177,21 @@ const NotificationSettingScreen = ({accessToken}) => {
       if (summaryAlarmTimes.length === 0) {
         Alert.alert(
           '알림 시간 설정 필요',
-          '알림 시간을 최소 1개 이상 설정해 주세요.',
+          '알림 시간을 최소 1개 이상 선택해 주세요.',
+        );
+        return;
+      }
+
+      const nothingChecked =
+        !agreeTempAlarm &&
+        !agreePrecipAlarm &&
+        !agreeDustAlarm &&
+        !agreeUvAlarm;
+
+      if (nothingChecked) {
+        Alert.alert(
+          '알림 내용 설정 필요',
+          '알림 내용을 최소 1개 이상 선택해 주세요.',
         );
         return;
       }
@@ -186,7 +208,7 @@ const NotificationSettingScreen = ({accessToken}) => {
         return;
       }
 
-      const fcmToken = await messaging().getToken();
+      const fcmToken = await getLatestFcmToken();
       const formattedTimes = summaryAlarmTimes.map(time => TIME_KEY_MAP[time]);
 
       const alarmPayload = {
@@ -199,12 +221,41 @@ const NotificationSettingScreen = ({accessToken}) => {
         summaryAlarmTimes: formattedTimes,
       };
 
+      console.log(
+        '[NotificationSettingScreen] update/createAlarmSetting body:',
+        JSON.stringify(alarmPayload, null, 2),
+      );
+
+      console.log('[handleConfirm] alarmExists =', alarmExists);
+      console.log(
+        '[handleConfirm] 저장된 토큰 =',
+        await AsyncStorage.getItem('fcmToken'),
+      );
+      console.log('[handleConfirm] 현재 토큰   =', fcmToken);
+
+      // if (alarmExists) {
+      //   await updateAlarmSetting(accessToken, alarmPayload);
+      // } else {
+      //   await createAlarmSetting(accessToken, alarmPayload);
+      //   setAlarmExists(true);
+      // }
       if (alarmExists) {
-        await updateAlarmSetting(accessToken, alarmPayload);
+        try {
+          await updateAlarmSetting(accessToken, alarmPayload);
+        } catch (err) {
+          const code = err?.response?.data?.code;
+          if (code === 'ALARM_404_1') {
+            console.log('[handleConfirm] 토큰 레코드 없음 → POST 재시도');
+            await createAlarmSetting(accessToken, alarmPayload);
+          } else {
+            throw err;
+          }
+        }
       } else {
         await createAlarmSetting(accessToken, alarmPayload);
-        setAlarmExists(true);
       }
+
+      setAlarmExists(true);
 
       Alert.alert('알림 설정 완료', '설정이 정상적으로 저장되었습니다.');
     } catch (error) {
@@ -214,7 +265,7 @@ const NotificationSettingScreen = ({accessToken}) => {
 
   const handleTestAlarm = async () => {
     try {
-      const fcmToken = await messaging().getToken();
+      const fcmToken = await getLatestFcmToken();
       await sendTestAlarm(accessToken, fcmToken);
       Alert.alert(
         '테스트 알림 발송 완료',
@@ -391,6 +442,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginBottom: 10,
+    color: '#333',
   },
   subtext: {
     fontSize: 13,
