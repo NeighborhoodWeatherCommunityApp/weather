@@ -177,7 +177,21 @@ const NotificationSettingScreen = ({accessToken}) => {
       if (summaryAlarmTimes.length === 0) {
         Alert.alert(
           '알림 시간 설정 필요',
-          '알림 시간을 최소 1개 이상 설정해 주세요.',
+          '알림 시간을 최소 1개 이상 선택해 주세요.',
+        );
+        return;
+      }
+
+      const nothingChecked =
+        !agreeTempAlarm &&
+        !agreePrecipAlarm &&
+        !agreeDustAlarm &&
+        !agreeUvAlarm;
+
+      if (nothingChecked) {
+        Alert.alert(
+          '알림 내용 설정 필요',
+          '알림 내용을 최소 1개 이상 선택해 주세요.',
         );
         return;
       }
@@ -227,16 +241,14 @@ const NotificationSettingScreen = ({accessToken}) => {
       // }
       if (alarmExists) {
         try {
-          // ① 먼저 PATCH 시도
           await updateAlarmSetting(accessToken, alarmPayload);
         } catch (err) {
-          // ② 404-계열 에러면 새 레코드로 POST
           const code = err?.response?.data?.code;
           if (code === 'ALARM_404_1') {
             console.log('[handleConfirm] 토큰 레코드 없음 → POST 재시도');
             await createAlarmSetting(accessToken, alarmPayload);
           } else {
-            throw err; // 다른 에러라면 상위로 전파
+            throw err;
           }
         }
       } else {
@@ -430,6 +442,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginBottom: 10,
+    color: '#333',
   },
   subtext: {
     fontSize: 13,
