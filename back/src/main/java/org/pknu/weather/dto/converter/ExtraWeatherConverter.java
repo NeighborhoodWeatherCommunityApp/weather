@@ -1,7 +1,12 @@
 package org.pknu.weather.dto.converter;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.List;
 import org.pknu.weather.domain.ExtraWeather;
 import org.pknu.weather.domain.Location;
+import org.pknu.weather.dto.ExtraWeatherSummaryDTO;
 import org.pknu.weather.dto.WeatherResponse;
 
 public class ExtraWeatherConverter {
@@ -44,4 +49,40 @@ public class ExtraWeatherConverter {
                 .pm25value(extraWeatherInfo.getPm25Value())
                 .build();
     }
+
+    public static ExtraWeatherSummaryDTO toExtraWeatherSummaryDTO(ExtraWeather extraWeather) {
+        List<UvData> uvDataList = getUvData(extraWeather);
+
+        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1).with(LocalTime.MIDNIGHT);
+
+        UvData maxUv = uvDataList.stream()
+                .filter(data -> data.value() != null)
+                .filter(data -> data.time().isBefore(tomorrow))
+                .max(Comparator.comparing(UvData::value))
+                .orElse(new UvData(0, null));
+
+        return ExtraWeatherSummaryDTO.builder()
+                .locationId(extraWeather.getLocation().getId())
+                .pm10(extraWeather.getPm10())
+                .maxUvValue(maxUv.value())
+                .maxUvTime(String.valueOf(maxUv.time().getHour()))
+                .build();
+    }
+
+    private static List<UvData> getUvData(ExtraWeather extraWeather) {
+        LocalDateTime baseTime = extraWeather.getBasetime();
+
+        return List.of(
+                new UvData(extraWeather.getUv(), baseTime.plusHours(0)),
+                new UvData(extraWeather.getUvPlus3(), baseTime.plusHours(3)),
+                new UvData(extraWeather.getUvPlus6(), baseTime.plusHours(6)),
+                new UvData(extraWeather.getUvPlus9(), baseTime.plusHours(9)),
+                new UvData(extraWeather.getUvPlus12(), baseTime.plusHours(12)),
+                new UvData(extraWeather.getUvPlus15(), baseTime.plusHours(15)),
+                new UvData(extraWeather.getUvPlus18(), baseTime.plusHours(18)),
+                new UvData(extraWeather.getUvPlus21(), baseTime.plusHours(21))
+        );
+    }
+    public record UvData(Integer value, LocalDateTime time) {}
+
 }

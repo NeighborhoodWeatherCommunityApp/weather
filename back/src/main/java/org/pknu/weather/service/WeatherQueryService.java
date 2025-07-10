@@ -1,20 +1,28 @@
 package org.pknu.weather.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Weather;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
+import org.pknu.weather.event.weather.WeatherCreateEvent;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +32,36 @@ import org.springframework.transaction.annotation.Transactional;
 public class WeatherQueryService {
     private final MemberRepository memberRepository;
     private final WeatherRepository weatherRepository;
+    private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final ApplicationEventPublisher eventPublisher;
     private final CacheManager cm;
     private final String LOCATION_UPDATE_STORE = "locationUpdateStore";
     private final String LOCATION_CREATE_STORE = "locationCreateStore";
+
+    /**
+     * TODO: 성능 개선 필요
+     * 현재 ~ +24시간 까지의 날씨 정보를 불러옵니다.
+     *
+     * @param locationId
+     * @return
+     */
+    public List<Weather> getWeathers(Long locationId) {
+        return weatherRepository.findAllWithLocation(locationId, LocalDateTime.now().plusHours(24)).stream()
+                .sorted(Comparator.comparing(Weather::getPresentationTime))
+                .toList();
+    }
+
+    public Weather getNearestWeatherForecastToNow(Location location) {
+        Optional<Weather> optionalWeather = weatherRepository.findWeatherByClosestPresentationTime(location);
+
+        if (optionalWeather.isEmpty()) {
+            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            return newForecast.get(0);
+        }
+
+        return optionalWeather.get();
+    }
 
     public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
         Member member = memberRepository.safeFindByEmail(email);
@@ -49,7 +84,7 @@ public class WeatherQueryService {
         }
 
         boolean value = weatherRepository.weatherHasBeenUpdated(location);
-        if (!value) {
+        if (value) {
             cache.put(location.getId(), true);
         }
 
@@ -71,7 +106,7 @@ public class WeatherQueryService {
         }
 
         boolean value = weatherRepository.weatherHasBeenCreated(location);
-        if (!value) {
+        if (value) {
             cache.put(location.getId(), true);
         }
 

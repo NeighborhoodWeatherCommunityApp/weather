@@ -1,37 +1,39 @@
 package org.pknu.weather.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.security.util.logout.AppleUnlinker;
-import org.pknu.weather.security.util.logout.KakaoUnlinker;
-import org.pknu.weather.common.utils.LocalUploaderUtils;
-import org.pknu.weather.common.utils.S3UploaderUtils;
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.MemberTerms;
-import org.pknu.weather.domain.Terms;
-import org.pknu.weather.dto.MemberJoinDTO;
-import org.pknu.weather.dto.MemberResponse;
-import org.pknu.weather.dto.TermsDto;
-import org.pknu.weather.dto.converter.TermsConverter;
-import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.repository.MemberTermsRepository;
-import org.pknu.weather.repository.TermsRepository;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import static org.pknu.weather.dto.converter.MemberResponseConverter.toMemberResponseDTO;
+import static org.pknu.weather.dto.converter.MemberResponseConverter.toMemberResponseWithAddressDTO;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.pknu.weather.dto.converter.MemberResponseConverter.toMemberResponseDTO;
-import static org.pknu.weather.dto.converter.MemberResponseConverter.toMemberResponseWithAddressDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.common.utils.LocalUploaderUtils;
+import org.pknu.weather.common.utils.S3UploaderUtils;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.MemberTerms;
+import org.pknu.weather.domain.Terms;
+import org.pknu.weather.domain.exp.Level;
+import org.pknu.weather.dto.MemberJoinDTO;
+import org.pknu.weather.dto.MemberResponse;
+import org.pknu.weather.dto.MemberResponse.MemberLevelUpDTO;
+import org.pknu.weather.dto.TermsDto;
+import org.pknu.weather.dto.converter.MemberResponseConverter;
+import org.pknu.weather.dto.converter.TermsConverter;
+import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.repository.MemberTermsRepository;
+import org.pknu.weather.repository.TermsRepository;
+import org.pknu.weather.security.util.logout.AppleUnlinker;
+import org.pknu.weather.security.util.logout.KakaoUnlinker;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -57,7 +59,8 @@ public class MemberService {
     }
 
     public MemberResponse.MemberResponseWithAddressDTO findFullMemberInfoByEmail(String email) {
-        Member member = memberRepository.findMemberByEmail(email).orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
+        Member member = memberRepository.findMemberByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
         return toMemberResponseWithAddressDTO(member);
     }
 
@@ -68,7 +71,6 @@ public class MemberService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
 
         MultipartFile profileImg = memberJoinDTO.getProfileImg();
-
 
         if (isProfileImgValid(profileImg)) {
             uploadProfileImageToS3(memberJoinDTO, profileImg);
@@ -89,7 +91,8 @@ public class MemberService {
 
     /**
      * 회원가입 시 사용자 약관 동의를 저장하는 로직
-     * @param email 사용자의 email
+     *
+     * @param email    사용자의 email
      * @param termsDto 각 약관의 동의 여부
      */
     @Transactional
@@ -101,7 +104,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(Map<String, Object> memberInfo){
+    public void deleteMember(Map<String, Object> memberInfo) {
 
         deleteMemberFromDB(memberInfo);
 
@@ -113,6 +116,14 @@ public class MemberService {
             appleUnlinker.unlinkUser(String.valueOf(memberInfo.get("authenticationCode")));
         }
 
+    }
+
+    @Transactional
+    public MemberLevelUpDTO checkLevelUp(String email) {
+        Member member = memberRepository.safeFindByEmail(email);
+        Level prevLevel = member.getLevel();
+        Level currentLevel = member.levelUpCheckAndReturn();
+        return MemberResponseConverter.toMemberLevelDTO(prevLevel, currentLevel);
     }
 
     private void deleteMemberFromDB(Map<String, Object> memberInfo) {
@@ -145,7 +156,8 @@ public class MemberService {
     }
 
     private void removeExProfileImage(Member member) {
-        if (member.getProfileImageName() != null && !member.getProfileImageName().isEmpty() && !member.getProfileImageName().equals("basic.png")) {
+        if (member.getProfileImageName() != null && !member.getProfileImageName().isEmpty()
+                && !member.getProfileImageName().equals("basic.png")) {
             s3UploaderUtils.removeS3File(member.getProfileImageName());
         }
     }

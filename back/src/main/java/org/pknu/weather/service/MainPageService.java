@@ -9,17 +9,20 @@ import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.converter.WeatherResponseConverter;
+import org.pknu.weather.event.weather.WeatherCreateEvent;
+import org.pknu.weather.event.weather.WeatherUpdateEvent;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 메인페이지에서 사용되는 API를 위한 서비스 즉, 화면에 맞춰진 로직을 관리한다. 해당 서비스는 서비스를 의존할 수 있다.
- * 단 핵심 비즈니스 로직만 의존한다. 서비스를 참조하는 서비스를 한 곳으로 몰아서 서비스간 순환 참조를 방지한다.
+ * 메인페이지에서 사용되는 API를 위한 서비스 즉, 화면에 맞춰진 로직을 관리한다. 해당 서비스는 서비스를 의존할 수 있다. 단 핵심 비즈니스 로직만 의존한다. 서비스를 참조하는 서비스를 한 곳으로 몰아서
+ * 서비스간 순환 참조를 방지한다.
  */
 @Service
 @Slf4j
@@ -27,48 +30,53 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MainPageService {
     private final MemberRepository memberRepository;
-    private final WeatherService weatherService;
     private final WeatherQueryService weatherQueryService;
     private final LocationRepository locationRepository;
     private final PostQueryService postQueryService;
     private final TagQueryService tagQueryService;
+    private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
-     * 메인 페이지에 날씨와 관련된 데이터를 반환한다.
-     * 만약 해당 지역의 날씨의 갱신 시간이 지났다면 갱신을 시도하고 반환한다.
-     * 만약 해당 지역의 날씨 정보가 없다면 저장하고 반환한다.
+     * 메인 페이지에 날씨와 관련된 데이터를 반환한다. 만약 해당 지역의 날씨의 갱신 시간이 지났다면 갱신을 시도하고 반환한다. 만약 해당 지역의 날씨 정보가 없다면 저장하고 반환한다.
      *
      * @param email
      * @return
      */
-    @Transactional
     public WeatherResponse.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
         Member member = memberRepository.safeFindByEmail(email);
+        Location location = resolveLocation(member, locationId);
 
-        Location location;
-        if (locationId != null) {
-            location = locationRepository.safeFindById(locationId);
-        } else {
-            location = member.getLocation();
-        }
-
-        List<Weather> weatherList = new ArrayList<>();
-
-        // 해당 지역에 날씨 예보가 있는지 없는지 체크
-        if (!weatherQueryService.weatherHasBeenCreated(location)) {
-            weatherList = weatherService.getVillageShortTermForecast(location);
-            weatherService.saveWeathersAsync(location, weatherList);
+        List<Weather> weatherList = createWeatherIfRequired(location, member);
+        if (weatherList != null) {
             return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
         }
 
-        // 예보를 갱신할 시간이 되었는지 체크
-        if (!weatherQueryService.weatherHasBeenUpdated(location)) {
-            weatherService.updateWeathersAsync(location);
-        }
-
-        weatherList = weatherList.isEmpty() ? weatherService.getWeathers(location) : weatherList;
+        updateWeatherIfRequired(location);
+        weatherList = weatherQueryService.getWeathers(location.getId());
 
         return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
+    }
+
+    private Location resolveLocation(Member member, Long locationId) {
+        return locationId != null
+                ? locationRepository.safeFindById(locationId)
+                : member.getLocation();
+    }
+
+    private List<Weather> createWeatherIfRequired(Location location, Member member) {
+        if (!weatherQueryService.weatherHasBeenCreated(location)) {
+            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            return newForecast;
+        }
+        return null;
+    }
+
+    private void updateWeatherIfRequired(Location location) {
+        if (!weatherQueryService.weatherHasBeenUpdated(location)) {
+            eventPublisher.publishEvent(new WeatherUpdateEvent(location.getId()));
+        }
     }
 
     /**

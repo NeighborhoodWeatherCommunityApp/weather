@@ -1,9 +1,14 @@
 package org.pknu.weather.repository;
 
+import static org.pknu.weather.domain.QRecommendation.recommendation;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Recommendation;
 
-import static org.pknu.weather.domain.QRecommendation.recommendation;
+import java.time.LocalDateTime;
+
 
 @RequiredArgsConstructor
 public class RecommendationCustomRepositoryImpl implements RecommendationCustomRepository {
@@ -17,13 +22,44 @@ public class RecommendationCustomRepositoryImpl implements RecommendationCustomR
      * @return 좋아요를 누를 수 있으면 true, 누를 수 없으면 false
      */
     @Override
-    public Boolean isRecommended(Long memberId, Long postId) {
-        return jpaQueryFactory
+    public Boolean isRecommend(Long memberId, Long postId) {
+        Recommendation fetched = jpaQueryFactory
                 .selectFrom(recommendation)
                 .where(
                         recommendation.post.id.eq(postId),
                         recommendation.member.id.eq(memberId)
                 )
-                .fetchOne() == null;
+                .fetchOne();
+
+        return fetched == null || !fetched.getDeleted();
+    }
+
+    @Override
+    public int countTodayRecommendationByMemberId(Long memberId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = now.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1);
+
+        return jpaQueryFactory
+                .selectFrom(recommendation)
+                .where(
+                        recommendation.member.id.eq(memberId),
+                        recommendation.createdAt.after(start),
+                        recommendation.createdAt.before(end)
+                )
+                .fetch()
+                .size();
+    }
+
+    @Override
+    public void softDeleteByMemberAndPostId(Member member, Long postId) {
+        jpaQueryFactory
+                .update(recommendation)
+                .set(recommendation.deleted, true)
+                .where(
+                        recommendation.post.id.eq(postId),
+                        recommendation.member.id.eq(member.getId())
+                )
+                .execute();
     }
 }

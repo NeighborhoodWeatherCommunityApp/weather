@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Location extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "location_id")
     private Long id;
 
@@ -36,8 +36,7 @@ public class Location extends BaseEntity {
     private List<Weather> weatherList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "location",
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "location")
     private List<Tag> TagList = new ArrayList<>();
 
     public String getAddress() {
@@ -50,8 +49,12 @@ public class Location extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Location location = (Location) o;
         return Objects.equals(id, location.id);
     }

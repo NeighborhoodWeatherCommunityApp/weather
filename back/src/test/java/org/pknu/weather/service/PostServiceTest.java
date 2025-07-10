@@ -1,28 +1,43 @@
 package org.pknu.weather.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.pknu.weather.common.TestDataCreator;
-import org.pknu.weather.domain.*;
+import org.pknu.weather.domain.Location;
+import org.pknu.weather.domain.Member;
+import org.pknu.weather.domain.Post;
+import org.pknu.weather.domain.Recommendation;
+import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.common.PostType;
-import org.pknu.weather.domain.tag.*;
+import org.pknu.weather.domain.tag.DustTag;
+import org.pknu.weather.domain.tag.HumidityTag;
+import org.pknu.weather.domain.tag.SkyTag;
+import org.pknu.weather.domain.tag.TemperatureTag;
+import org.pknu.weather.domain.tag.WindTag;
 import org.pknu.weather.dto.PostRequest;
 import org.pknu.weather.dto.PostRequest.HobbyParams;
-import org.pknu.weather.repository.*;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.repository.PostRepository;
+import org.pknu.weather.repository.RecommendationRepository;
+import org.pknu.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest
 @Slf4j
+@SpringBootTest
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 class PostServiceTest {
 
     @Autowired
@@ -42,6 +57,9 @@ class PostServiceTest {
 
     @Autowired
     WeatherRepository weatherRepository;
+
+    @Autowired
+    RecommendationService recommendationService;
 
     @Autowired
     EntityManager em;
@@ -112,6 +130,7 @@ class PostServiceTest {
         Post post = postRepository.findAll().get(0);
         assertThat(post.getContent()).isEqualTo("test");
         assertThat(post.getMember().getId()).isEqualTo(member.getId());
+        assertThat(post.getMember().getLevel()).isEqualTo(member.getLevel());
     }
 
     @ParameterizedTest
@@ -121,7 +140,8 @@ class PostServiceTest {
             "content, , , , , ,"
     })
     @Transactional
-    void post_저장_테스트_v2(String content, String tempKey, String humidKey, String skyKey, String dustKey, String windKey) {
+    void post_저장_테스트_v2(String content, String tempKey, String humidKey, String skyKey, String dustKey,
+                        String windKey) {
         // given
         Location location = TestDataCreator.getBusanLocation();
         LocalDateTime now = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
@@ -195,7 +215,7 @@ class PostServiceTest {
         assertThat(postList.get(0)).isEqualTo(busanPost);
     }
 
-//    @Test
+    //    @Test
     @Transactional
     void postType이_다르면_게시글이_조회되지_않습니다() {
         // given
@@ -232,19 +252,23 @@ class PostServiceTest {
         Post post = postRepository.save(TestDataCreator.getPost(member1));
 
         // when
-        postService.addRecommendation(member1.getEmail(), post.getId());
-        postService.addRecommendation(member2.getEmail(), post.getId());
+        recommendationService.addRecommendation(member1.getEmail(), post.getId());
+        recommendationService.addRecommendation(member2.getEmail(), post.getId());
         em.flush();
         em.clear();
 
         post = postRepository.safeFindById(post.getId());
         assertThat(post.getRecommendationList().size()).isEqualTo(2);
 
-        postService.addRecommendation(member1.getEmail(), post.getId());
+        recommendationService.addRecommendation(member1.getEmail(), post.getId());
         em.flush();
         em.clear();
 
         post = postRepository.safeFindById(post.getId());
-        assertThat(post.getRecommendationList().size()).isEqualTo(1);
+        assertThat(
+                post.getRecommendationList().stream()
+                        .filter(Recommendation::isNotDeleted)
+                        .count())
+                .isEqualTo(1L);
     }
 }

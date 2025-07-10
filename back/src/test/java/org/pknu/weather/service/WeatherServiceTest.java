@@ -1,80 +1,92 @@
-//package org.pknu.weather.service;
-//
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.pknu.weather.common.utils.GeometryUtils;
-//import org.pknu.weather.domain.Location;
-//import org.pknu.weather.domain.Member;
-//import org.pknu.weather.domain.Weather;
-//import org.pknu.weather.domain.common.Sensitivity;
-//import org.pknu.weather.feignClient.WeatherFeignClient;
-//import org.pknu.weather.repository.LocationRepository;
-//import org.pknu.weather.repository.MemberRepository;
-//import org.pknu.weather.repository.WeatherRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.util.List;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//@SpringBootTest
-//class WeatherServiceTest {
-//    @Autowired
-//    WeatherService weatherService;
-//
-//    @Autowired
-//    WeatherRepository weatherRepository;
-//
-//    @Autowired
-//    MemberRepository memberRepository;
-//
-//    @Autowired
-//    LocationRepository locationRepository;
-//
-//    @Autowired
-//    WeatherFeignClient weatherFeignClient;
-//
-//    private final double LATITUDE = 35.1845361111111;
-//    private final double LONGITUDE = 128.989688888888;
-//
-//    @BeforeEach
-//    void init() {
-//        Location location = Location.builder()
-//                .point(GeometryUtils.getPoint(LATITUDE, LONGITUDE))
-//                .city("city")
-//                .province("province")
-//                .street("street")
-//                .latitude(LATITUDE)
-//                .longitude(LONGITUDE)
-//                .build();
-//
-//        Member member = Member.builder()
-//                .location(location)
-//                .email("email@naver.com")
-//                .nickname("nickname")
-//                .sensitivity(Sensitivity.NONE)
-//                .build();
-//
-//        locationRepository.save(location);
-//        memberRepository.save(member);
-//    }
-//
+package org.pknu.weather.service;
+
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.TestDataCreator;
+import org.pknu.weather.domain.Location;
+import org.pknu.weather.domain.Weather;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.repository.WeatherRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.Mockito.doReturn;
+
+@SpringBootTest
+@Slf4j
+class WeatherServiceTest {
+    @Autowired
+    WeatherService weatherService;
+
+    @Autowired
+    LocationRepository locationRepository;
+
+    @SpyBean
+    WeatherFeignClientUtils weatherFeignClientUtils;
+
+    @Autowired
+    WeatherRepository weatherRepository;
+
+    @Test
+    void 비동기_insert_로직_테스트() {
+        // given
+        Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
+        LocalDateTime baseTime = TestDataCreator.getBaseTime();
+
+        // when
+        weatherService.saveWeathersAsync(location.getId(), TestDataCreator.getNewForecast(location, baseTime));
+
+        // then
+        Awaitility.await().until(() -> weatherRepository.count() == 24);
+        List<Weather> weatherList = weatherRepository.findAll();
+        Assertions.assertThat(weatherList.size()).isEqualTo(24);
+    }
+
+    @Test
+    void 비동기_벌크_insert_로직_테스트() {
+        // given
+        Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
+        LocalDateTime baseTime = TestDataCreator.getBaseTime();
+
+        // when
+        weatherService.bulkSaveWeathersAsync(location.getId(), TestDataCreator.getNewForecast(location, baseTime));
+
+        // then
+        Awaitility.await().until(() -> weatherRepository.count() == 24);
+        List<Weather> weatherList = weatherRepository.findAll();
+        Assertions.assertThat(weatherList.size()).isEqualTo(24);
+    }
+
 //    @Test
-//    @DisplayName("단기 예보 저장 통합 테스트")
-//    @Transactional
-//    void shortTermForecastSaveTest() {
-//        // given
-//        Member member = memberRepository.findAll().get(0);
-//        Location location = member.getLocation();
-//
-//        // when
-//        // TODO: WeatherFeignClient.test 에서 API가 호출되는지 테스트를 하기 때문에 Mock으로 변경
-//        List<Weather> weathers = weatherService.saveWeathers(location);
-//
-//        // then
-//        assertThat(weathers.size()).isGreaterThanOrEqualTo(20);
-//    }
-//}
+    void 비동기_벌크_update_로직_테스트() throws InterruptedException {
+        // given
+        Location location = locationRepository.saveAndFlush(TestDataCreator.getBusanLocation());
+        LocalDateTime baseTime = TestDataCreator.getBaseTime();
+        weatherRepository.saveAll(TestDataCreator.getPastForecast(location, baseTime.minusHours(3)).values());
+
+        doReturn(TestDataCreator.getNewForecast(location, baseTime))
+                .when(weatherFeignClientUtils).getVillageShortTermForecast(location);
+
+        // when
+        weatherService.bulkUpdateWeathersAsync(location.getId());
+
+        // then
+        Awaitility.await().until(() -> weatherRepository.count() == 27);
+        List<Weather> weatherList = weatherRepository.findAll();
+        Assertions.assertThat(weatherList.size()).isEqualTo(27);
+    }
+
+    @AfterEach
+    void remove() {
+        weatherRepository.deleteAll();
+        locationRepository.deleteAll();
+    }
+}

@@ -1,14 +1,30 @@
 package org.pknu.weather.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import javax.imageio.ImageIO;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
+import org.pknu.weather.common.TestUtil;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.MemberTerms;
 import org.pknu.weather.domain.Terms;
 import org.pknu.weather.domain.common.TermsType;
+import org.pknu.weather.domain.exp.Level;
 import org.pknu.weather.dto.MemberJoinDTO;
 import org.pknu.weather.dto.TermsDto;
 import org.pknu.weather.repository.MemberRepository;
@@ -22,21 +38,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,7 +69,7 @@ class MemberControllerV1Test {
     @Autowired
     ObjectMapper objectMapper;
 
-//    @Test
+    //    @Test
 //    @Transactional
     void saveMemberInfo() throws Exception {
         // given
@@ -75,13 +78,11 @@ class MemberControllerV1Test {
         em.flush();
         em.clear();
 
-
         MockMultipartFile profileImgFile = getProfileImage();
         TermsDto termsDtoAgreed = getTermsDto(true);
         Member member = memberRepository.findMemberByEmail(TestDataCreator.getBusanMember().getEmail()).get();
         MemberJoinDTO memberJoinDTO = getMemberJoinDTO(member);
         String jwt = generateJwtToken(member.getId(), member.getEmail());
-
 
         // mockMvc를 사용하여 실제 컨트롤러 호출
         mockMvc.perform(multipart("/api/v1/member/info")
@@ -90,8 +91,10 @@ class MemberControllerV1Test {
                         .param("nickname", memberJoinDTO.getNickname())  // MemberJoinDTO 데이터
                         .param("isServiceTermsAgreed", termsDtoAgreed.getIsServiceTermsAgreed().toString())    // TermsDto 데이터
                         .param("isPrivacyPolicyAgreed", termsDtoAgreed.getIsPrivacyPolicyAgreed().toString())    // TermsDto 데이터
-                        .param("isLocationServiceTermsAgreed", termsDtoAgreed.getIsLocationServiceTermsAgreed().toString())    // TermsDto 데이터
-                        .param("isPushNotificationAgreed", termsDtoAgreed.getIsPushNotificationAgreed().toString())    // TermsDto 데이터
+                        .param("isLocationServiceTermsAgreed",
+                                termsDtoAgreed.getIsLocationServiceTermsAgreed().toString())    // TermsDto 데이터
+                        .param("isPushNotificationAgreed",
+                                termsDtoAgreed.getIsPushNotificationAgreed().toString())    // TermsDto 데이터
                         .header("Authorization", jwt))  // Authorization 헤더
                 .andExpect(status().isOk())  // 응답 상태 코드 200 OK 확인
                 .andExpect(jsonPath("$.result.nickname").value(member.getNickname()))  // 응답 바디 검증
@@ -107,7 +110,7 @@ class MemberControllerV1Test {
         String email = "setTermsTest@naver.com";
         init();
         memberRepository.save(Member.builder()
-                        .email(email)
+                .email(email)
                 .build());
         em.flush();
         em.clear();
@@ -184,13 +187,33 @@ class MemberControllerV1Test {
                 .termsType(TermsType.PUSH_NOTIFICATION)
                 .termsVersion(1)
                 .build());
-
-        memberRepository.save(TestDataCreator.getBusanMember());
     }
 
     private String generateJwtToken(Long id, String email) {
         // JWT 토큰을 생성하는 메서드
-        Map<String, Object> claims = Map.of("id", id,"email", email);
-        return "Bearer " + jwtUtil.generateToken(claims ,1);
+        Map<String, Object> claims = Map.of("id", id, "email", email);
+        return "Bearer " + jwtUtil.generateToken(claims, 1);
+    }
+
+    @Test
+    void 사용자정보조회성공() throws Exception {
+        // given
+        Member member = memberRepository.save(TestDataCreator.getBusanMember());
+        String jwt = TestUtil.generateJwtToken(jwtUtil, member);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/api/v1/member/info")
+                .header("Authorization", jwt));
+
+        // then
+        result
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.email").value(member.getEmail()))
+                .andExpect(jsonPath("$.result.nickname").value(member.getNickname()))
+                .andExpect(jsonPath("$.result.levelKey").value(member.getLevel().name()))
+                .andExpect(jsonPath("$.result.rankName").value(member.getLevel().getRankName()))
+                .andExpect(jsonPath("$.result.exp").value(member.getExp()))
+                .andExpect(jsonPath("$.result.nextLevelRequiredExp").value(
+                        Level.getNextLevel(member.getLevel()).getRequiredExp()));
     }
 }

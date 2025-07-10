@@ -1,6 +1,15 @@
 package org.pknu.weather.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,13 +29,9 @@ import org.pknu.weather.domain.tag.WindTag;
 public class Tag extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
     private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = true)
-    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
@@ -34,7 +39,7 @@ public class Tag extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private TemperatureTag temperTag;
-    
+
     @Enumerated(EnumType.STRING)
     private WindTag windTag;
 
@@ -46,8 +51,4 @@ public class Tag extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DustTag dustTag;
-
-    public void addPost(Post post) {
-        this.post = post;
-    }
 }

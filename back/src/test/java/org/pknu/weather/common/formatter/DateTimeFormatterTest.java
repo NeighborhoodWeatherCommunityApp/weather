@@ -1,11 +1,10 @@
 package org.pknu.weather.common.formatter;
 
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.time.LocalDateTime;
-import java.util.stream.Stream;
 
 class DateTimeFormatterTest {
 
@@ -25,11 +24,11 @@ class DateTimeFormatterTest {
     @MethodSource("provideTestDates")
     void 날짜가_변경되는_시점에서도_baseTime을_정상적으로_반환하는지_테스트(LocalDateTime localDateTime) {
         // given
-        String baseDate = DateTimeFormatter.getFormattedBaseDate(localDateTime.toLocalDate());
+        String baseDate = DateTimeFormatter.getFormattedBaseDate(localDateTime);
         String baseTime = DateTimeFormatter.getFormattedBaseTime(localDateTime);
 
         // when
-        String baseDateResult = DateTimeFormatter.getFormattedBaseDate(localDateTime.toLocalDate());
+        String baseDateResult = DateTimeFormatter.getFormattedBaseDate(localDateTime);
         String baseTimeResult = DateTimeFormatter.getFormattedBaseTime(localDateTime);
 
         // then

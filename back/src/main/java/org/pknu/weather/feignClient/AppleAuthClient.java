@@ -16,10 +16,10 @@ public interface AppleAuthClient {
 
     @PostMapping(value = "/auth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     AppleAuthTokenResponse getAccessToken(
-            @RequestPart String code,
-            @RequestPart String client_id,
-            @RequestPart String client_secret,
-            @RequestPart String grant_type
+            @RequestPart("code") String code,
+            @RequestPart("client_id") String client_id,
+            @RequestPart("client_secret") String client_secret,
+            @RequestPart("grant_type") String grant_type
     );
 
     @PostMapping(value = "/auth/revoke", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

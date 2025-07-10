@@ -8,8 +8,15 @@ import {
   ScrollView,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
-import {fetchPostTags, createPost, fetchMemberInfo} from '../api/api';
+import {
+  fetchSelectedTags,
+  fetchWeatherTags,
+  createPost,
+  fetchMemberInfo,
+} from '../api/api';
+import {logPostCreation} from '../api/googleSheetLogger';
 
 const PostCreationScreen = ({navigation, accessToken, route}) => {
   const {onPostCreated} = route.params || {};
@@ -29,21 +36,43 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
   const [nickname, setNickname] = useState('');
   const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const loadTags = async () => {
-      try {
-        const tags = await fetchPostTags(accessToken);
-        setTemperatureTags(tags.TemperatureTag);
-        setWeatherTags(tags.SkyTag);
-        setHumidityTags(tags.HumidityTag);
-        setWindTags(tags.WindTag);
-        setAirQualityTags(tags.DustTag);
-      } catch (error) {
-        console.error('Failed to fetch tags:', error);
-      }
-    };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const loadMemberInfo = async () => {
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        let tags;
+        try {
+          tags = await fetchSelectedTags(accessToken);
+        } catch (error) {
+          console.error(
+            'fetchSelectedTags 실패, fetchWeatherTags로 대체 시도:',
+            error,
+          );
+          tags = await fetchWeatherTags(accessToken); // const tags = await fetchSelectedTags(accessToken);
+        }
+
+        const tTemp = tags?.TemperatureTag ?? tags?.temperatureTag ?? [];
+        const tSky = tags?.SkyTag ?? tags?.skyTag ?? [];
+        const tHum = tags?.HumidityTag ?? tags?.humidityTag ?? [];
+        const tWind = tags?.WindTag ?? tags?.windTag ?? [];
+        const tDust = tags?.DustTag ?? tags?.dustTag ?? [];
+
+        setTemperatureTags(tTemp);
+        setWeatherTags(tSky);
+        setHumidityTags(tHum);
+        setWindTags(tWind);
+        setAirQualityTags(tDust);
+
+        setTemperature(tTemp.find(tag => tag.selected)?.code || null);
+        setWeather(tSky.find(tag => tag.selected)?.code || null);
+        setHumidity(tHum.find(tag => tag.selected)?.code || null);
+        setWind(tWind.find(tag => tag.selected)?.code || null);
+        setAirQuality(tDust.find(tag => tag.selected)?.code || null);
+      } catch (error) {
+        console.error('게시글 작성 시 태그 불러오기 실패:', error);
+      }
+
       try {
         const memberInfo = await fetchMemberInfo(accessToken);
         setNickname(memberInfo.result.nickname || '사용자');
@@ -53,13 +82,12 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
             : require('../../assets/images/profile.png'),
         );
       } catch (error) {
-        console.error('Failed to fetch member info:', error);
+        console.error('게시글 작성 시 회원 정보 불러오기 실패:', error);
         setProfileImage(require('../../assets/images/profile.png'));
       }
     };
 
-    loadTags();
-    loadMemberInfo();
+    initializeData();
   }, [accessToken]);
 
   const handleTagPress = (type, selectedTag) => {
@@ -85,10 +113,14 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (!temperature || !weather || !humidity || !wind || !airQuality) {
       Alert.alert('태그 선택', '아직 선택하지 않은 태그가 있어요.');
       return;
     }
+
+    setIsSubmitting(true);
 
     const postData = {
       content: description,
@@ -103,6 +135,12 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
       const response = await createPost(postData, accessToken);
       console.log('Post created successfully:', response);
 
+      const memberInfoRes = await fetchMemberInfo(accessToken);
+      if (memberInfoRes?.isSuccess) {
+        // 게시글 작성 로그 전송
+        await logPostCreation(memberInfoRes.result, 'post_creation');
+      }
+
       if (onPostCreated) {
         onPostCreated();
       }
@@ -111,6 +149,8 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
       navigation.jumpTo('Community');
     } catch (error) {
       console.error('Failed to create post:', error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -133,6 +173,10 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
         value={description}
         onChangeText={setDescription}
       />
+
+      <Text style={styles.recommendationNote}>
+        현재 날씨를 반영한 추천 태그입니다. 자유롭게 변경해 주세요.
+      </Text>
 
       <View style={styles.section}>
         <Text style={styles.label}>온도는 어떤가요?</Text>
@@ -253,7 +297,10 @@ const PostCreationScreen = ({navigation, accessToken, route}) => {
         </ScrollView>
       </View>
 
-      <TouchableOpacity style={styles.shareButton} onPress={handleSubmit}>
+      <TouchableOpacity
+        style={[styles.shareButton, isSubmitting && {opacity: 0.5}]}
+        onPress={handleSubmit}
+        disabled={isSubmitting}>
         <Text style={styles.shareButtonText}>공유하기</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -347,6 +394,12 @@ const styles = StyleSheet.create({
   shareButtonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  recommendationNote: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 20,
+    marginHorizontal: 20,
   },
 });
 

@@ -1,98 +1,46 @@
 package org.pknu.weather.service;
 
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
-
-import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.common.WeatherParamsFactory;
-import org.pknu.weather.common.formatter.DateTimeFormatter;
-import org.pknu.weather.common.utils.GeometryUtils;
 import org.pknu.weather.domain.ExtraWeather;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Weather;
-import org.pknu.weather.dto.WeatherApiResponse;
 import org.pknu.weather.dto.WeatherResponse;
 import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.feignClient.WeatherFeignClient;
-import org.pknu.weather.feignClient.dto.PointDTO;
-import org.pknu.weather.feignClient.dto.WeatherParams;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
-import org.pknu.weather.feignClient.utils.WeatherApiUtils;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
 import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeatherInfo;
+import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class WeatherService {
-    private final WeatherFeignClient weatherFeignClient;
+    private final WeatherFeignClientUtils weatherFeignClientUtils;
     private final WeatherRepository weatherRepository;
     private final ExtraWeatherRepository extraWeatherRepository;
     private final MemberRepository memberRepository;
     private final ExtraWeatherApiUtils extraWeatherApiUtils;
     private final LocationRepository locationRepository;
-    @Autowired
-    private EntityManager em;
 
-    @Value("${api.weather.service-key}")
-    private String weatherServiceKey;
-
-    /**
-     * 사용자의 위도 경도 및 기타 정보를 받아와 weather로 반환한다.
-     *
-     * @return now ~ 24 시간의 Wether 엔티티를 담고있는 List
-     * @Location 사용자 위치 엔티티
-     */
-    public List<Weather> getVillageShortTermForecast(Location location) {
-        float lon = location.getLongitude().floatValue();
-        float lat = location.getLatitude().floatValue();
-
-        PointDTO pointDTO = GeometryUtils.coordinateToPoint(lon, lat);
-        String date = DateTimeFormatter.getFormattedBaseDate();
-        String time = DateTimeFormatter.getFormattedBaseTime();
-
-        WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
-
-        WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
-        List<WeatherApiResponse.Response.Body.Items.Item> itemList = weatherApiResponse.getResponse()
-                .getBody()
-                .getItems()
-                .getItemList();
-
-        return WeatherApiUtils.responseProcess(itemList, date, time);
-    }
-
-    /**
-     * TODO: 성능 개선 필요
-     * 현재 ~ +24시간 까지의 날씨 정보를 불러옵니다.
-     *
-     * @param location
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public List<Weather> getWeathers(Location location) {
-        return weatherRepository.findAllWithLocation(location.getId(), LocalDateTime.now().plusHours(24)).stream()
-                .sorted(Comparator.comparing(Weather::getPresentationTime))
-                .toList();
-    }
 
     /**
      * 위도와 경도에 해당하는 지역(읍면동)의 24시간치 날씨 단기 예보 정보를 저장합니다.
@@ -101,7 +49,7 @@ public class WeatherService {
      */
     @Transactional
     public List<Weather> saveWeathers(Location location) {
-        List<Weather> values = getVillageShortTermForecast(location);
+        List<Weather> values = weatherFeignClientUtils.getVillageShortTermForecast(location);
         List<Weather> weatherList = new ArrayList<>(values);
 
         weatherList.forEach(w -> w.addLocation(location));
@@ -111,45 +59,84 @@ public class WeatherService {
     /**
      * 날씨 정보를 저장합니다. 비동기적으로 동작합니다.
      *
-     * @param loc      member.getLocation()
-     * @param forecast 공공데이터 API에서 받아온 단기날씨예보 값 list
+     * @param locationId
+     * @param newForecast 공공데이터 API에서 받아온 단기날씨예보 값 list
      */
-    @Async("threadPoolTaskExecutor")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveWeathersAsync(Location loc, List<Weather> forecast) {
-        Location location = locationRepository.safeFindById(loc.getId());
-        List<Weather> weatherList = new ArrayList<>(forecast);
+    @Async("WeatherCUDExecutor")
+    @Transactional
+    public void saveWeathersAsync(Long locationId, List<Weather> newForecast) {
+        Location location = locationRepository.safeFindById(locationId);
 
-        weatherList.forEach(w -> w.addLocation(location));
+        List<Weather> weatherList = new ArrayList<>(newForecast).stream()
+                .peek(weather -> weather.addLocation(location))
+                .toList();
+
         weatherRepository.saveAll(weatherList);
+    }
+
+    /**
+     * 날씨 정보를 저장합니다. 비동기적으로 동작합니다.
+     *
+     * @param locationId 날씨 데이터를 저장할 지역의 id
+     * @param newForecast 공공데이터 단기날씨예보 API에서 받아온 날씨 예보 List
+     */
+    @Async("WeatherCUDExecutor")
+    @Transactional
+    public void bulkSaveWeathersAsync(Long locationId, List<Weather> newForecast) {
+        Location location = locationRepository.safeFindById(locationId);
+        weatherRepository.batchSave(newForecast, location);
     }
 
     /**
      * 단기 날씨 예보 API가 3시간 마다 갱신되기 때문에, 날씨 데이터 갱신을 위한 메서드
      *
-     * @param loc API를 호출한 사용자의 Location 엔티티
+     * @param locationId API를 호출한 사용자의 Location id
      * @return 해당 위치의 날씨 데이터 List
      */
-    @Async("threadPoolTaskExecutor")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateWeathersAsync(Location loc) {
-        Location location = locationRepository.safeFindById(loc.getId());
-        weatherRepository.deleteAllByLocation(location);
+    @Async("WeatherCUDExecutor")
+    @Transactional
+    @Deprecated
+    public void updateWeathersAsync(Long locationId) {
+        Location location = locationRepository.safeFindById(locationId);
+        Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
+        List<Weather> newWeatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
+        List<Weather> weathersList = updateWeathers(oldWeatherMap, newWeatherList, location);
+        weatherRepository.saveAll(weathersList);
+    }
 
-        List<Weather> newWeathers = getVillageShortTermForecast(location).stream()
-                .toList();
+    @Async("WeatherCUDExecutor")
+    @Transactional
+    public void bulkUpdateWeathersAsync(Long locationId) {
+        Location location = locationRepository.safeFindById(locationId);
+        Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
+        List<Weather> newWeatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
+        List<Weather> weathersList = updateWeathers(oldWeatherMap, newWeatherList, location);
+        weatherRepository.batchUpdate(weathersList, location);
+    }
 
-        newWeathers.forEach(weather -> {
-            weather.addLocation(location);
+    private List<Weather> updateWeathers(Map<LocalDateTime, Weather> oldWeatherMap, List<Weather> newWeatherList,
+                                         Location location) {
+        log.debug("oldWeatherMap size: " + oldWeatherMap.size());
+        newWeatherList.forEach(newWeather -> {
+            LocalDateTime presentationTime = newWeather.getPresentationTime();
+            if (oldWeatherMap.containsKey(presentationTime)) {
+                Weather oldWeather = oldWeatherMap.get(presentationTime);
+                oldWeather.updateWeather(newWeather);
+            } else {
+                newWeather.addLocation(location); // 새 데이터만 추가
+                oldWeatherMap.put(newWeather.getPresentationTime(), newWeather);
+            }
         });
 
-        weatherRepository.saveAll(newWeathers);
+        log.debug("oldWeatherMap size: " + oldWeatherMap.size());
+        return oldWeatherMap.values().stream().toList();
     }
+
 
     /**
      * 예보 시간이 현재 보다 과거이면 모두 삭제합니다.v
      */
-    @Async("threadPoolDeleteTaskExecutor")
+    @Async("WeatherCUDExecutor")
     public void bulkDeletePastWeather() {
         weatherRepository.bulkDeletePastWeathers();
     }
@@ -201,5 +188,20 @@ public class WeatherService {
     private void saveExtraWeatherInfo(Location location, ExtraWeatherInfo extraWeatherInfo) {
         extraWeatherRepository.save(toExtraWeather(location, extraWeatherInfo));
         log.debug("기타 날씨 정보 저장 완료");
+    }
+
+    /**
+     * 단기 날씨 예보 API가 3시간 마다 갱신되 기 때문에, 날씨 데이터 갱신을 위한 메서드
+     *
+     * @param locationId API를 호출한 사용자의 Location id
+     * @return 해당 위치의 날씨 데이터 List
+     */
+    public void updateWeathers(Long locationId) {
+        Location location = locationRepository.safeFindById(locationId);
+        Map<LocalDateTime, Weather> oldWeatherMap = weatherRepository.findAllByLocationAfterNow(location);
+
+        List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+        List<Weather> weatherList = updateWeathers(oldWeatherMap, newForecast, location);
+        weatherRepository.saveAll(weatherList);
     }
 }

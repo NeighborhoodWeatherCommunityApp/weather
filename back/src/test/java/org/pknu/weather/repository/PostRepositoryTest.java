@@ -1,8 +1,11 @@
 package org.pknu.weather.repository;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
@@ -13,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
@@ -36,7 +36,6 @@ class PostRepositoryTest {
     private final double LATITUDE = 35.1845361111111;
     private final double LONGITUDE = 128.989688888888;
 
-    @BeforeEach
     void init() {
         List<Member> memberList = new ArrayList<>();
         List<Post> postList = new ArrayList<>();
@@ -88,16 +87,32 @@ class PostRepositoryTest {
     @Transactional
     void 지역에서_좋아요를_많이_받은_게시글_5개_불러오기() {
         // given
+        init();
         List<Recommendation> all = recommendationRepository.findAll();
         // when
         Location location = locationRepository.findAll().get(0);
         List<Post> popularPostList = postRepository.getPopularPostList(location);
 
         // then
-        Assertions.assertThat(popularPostList.get(0).getContent()).isEqualTo("content5");
-        Assertions.assertThat(popularPostList.get(1).getContent()).isEqualTo("content4");
-        Assertions.assertThat(popularPostList.get(2).getContent()).isEqualTo("content3");
-        Assertions.assertThat(popularPostList.get(3).getContent()).isEqualTo("content2");
-        Assertions.assertThat(popularPostList.get(4).getContent()).isEqualTo("content1");
+        assertThat(popularPostList.get(0).getContent()).isEqualTo("content5");
+        assertThat(popularPostList.get(1).getContent()).isEqualTo("content4");
+        assertThat(popularPostList.get(2).getContent()).isEqualTo("content3");
+        assertThat(popularPostList.get(3).getContent()).isEqualTo("content2");
+        assertThat(popularPostList.get(4).getContent()).isEqualTo("content1");
+    }
+
+    @Test
+    void 하루에_게시글_몇개_작성했는지_반환하는_메서드_테스트() {
+        // given
+        Member member = memberRepository.save(TestDataCreator.getBusanMember());
+        postRepository.save(TestDataCreator.getPost(member));
+        postRepository.save(TestDataCreator.getPost(member));
+        postRepository.save(TestDataCreator.getPost(member));
+
+        // when
+        Integer countTodayPost = postRepository.countTodayPostByMemberId(member.getId());
+
+        // then
+        assertThat(countTodayPost).isEqualTo(3);
     }
 }

@@ -1,5 +1,8 @@
 package org.pknu.weather.dto.converter;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.pknu.weather.common.utils.TagUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
@@ -9,10 +12,6 @@ import org.pknu.weather.domain.tag.TemperatureTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.WeatherQueryResult;
 import org.pknu.weather.dto.WeatherResponse;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class WeatherResponseConverter {
 
@@ -45,8 +44,8 @@ public class WeatherResponseConverter {
     }
 
     public static WeatherResponse.WeatherPerHour toWeatherPerHour(Weather weather, Member member) {
-        RainTag rainTag = TagUtils.rainType2Text(weather.getRain(), weather.getSnowCover(), weather.getRainType());
-        TemperatureTag temperatureTag = TagUtils.tmp2Text(weather.getTemperature(), member.getSensitivity());
+        RainTag rainTag = (RainTag) TagUtils.rainType2RainTag(weather);
+        TemperatureTag temperatureTag = TagUtils.tmp2TemperatureTag(weather.getTemperature(), member.getSensitivity());
 
         return WeatherResponse.WeatherPerHour.builder()
                 .hour(weather.getPresentationTime())
@@ -109,29 +108,4 @@ public class WeatherResponseConverter {
                 .rainfallAmount(simpleRainInfo.getRain() + "mm")
                 .build();
     }
-
-//    private static String commentBuilder(SimpleRainInfo simpleRainInfo) {
-//        StringBuilder sb = new StringBuilder();
-//        if (simpleRainInfo == null) {
-//            sb.append()
-//        }
-//    }
-
-//    private static String checkRain(SimpleRainInfo simpleRainInfo) {
-//        LocalDateTime forecastTime = simpleRainInfo.getTime();
-//
-//        if (simpleRainInfo.getRain() > 0) {
-//            return forecastTimeCheck(forecastTime);
-//        }
-//
-//        return "오늘은 비소식이 없어요";
-//    }
-//
-//    private static String forecastTimeCheck(LocalDateTime forecastTime) {
-//        long hours = Duration.between(forecastTime, LocalDateTime.now()).toHours();
-//        if (hours == 0) {
-//            return "잠시 후에";
-//        }
-//        return hours + "시간 후에";
-//    }
 }

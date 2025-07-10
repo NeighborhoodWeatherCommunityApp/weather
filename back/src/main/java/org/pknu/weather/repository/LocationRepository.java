@@ -1,5 +1,7 @@
 package org.pknu.weather.repository;
 
+import java.util.Collection;
+import java.util.List;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.exception.GeneralException;
@@ -16,4 +18,7 @@ public interface LocationRepository extends JpaRepository<Location, Long>, Locat
 
     @Query("select loc from Location loc where loc.province = :province and loc.city = :city and loc.street = :street")
     Optional<Location> findLocationByFullAddress(String province, String city, String street);
+
+    List<Location> findByIdIn(Collection<Long> ids);
+
 }

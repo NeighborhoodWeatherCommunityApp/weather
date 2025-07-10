@@ -155,7 +155,7 @@ const WeatherHeader = ({
             setRefresh(true);
           } catch (error) {
             console.error('Error sending location to backend:', error.message);
-            Alert.alert('위치 전송 실패', '나중에 다시 시도해 주세요.');
+            // Alert.alert('위치 전송 실패', '나중에 다시 시도해 주세요.');
           } finally {
             setLoadingLocation(false);
           }
@@ -296,7 +296,6 @@ const WeatherHeader = ({
         onValueChange={handleToggle}
         style={styles.switch}
       />
-
       <View style={styles.infoContainer}>
         <View style={styles.locationContainer}>
           <Image

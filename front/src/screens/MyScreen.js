@@ -13,11 +13,12 @@ import {
   Platform,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {fetchMemberInfo, deleteMember} from '../api/api';
+import {fetchMemberInfo, deleteMember, checkLevelUp} from '../api/api';
 import profilePlaceholder from '../../assets/images/profile.png';
 import {logout} from '@react-native-seoul/kakao-login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import {useLevelUp} from '../contexts/LevelUpContext';
 
 const {width, height} = Dimensions.get('window');
 
@@ -31,10 +32,20 @@ const MyScreen = ({
   navigation,
   setIsProfileCompleted,
 }) => {
+  const {triggerLevelUp} = useLevelUp();
+
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState(profilePlaceholder);
+  const [levelName, setLevelName] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const [levelTitle, setLevelTitle] = useState('');
+  const [exp, setExp] = useState('');
+  const [nextLevelRequiredExp, setNextLevelRequiredExp] = useState('');
+
+  const levelOrder = ['쌔싹', '바람', '구름', '비', '번개', '태풍'];
+  const [nextLevelTitle, setNextLevelTitle] = useState(null);
 
   const personalInfoUrl =
     'https://safe-scabiosa-656.notion.site/16d2f55997ef804d8a16c3c1a5dd1879?pvs=4';
@@ -72,6 +83,28 @@ const MyScreen = ({
       }
       setNickname(memberInfo.result.nickname || '닉네임');
       setEmail(memberInfo.result.email || 'example@email.com');
+
+      // 여기서 레벨 정보 상태에 반영
+      setLevelTitle(memberInfo.result.rankName || '알 수 없음');
+      setExp(Number(memberInfo.result.exp || 0));
+      setNextLevelRequiredExp(
+        Number(memberInfo.result.nextLevelRequiredExp || 100),
+      );
+
+      const currentIdx = levelOrder.indexOf(memberInfo.result.rankName);
+      if (currentIdx !== -1 && currentIdx < levelOrder.length - 1) {
+        setNextLevelTitle(levelOrder[currentIdx + 1]);
+        console.log('다음 레벨:', levelOrder[currentIdx + 1]);
+      } else {
+        setNextLevelTitle(null); // 마지막 단계이면 null
+      }
+
+      // 레벨업 여부 확인
+      const levelUpResult = await checkLevelUp(accessToken);
+      if (levelUpResult.isLevelUp) {
+        triggerLevelUp(levelUpResult.currentLevelRankName);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error('회원 정보 불러오는 중 오류 발생:', error);
@@ -260,13 +293,50 @@ const MyScreen = ({
         <Image source={profileImage} style={styles.profileImage} />
       </View>
 
+      <TouchableOpacity onPress={() => navigation.navigate('ExpGuideScreen')}>
+        <View style={styles.levelContainer}>
+          {/* 현재 레벨과 다음 레벨 */}
+          <View style={styles.levelLabelRow}>
+            <Text style={styles.levelSideText}>{levelTitle}</Text>
+            {nextLevelTitle && (
+              <Text style={styles.levelSideText}>{nextLevelTitle}</Text>
+            )}
+          </View>
+
+          {/* 경험치 바 */}
+          <View style={styles.expBarBackground}>
+            <View
+              style={[
+                styles.expBarFill,
+                {
+                  width: `${Math.min(
+                    (exp / nextLevelRequiredExp) * 100,
+                    100,
+                  )}%`,
+                },
+              ]}
+            />
+          </View>
+
+          {/* 남은 경험치 수치 - 확인 필요 */}
+          <Text style={styles.expText}>
+            다음 레벨까지{' '}
+            {nextLevelRequiredExp - exp > 0 ? nextLevelRequiredExp - exp : 0}{' '}
+            exp 남았습니다!
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <View style={styles.profileInfoContainer}>
         <View style={styles.profileTextContainer}>
-          <Text style={styles.nickname}>{nickname}</Text>
+          <Text style={styles.nickname}>
+            {nickname}
+            {levelName ? ` · ${levelName}` : ''}
+          </Text>
           <Text style={styles.email}>{email}</Text>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
-          <Text style={styles.profileEdit}>프로필 수정</Text>
+          <Text style={styles.profileEdit}>프로필 설정</Text>
         </TouchableOpacity>
       </View>
 
@@ -296,7 +366,7 @@ const MyScreen = ({
       <View style={styles.footerSection}>
         <View style={styles.appInfo}>
           <Text style={styles.footerText}>앱 버전</Text>
-          <Text style={styles.footerValue}>1.0.0</Text>
+          <Text style={styles.footerValue}>1.1.0</Text>
         </View>
         <TouchableOpacity onPress={handleDeleteAccount} style={styles.menuItem}>
           <Text style={styles.menuText}>회원탈퇴</Text>
@@ -426,6 +496,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // 레벨 시스템 관련
+  levelContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  levelLabelRow: {
+    width: width * 0.9,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  levelSideText: {
+    fontSize: 13,
+    color: '#666',
+    fontWeight: '500',
+  },
+  expBarBackground: {
+    width: width * 0.9,
+    height: 12,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  expBarFill: {
+    height: '100%',
+    backgroundColor: '#3f7dfd',
+    borderRadius: 6,
+  },
+  expText: {
+    fontSize: 12,
+    color: '#777',
+    marginTop: 4,
   },
 });
 

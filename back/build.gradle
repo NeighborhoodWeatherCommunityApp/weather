@@ -31,6 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.hibernate:hibernate-validator:8.0.1.Final'
     implementation 'org.springframework.boot:spring-boot-starter-aop'        // aop
+    implementation 'org.springframework.retry:spring-retry'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'com.h2database:h2'
@@ -86,6 +87,18 @@ dependencies {
 
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78'
     implementation 'org.bouncycastle:bcpkix-jdk18on:1.78'
+
+    //FCM
+    implementation 'com.google.firebase:firebase-admin:9.4.3'
+
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Embeded Redis
+    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+
+    // 비동기 코드 테스트를 위한 Awaitility
+    testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
 }
 tasks.named('test') {
     useJUnitPlatform()
