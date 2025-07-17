@@ -44,6 +44,10 @@ public class Pointcuts {
     }
 
     @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut()")
-    public void integrationLoggingPointcut() {
+    public void devLoggingPointcut() {
+    }
+
+    @Pointcut("controllerPointcut()")
+    public void prodLoggingPointcut() {
     }
 }
