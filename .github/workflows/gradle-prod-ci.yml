@@ -94,6 +94,7 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
           fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
+          log-option: prod
 
       - name: Build
         working-directory: back
