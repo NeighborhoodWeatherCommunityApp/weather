@@ -97,7 +97,7 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
           fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
-          integration-logging: true
+          log-option: dev
           spring.data.redis.host: ${{secrets.REDIS_HOST_DEV}}
           spring.data.redis.port: ${{secrets.REDIS_PORT_DEV}}
           spring.data.redis.password: ${{secrets.REDIS_PASSWORD_DEV}}

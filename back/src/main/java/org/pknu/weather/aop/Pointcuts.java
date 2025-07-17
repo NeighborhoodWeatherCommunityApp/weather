@@ -18,7 +18,8 @@ public class Pointcuts {
     public void getMemberDefaultLocationPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.controller..*.*(..))")
+    @Pointcut("execution(* org.pknu.weather.controller..*.*(..))" +
+            " && !execution(* org.pknu.weather.controller.HealthCheckController.*(..))")
     public void controllerPointcut() {
     }
 
@@ -43,6 +44,10 @@ public class Pointcuts {
     }
 
     @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut()")
-    public void integrationLoggingPointcut() {
+    public void devLoggingPointcut() {
+    }
+
+    @Pointcut("controllerPointcut()")
+    public void prodLoggingPointcut() {
     }
 }

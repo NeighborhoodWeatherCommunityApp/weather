@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-@ConditionalOnProperty(value = "integration-logging", havingValue = "true", matchIfMissing = true)
-public class IntegrationLoggingAspect {
+@ConditionalOnProperty(value = "log-option", havingValue = "dev", matchIfMissing = false)
+public class DevLoggingAspect {
 
     /**
      * Controller, Service 에 모든 메서드 수행을 로깅하는 AOP입니다. 쓰레드 id, 클래스명, 메서드명, 파라미터, 메서드 수행 시간 등이 로그에 남습니다.
@@ -24,7 +24,7 @@ public class IntegrationLoggingAspect {
      * @return
      * @throws Throwable
      */
-    @Around("org.pknu.weather.aop.Pointcuts.integrationLoggingPointcut()")
+    @Around("org.pknu.weather.aop.Pointcuts.devLoggingPointcut()")
     public Object doLog(ProceedingJoinPoint pjp) throws Throwable {
         try {
             LoggingUtils.logBefore(pjp, pjp.getArgs());

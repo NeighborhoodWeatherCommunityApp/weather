@@ -114,4 +114,4 @@ fcm:
   project-id: ${FCM_ID}
   service-account: ${FCM_CREDENTIAL}
 
-integration-logging: true
+log-option: prod
