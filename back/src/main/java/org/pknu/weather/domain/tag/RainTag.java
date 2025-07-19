@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.dto.TotalWeatherDto;
-import org.pknu.weather.dto.TotalWeatherDto.WeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto.WeatherDto;
 import org.pknu.weather.exception.GeneralException;
 
 @Getter

@@ -1,9 +1,9 @@
-package org.pknu.weather.repository;
+package org.pknu.weather.weather.repository;
 
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Weather;
-import org.pknu.weather.dto.WeatherQueryResult;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;

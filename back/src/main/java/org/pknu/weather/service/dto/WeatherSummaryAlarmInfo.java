@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.dto.AlarmMemberDTO;
-import org.pknu.weather.dto.ExtraWeatherSummaryDTO;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.dto.ExtraWeatherSummaryDTO;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 
 @Getter
 @Builder

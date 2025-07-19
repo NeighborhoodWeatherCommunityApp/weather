@@ -1,6 +1,6 @@
 package org.pknu.weather.feignClient;
 
-import org.pknu.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.dto.WeatherApiResponse;
 import org.pknu.weather.feignClient.dto.WeatherParams;
 import org.pknu.weather.feignClient.error.CommonErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;

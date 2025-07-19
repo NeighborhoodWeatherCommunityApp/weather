@@ -1,7 +1,7 @@
 package org.pknu.weather.event.weather;
 
 import lombok.AllArgsConstructor;
-import org.pknu.weather.service.WeatherService;
+import org.pknu.weather.weather.service.WeatherService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;

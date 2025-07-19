@@ -1,4 +1,4 @@
-package org.pknu.weather.repository;
+package org.pknu.weather.weather.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
@@ -11,10 +11,10 @@ import org.pknu.weather.common.utils.QueryUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.QLocation;
 import org.pknu.weather.domain.QWeather;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.dto.WeatherQueryResult;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 

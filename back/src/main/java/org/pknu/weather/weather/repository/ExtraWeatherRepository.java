@@ -1,7 +1,7 @@
-package org.pknu.weather.repository;
+package org.pknu.weather.weather.repository;
 
 import java.util.Set;
-import org.pknu.weather.domain.ExtraWeather;
+import org.pknu.weather.weather.ExtraWeather;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

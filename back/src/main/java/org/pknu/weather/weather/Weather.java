@@ -1,4 +1,4 @@
-package org.pknu.weather.domain;
+package org.pknu.weather.weather;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,9 +19,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.pknu.weather.common.utils.SensibleTemperatureUtils;
+import org.pknu.weather.domain.BaseEntity;
+import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.dto.WeatherApiResponse;
 
 @Entity
 @Getter

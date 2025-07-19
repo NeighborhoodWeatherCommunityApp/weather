@@ -1,4 +1,4 @@
-package org.pknu.weather.dto;
+package org.pknu.weather.weather.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

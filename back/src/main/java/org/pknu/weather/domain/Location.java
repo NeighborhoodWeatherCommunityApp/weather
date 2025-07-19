@@ -2,6 +2,7 @@ package org.pknu.weather.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.pknu.weather.weather.Weather;
 
 import java.util.ArrayList;
 import java.util.List;

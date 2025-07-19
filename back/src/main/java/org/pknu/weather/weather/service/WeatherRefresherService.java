@@ -1,17 +1,17 @@
-package org.pknu.weather.service;
+package org.pknu.weather.weather.service;
 
-import static org.pknu.weather.dto.converter.ExtraWeatherConverter.toExtraWeather;
+import static org.pknu.weather.weather.converter.ExtraWeatherConverter.toExtraWeather;
 import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.domain.ExtraWeather;
+import org.pknu.weather.weather.ExtraWeather;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
-import org.pknu.weather.repository.ExtraWeatherRepository;
+import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

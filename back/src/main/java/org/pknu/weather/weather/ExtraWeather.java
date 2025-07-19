@@ -1,9 +1,10 @@
-package org.pknu.weather.domain;
+package org.pknu.weather.weather;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.pknu.weather.dto.MemberJoinDTO;
-import org.pknu.weather.dto.WeatherResponse;
+import org.pknu.weather.domain.BaseEntity;
+import org.pknu.weather.domain.Location;
+import org.pknu.weather.weather.dto.WeatherResponse;
 
 import java.time.LocalDateTime;
 

@@ -9,21 +9,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.domain.ExtraWeather;
-import org.pknu.weather.dto.converter.ExtraWeatherConverter;
-import org.pknu.weather.repository.ExtraWeatherRepository;
+import org.pknu.weather.weather.ExtraWeather;
+import org.pknu.weather.weather.converter.ExtraWeatherConverter;
+import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.repository.WeatherRepository;
+import org.pknu.weather.weather.repository.WeatherRepository;
 import org.pknu.weather.service.message.AlarmMessageMaker;
 import org.pknu.weather.service.sender.NotificationMessage;
 import org.pknu.weather.service.sender.NotificationSender;
 import org.pknu.weather.dto.AlarmMemberDTO;
-import org.pknu.weather.dto.ExtraWeatherSummaryDTO;
+import org.pknu.weather.weather.dto.ExtraWeatherSummaryDTO;
 import org.pknu.weather.service.dto.WeatherSummaryAlarmInfo;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 import org.pknu.weather.service.supports.AlarmTimeUtil;
 import org.pknu.weather.domain.common.AlarmType;
-import org.pknu.weather.service.WeatherRefresherService;
+import org.pknu.weather.weather.service.WeatherRefresherService;
 import org.springframework.stereotype.Component;
 
 @Component
