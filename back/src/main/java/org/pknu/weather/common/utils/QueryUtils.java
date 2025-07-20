@@ -2,7 +2,7 @@ package org.pknu.weather.common.utils;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.QWeather;
+import org.pknu.weather.weather.QWeather;
 
 import java.time.LocalDateTime;
 
