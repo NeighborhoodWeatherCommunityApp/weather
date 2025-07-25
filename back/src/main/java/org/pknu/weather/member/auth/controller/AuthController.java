@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.service.AuthService;
@@ -25,7 +26,7 @@ public class AuthController {
     private final JWTUtil jwtUtil;
 
     @PostMapping("/token")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+    public ApiResponse<?> login(@RequestBody Map<String, String> request) {
 
         String tokenType = request.get("type");
         String accessToken = request.get("accessToken");
@@ -37,11 +38,11 @@ public class AuthController {
 
         Map<String, String> appTokens = authService.generateTokens(tokenType, accessToken);
 
-        return ResponseEntity.ok(appTokens);
+        return ApiResponse.onSuccess(appTokens);
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> tokens) {
+    public ApiResponse<?> refresh(@RequestBody Map<String, String> tokens) {
 
         String accessToken = tokens.get("accessToken");
         String refreshToken = tokens.get("refreshToken");
@@ -50,7 +51,7 @@ public class AuthController {
 
         Map<String, String> appTokens = authService.refreshTokens(refreshToken);
 
-        return ResponseEntity.ok(appTokens);
+        return ApiResponse.onSuccess(appTokens);
     }
 
     private void checkAccessToken(String accessToken) throws TokenException {
