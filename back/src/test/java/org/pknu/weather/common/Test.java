@@ -3,8 +3,8 @@
 //import lombok.extern.slf4j.Slf4j;
 //import org.pknu.weather.common.converter.TokenConverter;
 //import org.pknu.weather.domain.Location;
-//import org.pknu.weather.domain.Member;
-//import org.pknu.weather.repository.MemberRepository;
+//import org.pknu.weather.member.entity.Member;
+//import org.pknu.weather.member.repository.MemberRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.transaction.annotation.Transactional;

@@ -24,12 +24,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.Alarm;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.common.SummaryAlarmTime;
 import org.pknu.weather.dto.AlarmRequestDTO;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.repository.AlarmRepository;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.repository.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AlarmService 유닛 테스트")

@@ -11,10 +11,12 @@ import java.util.Objects;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pknu.weather.config.EmbeddedRedisConfig;
 import org.pknu.weather.domain.Alarm;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.common.AlarmType;
 import org.pknu.weather.domain.tag.DustTag;
 import org.pknu.weather.domain.tag.HumidityTag;
@@ -24,7 +26,7 @@ import org.pknu.weather.domain.tag.WindTag;
 import org.pknu.weather.dto.PostRequest.CreatePost;
 import org.pknu.weather.repository.AlarmRepository;
 import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.service.AlarmCooldownService;
 import org.pknu.weather.service.PostService;
 import org.pknu.weather.service.sender.FcmMessage;
@@ -42,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @Import(EmbeddedRedisConfig.class)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class LiveRainAlarmSendTest {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;

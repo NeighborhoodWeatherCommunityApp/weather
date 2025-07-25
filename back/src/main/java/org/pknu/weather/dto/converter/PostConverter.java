@@ -1,6 +1,6 @@
 package org.pknu.weather.dto.converter;
 
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Post;
 import org.pknu.weather.domain.Tag;
 import org.pknu.weather.domain.common.PostType;

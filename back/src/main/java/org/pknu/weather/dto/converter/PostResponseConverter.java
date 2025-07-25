@@ -5,7 +5,7 @@ import java.util.List;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.RecommendationUtils;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Post;
 import org.pknu.weather.domain.Recommendation;
 import org.pknu.weather.dto.PostResponse;

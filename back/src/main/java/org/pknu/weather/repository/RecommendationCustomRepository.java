@@ -1,6 +1,6 @@
 package org.pknu.weather.repository;
 
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 
 public interface RecommendationCustomRepository {
     Boolean isRecommend(Long memberId, Long postId);

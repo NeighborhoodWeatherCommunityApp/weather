@@ -10,8 +10,8 @@ import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.apiPayload.code.status.SuccessStatus;
 import org.pknu.weather.common.GlobalParams;
 import org.pknu.weather.common.converter.TokenConverter;
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 

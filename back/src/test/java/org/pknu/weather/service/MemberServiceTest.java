@@ -13,11 +13,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.exp.Level;
-import org.pknu.weather.dto.MemberResponse.MemberResponseWithAddressDTO;
+import org.pknu.weather.member.dto.MemberResponse.MemberResponseWithAddressDTO;
 import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.service.MemberService;
+import org.pknu.weather.member.repository.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {

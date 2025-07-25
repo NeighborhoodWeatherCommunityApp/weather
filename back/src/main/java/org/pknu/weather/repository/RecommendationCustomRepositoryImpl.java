@@ -4,7 +4,7 @@ import static org.pknu.weather.domain.QRecommendation.recommendation;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Recommendation;
 
 import java.time.LocalDateTime;

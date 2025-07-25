@@ -99,6 +99,9 @@ dependencies {
 
     // 비동기 코드 테스트를 위한 Awaitility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 tasks.named('test') {
     useJUnitPlatform()

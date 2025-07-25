@@ -37,8 +37,7 @@ public class JWTUtil {
         headers.put("alg","HS256");
 
         //JWT payload 설정
-        Map<String, Object> payloads = new HashMap<>();
-        payloads.putAll(valueMap);
+        Map<String, Object> payloads = new HashMap<>(valueMap);
 
         int time = (60 * 24) * days;
 

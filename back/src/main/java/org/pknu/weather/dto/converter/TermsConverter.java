@@ -1,6 +1,6 @@
 package org.pknu.weather.dto.converter;
 
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.MemberTerms;
 import org.pknu.weather.domain.Terms;
 import org.pknu.weather.dto.TermsDto;

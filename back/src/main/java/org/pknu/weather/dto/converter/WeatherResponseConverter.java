@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.pknu.weather.common.utils.TagUtils;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Weather;
 import org.pknu.weather.domain.tag.RainTag;
 import org.pknu.weather.domain.tag.TemperatureTag;

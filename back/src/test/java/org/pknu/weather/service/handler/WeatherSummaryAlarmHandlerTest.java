@@ -40,7 +40,7 @@ import org.pknu.weather.dto.AlarmMemberDTO;
 import org.pknu.weather.dto.ExtraWeatherSummaryDTO;
 import org.pknu.weather.dto.WeatherSummaryDTO;
 import org.pknu.weather.repository.ExtraWeatherRepository;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
 import org.pknu.weather.service.dto.WeatherSummaryAlarmInfo;
 import org.pknu.weather.service.message.AlarmMessageMaker;
