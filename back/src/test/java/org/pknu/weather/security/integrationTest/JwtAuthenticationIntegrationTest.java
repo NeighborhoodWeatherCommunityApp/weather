@@ -37,9 +37,12 @@ class JwtAuthenticationIntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    private static final String ACTUATOR_TEST_PATH = "/actuator/prometheus";
+    private static final String API_TEST_PATH = "/api/v1/member/info";
+
     @Test
     void 인증되지_않은_사용자는_보호된_API에_401을_응답받는다() throws Exception {
-        mockMvc.perform(get("/api/v1/member/info"))
+        mockMvc.perform(get(API_TEST_PATH))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -58,7 +61,7 @@ class JwtAuthenticationIntegrationTest {
         String token = jwtUtil.generateToken(userInfo.getUserInfo(), 3);
 
         // when & then
-        mockMvc.perform(get("/api/v1/member/info")
+        mockMvc.perform(get(API_TEST_PATH)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"isSuccess\":true")));    }
@@ -67,7 +70,7 @@ class JwtAuthenticationIntegrationTest {
     void 잘못된_토큰은_401로_거부된다() throws Exception {
         String malformedToken = "malformedToken";
 
-        mockMvc.perform(get("/api/v1/member/info")
+        mockMvc.perform(get(API_TEST_PATH)
                         .header("Authorization", "Bearer " + malformedToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("\"JWT_401_3\"")));
@@ -87,7 +90,7 @@ class JwtAuthenticationIntegrationTest {
         SocialUserInfo userInfo = new SocialUserInfo("kakao", email);
         String token = jwtUtil.generateToken(userInfo.getUserInfo(), 3);
 
-        mockMvc.perform(get("/actuator/health")
+        mockMvc.perform(get(ACTUATOR_TEST_PATH)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
     }
@@ -106,9 +109,10 @@ class JwtAuthenticationIntegrationTest {
         SocialUserInfo userInfo = new SocialUserInfo("kakao", email);
         String token = jwtUtil.generateToken(userInfo.getUserInfo(), 3);
 
-        mockMvc.perform(get("/actuator/health")
+
+        mockMvc.perform(get(ACTUATOR_TEST_PATH)
                         .header("Authorization", "Bearer " + token))
-                .andDo(print())
                 .andExpect(status().isOk());
+
     }
 }
