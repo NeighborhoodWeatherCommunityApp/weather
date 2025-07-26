@@ -14,6 +14,7 @@ public class PublicPaths {
     public static final String[] PERMIT_ALL_PATHS = {
             "/token",
             "/refreshToken",
-            "/health-check"
+            "/health-check",
+            "/actuator/health"
     };
 }
