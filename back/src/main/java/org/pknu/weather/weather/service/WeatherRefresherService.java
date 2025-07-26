@@ -1,6 +1,7 @@
 package org.pknu.weather.weather.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.event.weather.WeatherUpdateEvent;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
@@ -19,6 +20,7 @@ import java.util.Set;
 import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
 import static org.pknu.weather.weather.converter.ExtraWeatherConverter.toExtraWeather;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -75,12 +77,20 @@ public class WeatherRefresherService {
     }
 
     /**
-     *
+     * WeatherUpdateScheduler에 의해 스케쥴링으로 실행됩니다.
      */
     public void updateWeatherDataScheduled(Integer limitSize) {
         List<Long> locationIdsWithRecentlyUpdatedWeather = locationRepository.findLocationIdsWithRecentlyUpdatedWeather(limitSize);
         for (Long locationId : locationIdsWithRecentlyUpdatedWeather) {
+            publishEvent(locationId);
+        }
+    }
+
+    private void publishEvent(Long locationId) {
+        try {
             eventPublisher.publishEvent(new WeatherUpdateEvent(locationId));
+        } catch (Exception e) {
+            log.warn("이벤트 처리 중 예외 발생. locationId: {}", locationId, e);
         }
     }
 }
