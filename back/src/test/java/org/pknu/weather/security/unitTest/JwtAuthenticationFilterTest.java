@@ -42,7 +42,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void 모든_요청에_공개된_URL은_토큰없이_통관된다() throws ServletException, IOException {
+    void 인증이_필요없는_공개된_URL은_토큰없이_통과된다() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("/token");
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -102,7 +102,7 @@ public class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void 서명이_잘못된_토큰의_경우에는_Signatured에러가_발생한다() throws ServletException, IOException {
+    void 서명이_잘못된_토큰의_경우에는_Signatured예외가_발생한다() throws ServletException, IOException {
         String invalidToken = "badSignaturedToken";
         MockHttpServletRequest request = setupRequestWithToken(invalidToken);
         MockHttpServletResponse response = new MockHttpServletResponse();

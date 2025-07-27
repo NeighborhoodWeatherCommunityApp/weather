@@ -113,7 +113,7 @@ class AuthServiceUnitTest {
     }
 
     @Test
-    void 지원하지_않은_소셜_로그인_타입을_통한_앱_토큰_생성_실패() {
+    void 지원하지_않은_소셜_로그인_타입으로_접근하면_앱_토큰_생성_실패() {
         // Given
         String tokenType = "google";
         String email = "test@example.com";

@@ -41,13 +41,13 @@ class JwtAuthenticationIntegrationTest {
     private static final String API_TEST_PATH = "/api/v1/member/info";
 
     @Test
-    void 인증되지_않은_사용자는_보호된_API에_401을_응답받는다() throws Exception {
+    void 유효한_토큰이_없는_사용자는_API에_접근할_수_없다() throws Exception {
         mockMvc.perform(get(API_TEST_PATH))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void 유효한_토큰으로_접근시_보호된_API에_200_응답() throws Exception {
+    void 유효한_토큰으로_접근시_API_응답이_정상적으로_이루어진다() throws Exception {
         // given
         String email = "test@example.com";
         Member member = Member.builder()
@@ -77,7 +77,7 @@ class JwtAuthenticationIntegrationTest {
     }
 
     @Test
-    void 일반사용자는_액추에이터_접근시_403반환() throws Exception {
+    void 일반사용자는_액추에이터_관련_api_접근시_제한된다() throws Exception {
         // given
         String email = "test@example.com";
         Member member = Member.builder()
@@ -96,7 +96,7 @@ class JwtAuthenticationIntegrationTest {
     }
 
     @Test
-    void 관리자는_액추에이터_접근시_통과() throws Exception {
+    void 관리자권한을_가진_유저는_액추에이터_관련_api_접근시_통과() throws Exception {
         // given
         String email = "test@example.com";
         Member member = Member.builder()

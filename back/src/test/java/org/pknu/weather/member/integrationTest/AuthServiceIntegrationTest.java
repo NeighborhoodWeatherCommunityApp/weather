@@ -163,7 +163,7 @@ public class AuthServiceIntegrationTest {
     }
 
     @Test
-    void 리프레시_토큰_갱신_불필요_시_액세스_토큰만_갱신() throws Exception {
+    void 리프레시_토큰의_유효기간이_충분할_경우_액세스_토큰만_갱신() throws Exception {
 
         // Given
         String refreshToken = "validRefreshToken";
@@ -185,7 +185,7 @@ public class AuthServiceIntegrationTest {
     }
 
     @Test
-    void 리프레시_토큰_갱신_필요_시_액세스_리프레시_토큰_모두_갱신() throws TokenException {
+    void 리프레시_토큰_갱신이_필요할_경우_액세스_리프레시_토큰_모두_갱신() throws TokenException {
         // Given
         String refreshToken = "oldRefreshToken";
         Map<String, Object> claims = new HashMap<>();
@@ -206,9 +206,8 @@ public class AuthServiceIntegrationTest {
                 .containsEntry("refreshToken", "newRefreshToken");
     }
 
-    @DisplayName("AuthService 통합 테스트: refreshTokens - 만료된 리프레시 토큰 시 TokenException (EXPIRED_REFRESH_TOKEN) 발생")
     @Test
-    void 만료된_리프레시_토큰으로_갱신_시_EXPIRED_REFRESH_TOKEN_발생() {
+    void 만료된_리프레시_토큰으로_갱신_시_EXPIRED_REFRESH_TOKEN_예외_발생() {
         // Given
         String expiredRefreshToken = "expiredRefreshToken";
         when(jwtUtil.validateToken(expiredRefreshToken)).thenThrow(ExpiredJwtException.class);
@@ -222,7 +221,7 @@ public class AuthServiceIntegrationTest {
     }
 
     @Test
-    void 유효하지_않은_형식의_리프레시_토큰으로_갱신_시_MALFORMED_REFRESH_TOKEN_발생() {
+    void 유효하지_않은_형식의_리프레시_토큰으로_갱신_시_MALFORMED_REFRESH_TOKEN_예외_발생() {
         // Given
         String malformedRefreshToken = "malformedToken";
         when(jwtUtil.validateToken(malformedRefreshToken)).thenThrow(new RuntimeException("Invalid token format"));
@@ -235,7 +234,7 @@ public class AuthServiceIntegrationTest {
     }
 
     @Test
-    void 지원하지_않는_소셜로그인_타입_시_TYPE_NOT_ACCEPTED예외_발생() {
+    void 지원하지_않는_소셜로그인_타입_시_TYPE_NOT_ACCEPTED_예외_발생() {
         // When & Then
         assertThatThrownBy(() -> authService.generateTokens("google", "someAccessToken"))
                 .isInstanceOf(GeneralException.class)
