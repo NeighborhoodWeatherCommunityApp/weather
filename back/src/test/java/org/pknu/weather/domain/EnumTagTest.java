@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.pknu.weather.common.mapper.EnumTagMapper;
 import org.pknu.weather.domain.tag.EnumTag;
-import org.pknu.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

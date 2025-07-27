@@ -1,4 +1,4 @@
-package org.pknu.weather.dto.converter;
+package org.pknu.weather.weather.converter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -6,12 +6,12 @@ import java.util.List;
 import org.pknu.weather.common.utils.TagUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.tag.RainTag;
 import org.pknu.weather.domain.tag.TemperatureTag;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.dto.WeatherQueryResult;
-import org.pknu.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherResponse;
 
 public class WeatherResponseConverter {
 

@@ -4,12 +4,12 @@ import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
 import org.pknu.weather.domain.Post;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.PostType;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.Sensitivity;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

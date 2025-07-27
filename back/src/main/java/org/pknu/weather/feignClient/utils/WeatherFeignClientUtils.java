@@ -1,28 +1,24 @@
 package org.pknu.weather.feignClient.utils;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.common.WeatherParamsFactory;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Weather;
-import org.pknu.weather.dto.WeatherApiResponse;
-import org.pknu.weather.dto.WeatherApiResponse.Response.Body.Items.Item;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.feignClient.WeatherFeignClient;
 import org.pknu.weather.feignClient.dto.PointDTO;
 import org.pknu.weather.feignClient.dto.WeatherParams;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.dto.WeatherApiResponse.Response.Body.Items.Item;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +56,7 @@ public class WeatherFeignClientUtils {
             String date = DateTimeFormatter.getFormattedBaseDate(newBaseLocalDateTime);
             String time = DateTimeFormatter.getFormattedBaseTime(newBaseLocalDateTime);
 
-            WeatherParams weatherParams = WeatherParamsFactory.create(weatherServiceKey, date, time, pointDTO);
+            WeatherParams weatherParams = WeatherFeignClientUitls.create(weatherServiceKey, date, time, pointDTO);
 
             log.info(String.format("Retry Forecast API x:%s y:%s date:%s time:%s",
                     pointDTO.getX() != null ? String.valueOf(pointDTO.getX()) : "N/A",

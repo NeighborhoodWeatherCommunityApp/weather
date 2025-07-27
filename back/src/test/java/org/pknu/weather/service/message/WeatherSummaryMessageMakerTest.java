@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.dto.AlarmMemberDTO;
-import org.pknu.weather.dto.ExtraWeatherSummaryDTO;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.dto.ExtraWeatherSummaryDTO;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 import org.pknu.weather.service.dto.AlarmInfo;
 import org.pknu.weather.service.dto.WeatherSummaryAlarmInfo;
 import org.pknu.weather.service.sender.FcmMessage;

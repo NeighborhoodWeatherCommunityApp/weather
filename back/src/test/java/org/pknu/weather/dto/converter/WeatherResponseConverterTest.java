@@ -4,8 +4,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pknu.weather.dto.WeatherQueryResult.SimpleRainInfo;
-import org.pknu.weather.dto.WeatherResponse.SimpleRainInformation;
+import org.pknu.weather.weather.dto.WeatherQueryResult.SimpleRainInfo;
+import org.pknu.weather.weather.dto.WeatherResponse.SimpleRainInformation;
+import org.pknu.weather.weather.converter.WeatherResponseConverter;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;

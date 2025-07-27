@@ -1,17 +1,17 @@
-package org.pknu.weather.service;
+package org.pknu.weather.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.Weather;
-import org.pknu.weather.dto.WeatherQueryResult;
-import org.pknu.weather.dto.WeatherResponse;
-import org.pknu.weather.dto.converter.WeatherResponseConverter;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import org.pknu.weather.event.weather.WeatherCreateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.repository.WeatherRepository;
+import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

@@ -1,4 +1,4 @@
-package org.pknu.weather.service;
+package org.pknu.weather.weather.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -7,10 +7,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Weather;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.repository.WeatherRepository;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;

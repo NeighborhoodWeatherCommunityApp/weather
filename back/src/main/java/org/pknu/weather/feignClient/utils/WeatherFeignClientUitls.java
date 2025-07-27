@@ -1,9 +1,9 @@
-package org.pknu.weather.common;
+package org.pknu.weather.feignClient.utils;
 
 import org.pknu.weather.feignClient.dto.PointDTO;
 import org.pknu.weather.feignClient.dto.WeatherParams;
 
-public class WeatherParamsFactory {
+public class WeatherFeignClientUitls {
     public static WeatherParams create(String serviceKey, String baseDate, String baseTime, PointDTO pointDTO) {
         return WeatherParams.builder()
                 .serviceKey(serviceKey)
