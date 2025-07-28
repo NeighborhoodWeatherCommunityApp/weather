@@ -1,4 +1,4 @@
-package org.pknu.weather.dto;
+package org.pknu.weather.weather.dto;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -6,10 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
 
 @Getter
 public class TotalWeatherDto {

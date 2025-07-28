@@ -4,7 +4,7 @@
 //import org.assertj.core.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.pknu.weather.common.formatter.DateTimeFormatter;
-//import org.pknu.weather.dto.WeatherApiResponse;
+//import org.pknu.weather.weather.dto.WeatherApiResponse;
 //import org.pknu.weather.feignClient.dto.PointDTO;
 //import org.pknu.weather.feignClient.dto.WeatherParams;
 //import org.pknu.weather.feignClient.WeatherFeignClient;
@@ -24,7 +24,7 @@
 //
 //    @Test
 //    void open_fegin을_이용한_단기예보_api_동작_테스트() {
-//        WeatherParams weatherParams = WeatherParamsFactory.create(
+//        WeatherParams weatherParams = WeatherFeignClientUitls.create(
 //                weatherServiceKey,
 //                DateTimeFormatter.getFormattedDate(),
 //                DateTimeFormatter.getFormattedTimeByThreeHour(),

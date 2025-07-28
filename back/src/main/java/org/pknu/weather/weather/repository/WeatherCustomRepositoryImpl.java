@@ -1,4 +1,4 @@
-package org.pknu.weather.repository;
+package org.pknu.weather.weather.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
@@ -10,11 +10,11 @@ import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.QueryUtils;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.QLocation;
-import org.pknu.weather.domain.QWeather;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.QWeather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.dto.WeatherQueryResult;
-import org.pknu.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.pknu.weather.domain.QWeather.weather;
+import static org.pknu.weather.weather.QWeather.weather;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -252,5 +252,22 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
                         return forecast.size();
                     }
                 });
+    }
+
+    /**
+     * weather의 예보 시간이 24시간 이내인지 검사
+     * ex) weather.presentationTIme이 01-01 00:00:00 ~ yyyy-MM-02 00:00:00 사이의 값
+     * @param weather
+     * @return
+     */
+    public static BooleanExpression presentationTimeWithinLast24Hours(QWeather weather) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime end = now.plusHours(24);
+
+        return weather.presentationTime.between(now, end);
+    }
+
+    public static BooleanExpression isSameLocation(Location location, QWeather weather) {
+        return weather.location.eq(location);
     }
 }

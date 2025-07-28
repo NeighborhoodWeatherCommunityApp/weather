@@ -1,4 +1,4 @@
-package org.pknu.weather.dto;
+package org.pknu.weather.weather.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

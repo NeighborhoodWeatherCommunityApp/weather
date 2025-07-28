@@ -1,7 +1,7 @@
 package org.pknu.weather.common.utils;
 
 import java.util.List;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.Sensitivity;
 import org.pknu.weather.domain.tag.DustTag;
 import org.pknu.weather.domain.tag.EnumTag;
@@ -10,7 +10,7 @@ import org.pknu.weather.domain.tag.RainTag;
 import org.pknu.weather.domain.tag.SkyTag;
 import org.pknu.weather.domain.tag.TemperatureTag;
 import org.pknu.weather.domain.tag.WindTag;
-import org.pknu.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto;
 
 public class TagUtils {
 

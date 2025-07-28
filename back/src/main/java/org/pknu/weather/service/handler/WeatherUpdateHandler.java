@@ -10,7 +10,7 @@ import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.dto.AlarmMemberDTO;
 import org.pknu.weather.service.supports.AlarmTimeUtil;
 import org.pknu.weather.domain.common.AlarmType;
-import org.pknu.weather.service.WeatherRefresherService;
+import org.pknu.weather.weather.service.WeatherRefresherService;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,10 +2,15 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'org.pknu'
-version = '0.0.1-SNAPSHOT'
+version = '1.1.0-SNAPSHOT'
+
+jacoco {
+    toolVersion = "0.8.13"
+}
 
 java {
     toolchain {
@@ -104,6 +109,7 @@ dependencies {
 }
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'      // 테스트가 끝난 후 jacoco 보고서 생성
 }
 
 jar {
@@ -111,19 +117,80 @@ jar {
 }
 
 // Querydsl 설정부
-def generated = 'src/main/generated'
+def querydslDir = "$buildDir/generated/querydsl"
+
 
 // querydsl QClass 파일 생성 위치를 지정
-tasks.withType(JavaCompile) {
-    options.getGeneratedSourceOutputDirectory().set(file(generated))
+tasks.withType(JavaCompile).configureEach {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
-
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
-    main.java.srcDirs += [generated]
+    main.java.srcDirs += [querydslDir]
 }
 
 // gradle clean 시에 QClass 디렉토리 삭제
 clean {
-    delete file(generated)
+    delete file(querydslDir)
+}
+
+// jacoco 보고서 종류. 일단은 html만
+jacocoTestReport {
+    reports {
+        xml {
+            enabled false
+        }
+        csv {
+            enabled false
+        }
+        html {
+            enabled true
+        }
+
+        xml.destination file(project.layout.buildDirectory.dir("jacoco/index.xml")) as File
+        csv.destination file(project.layout.buildDirectory.dir("jacoco/index.csv")) as File
+        html.destination file(project.layout.buildDirectory.dir("jacoco/index.html")) as File
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [   // 제외할 패키지 또는 클래스
+                                                    "**/*Application*",
+                                                    "**/*Dto.class",
+                                                    "**/*DTO.class",
+                                                    "**/*Vo.class",
+                                                    "**/*VO.class",
+                                                    "**/config/**",        // 패키지 단위로도 가능
+                                                    "**/exception/**",
+                                                    "**/controller/**",
+                                                    "**/domain/**",
+                                                    "**/apiPayload/**",
+                                                    "**/filter/**"
+                    ])
+                })
+        )
+    }
+}
+
+// 테스트 기준. 라인, 분기 60% 커버리지
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
+    }
 }

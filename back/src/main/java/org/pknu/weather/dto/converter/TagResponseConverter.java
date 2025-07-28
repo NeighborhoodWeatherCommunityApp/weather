@@ -3,7 +3,7 @@ package org.pknu.weather.dto.converter;
 import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.TagWithSelectedStatusDto;
-import org.pknu.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto;
 
 public class TagResponseConverter {
 

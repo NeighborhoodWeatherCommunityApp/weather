@@ -1,7 +1,7 @@
 package org.pknu.weather.event.weather;
 
 import lombok.Getter;
-import org.pknu.weather.domain.Weather;
+import org.pknu.weather.weather.Weather;
 
 import java.util.List;
 

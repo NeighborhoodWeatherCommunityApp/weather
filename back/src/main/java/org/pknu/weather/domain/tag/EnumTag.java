@@ -1,6 +1,6 @@
 package org.pknu.weather.domain.tag;
 
-import org.pknu.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDto;
 
 public interface EnumTag {
     EnumTag findByCode(int code);
