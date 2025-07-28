@@ -10,11 +10,13 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
@@ -25,7 +27,8 @@ import org.pknu.weather.member.auth.userInfo.KakaoUserInfo;
 import org.pknu.weather.member.auth.userInfo.KakaoUserInfoProvider;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.security.exception.TokenException;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
+import org.pknu.weather.security.jwt.TokenValidator;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceUnitTest {
@@ -33,6 +36,8 @@ class AuthServiceUnitTest {
     @Mock
     private JWTUtil jwtUtil;
 
+    @Mock
+    private TokenValidator tokenValidator;
     @Mock
     private AppTokenGenerator appTokenGenerator;
 
@@ -53,6 +58,8 @@ class AuthServiceUnitTest {
 
     private final int ACCESS_TOKEN_VALID_DAYS = 3;
     private final int REFRESH_TOKEN_VALID_DAYS = 30;
+
+
 
     @Test
     void 카카오_로그인을_통한_앱_토큰_생성() {
@@ -138,7 +145,7 @@ class AuthServiceUnitTest {
         claims.put("email", email);
         claims.put("exp", Instant.now().getEpochSecond() + (60 * 60 * 24 * 5)); // 5일 후 만료
 
-        when(jwtUtil.validateToken(refreshToken)).thenReturn(claims);
+        when(tokenValidator.validateRefreshToken(refreshToken)).thenReturn(claims);
         when(jwtUtil.generateToken(any(Map.class), eq(ACCESS_TOKEN_VALID_DAYS)))
                 .thenReturn("renewedAccessTokenValue");
 
@@ -162,7 +169,7 @@ class AuthServiceUnitTest {
         claims.put("email", email);
         claims.put("exp", Instant.now().getEpochSecond() + (60 * 60 * 24 * 1)); // 1일 후 만료
 
-        when(jwtUtil.validateToken(refreshToken)).thenReturn(claims);
+        when(tokenValidator.validateRefreshToken(refreshToken)).thenReturn(claims);
         when(jwtUtil.generateToken(any(Map.class), eq(ACCESS_TOKEN_VALID_DAYS)))
                 .thenReturn("renewedAccessTokenValue");
         when(jwtUtil.generateToken(any(Map.class), eq(REFRESH_TOKEN_VALID_DAYS)))
@@ -182,8 +189,8 @@ class AuthServiceUnitTest {
     void 만료된_리프레시_토큰으로_갱신_시_실패() {
         // Given
         String expiredRefreshToken = "expiredRefreshToken";
-        when(jwtUtil.validateToken(expiredRefreshToken))
-                .thenThrow(new ExpiredJwtException(null, null, "JWT expired"));
+        when(tokenValidator.validateRefreshToken(expiredRefreshToken))
+                .thenThrow(new TokenException(ErrorStatus.EXPIRED_REFRESH_TOKEN));
 
         // When & Then
         assertThatThrownBy(() -> authService.refreshTokens(expiredRefreshToken))
@@ -192,13 +199,26 @@ class AuthServiceUnitTest {
                 .isEqualTo(ErrorStatus.EXPIRED_REFRESH_TOKEN);
     }
 
-    @DisplayName("유효하지 않은 리프레시 토큰으로 갱신 시 TokenException (MALFORMED_REFRESH_TOKEN) 발생 - AssertJ")
+    @Test
+    void 서명이_잘못된_리프레시_토큰으로_갱신_시_실패() {
+        // Given
+        String expiredRefreshToken = "badSingedRefreshToken";
+        when(tokenValidator.validateRefreshToken(expiredRefreshToken))
+                .thenThrow(new TokenException(ErrorStatus.BAD_SIGNED_REFRESH_TOKEN));
+
+        // When & Then
+        assertThatThrownBy(() -> authService.refreshTokens(expiredRefreshToken))
+                .isInstanceOf(TokenException.class)
+                .extracting("code")
+                .isEqualTo(ErrorStatus.BAD_SIGNED_REFRESH_TOKEN);
+    }
+
     @Test
     void 유효하지_않은_리프레시_토큰으로_갱신_시_실패() {
         // Given
         String malformedRefreshToken = "malformedRefreshToken";
-        when(jwtUtil.validateToken(malformedRefreshToken))
-                .thenThrow(new RuntimeException("Invalid JWT signature"));
+        when(tokenValidator.validateRefreshToken(malformedRefreshToken))
+                .thenThrow(new TokenException(ErrorStatus.MALFORMED_REFRESH_TOKEN));
 
         // When & Then
         assertThatThrownBy(() -> authService.refreshTokens(malformedRefreshToken))
@@ -207,17 +227,4 @@ class AuthServiceUnitTest {
                 .isEqualTo(ErrorStatus.MALFORMED_REFRESH_TOKEN);
     }
 
-    @Test
-    void jwtUtil에서_예외_발생_시_실패() {
-        // Given
-        String refreshToken = "someRefreshToken";
-        when(jwtUtil.validateToken(refreshToken))
-                .thenThrow(new IllegalArgumentException("Some other JWT related error"));
-
-        // When & Then
-        assertThatThrownBy(() -> authService.refreshTokens(refreshToken))
-                .isInstanceOf(TokenException.class)
-                .extracting("code")
-                .isEqualTo(ErrorStatus.MALFORMED_REFRESH_TOKEN);
-    }
 }

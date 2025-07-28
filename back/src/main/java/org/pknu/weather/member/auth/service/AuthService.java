@@ -10,9 +10,10 @@ import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.security.exception.TokenException;
 import org.pknu.weather.member.auth.generator.AppTokenGenerator;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.pknu.weather.member.auth.userInfo.AppleUserInfoProvider;
 import org.pknu.weather.member.auth.userInfo.KakaoUserInfoProvider;
+import org.pknu.weather.security.jwt.TokenValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final JWTUtil jwtUtil;
+    private final TokenValidator tokenValidator;
     private final AppTokenGenerator appTokenGenerator;
     private final KakaoUserInfoProvider kakaoUserInfoStrategy;
     private final AppleUserInfoProvider appleUserInfoStrategy;
@@ -48,7 +50,8 @@ public class AuthService {
 
     public Map<String, String> refreshTokens(String refreshToken) throws TokenException {
 
-        Map<String, Object> refreshClaims = checkRefreshToken(refreshToken);
+        Map<String, Object> refreshClaims = tokenValidator.validateRefreshToken(refreshToken);
+
         Long expiredDate = ((Number) refreshClaims.get("exp")).longValue();
         getNewClaims(refreshClaims);
 
@@ -64,17 +67,6 @@ public class AuthService {
                 "accessToken", renewedAccessToken,
                 "refreshToken", renewedRefreshToken
         );
-    }
-
-    private Map<String, Object> checkRefreshToken(String refreshToken) throws TokenException {
-
-        try {
-            return jwtUtil.validateToken(refreshToken);
-        }catch(ExpiredJwtException expiredJwtException){
-            throw new TokenException(ErrorStatus.EXPIRED_REFRESH_TOKEN);
-        }catch(Exception exception){
-            throw new TokenException(ErrorStatus.MALFORMED_REFRESH_TOKEN);
-        }
     }
 
     private boolean isRefreshTokenRenewNeed(Long exp) {

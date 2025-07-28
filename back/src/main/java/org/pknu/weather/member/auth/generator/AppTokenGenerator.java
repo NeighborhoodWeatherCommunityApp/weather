@@ -10,7 +10,7 @@ import org.pknu.weather.member.Role;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.member.auth.userInfo.UserInfoProvider;
 import org.pknu.weather.member.service.MemberService;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.springframework.stereotype.Component;
 
 @Slf4j

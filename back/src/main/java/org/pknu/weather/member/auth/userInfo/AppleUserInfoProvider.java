@@ -12,7 +12,7 @@ import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.feignClient.AppleAuthClient;
 import org.pknu.weather.member.auth.generator.ApplePublicKeyGenerator;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.springframework.stereotype.Component;
 
 @Slf4j

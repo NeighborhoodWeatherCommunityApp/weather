@@ -38,6 +38,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_8", "Refresh Token이 만료되었습니다."),
     TOKENS_NOT_ACCEPTED(HttpStatus.UNAUTHORIZED, "Jwt_401_9", "Access Token과 refresh Token이 존재하지 않습니다."),
     TYPE_NOT_ACCEPTED(HttpStatus.BAD_REQUEST, "Jwt_400_10", "소셜 로그인의 타입에 문제가 있습니다."),
+    BAD_SIGNED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt_401_11", "Refresh Token의 서명이 올바르지 않습니다"),
+
 
 
     //KaKaoAccessTokenException

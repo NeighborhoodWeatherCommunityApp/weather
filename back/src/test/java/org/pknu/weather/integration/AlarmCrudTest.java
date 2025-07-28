@@ -28,7 +28,7 @@ import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.repository.AlarmRepository;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.member.repository.MemberRepository;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

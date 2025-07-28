@@ -44,7 +44,7 @@ import org.pknu.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.repository.WeatherRepository;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.pknu.weather.service.AlarmService;
 import org.pknu.weather.service.dto.AlarmInfo;
 import org.pknu.weather.service.dto.WeatherSummaryAlarmInfo;

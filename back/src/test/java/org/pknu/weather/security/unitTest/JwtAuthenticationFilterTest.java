@@ -11,11 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.security.filter.JwtAuthenticationFilter;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
+import org.pknu.weather.security.jwt.TokenValidator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class JwtAuthenticationFilterTest {
 
+    private TokenValidator tokenValidator;
     @Mock
     private JWTUtil jwtUtil;
     @Mock
@@ -38,8 +41,10 @@ public class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        filter = new JwtAuthenticationFilter(jwtUtil, memberRepository);
+        tokenValidator = new TokenValidator(jwtUtil);
+        filter = new JwtAuthenticationFilter(tokenValidator, memberRepository);
     }
+
 
     @Test
     void 인증이_필요없는_공개된_URL은_토큰없이_통과된다() throws ServletException, IOException {
@@ -68,9 +73,8 @@ public class JwtAuthenticationFilterTest {
         MockHttpServletRequest request = setupRequestWithToken(malformedToken);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        given(jwtUtil.validateToken(malformedToken))
+        given(jwtUtil.validateToken("malformedToken"))
                 .willThrow(new MalformedJwtException("Malformed"));
-
 
         // when
         filter.doFilter(request, response, filterChain);

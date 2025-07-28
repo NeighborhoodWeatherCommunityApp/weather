@@ -13,7 +13,7 @@ import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Post;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.repository.PostRepository;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 import org.pknu.weather.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

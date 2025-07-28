@@ -21,7 +21,7 @@ import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.security.exception.TokenException;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.TokenValidator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,8 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTH_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
-    private final JWTUtil jwtUtil;
+    private final TokenValidator tokenValidator;
     private final MemberRepository memberRepository;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -63,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void authenticateRequest(HttpServletRequest request) throws TokenException {
         String token = extractAccessToken(request);
-        Map<String, Object> claims = validateToken(token);
+        Map<String, Object> claims = tokenValidator.validateAccessToken(token);
 
         String email = (String) claims.get("email");
 
@@ -91,23 +92,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return header.substring(TOKEN_PREFIX.length());
     }
 
-    private Map<String, Object> validateToken(String token) throws TokenException {
-        try {
-            return jwtUtil.validateToken(token);
-        } catch (MalformedJwtException e) {
-            log.error("Malformed JWT");
-            throw new TokenException(ErrorStatus.MALFORMED_ACCESS_TOKEN);
-        } catch (SignatureException e) {
-            log.error("Invalid JWT signature");
-            throw new TokenException(ErrorStatus.BAD_SIGNED_ACCESS_TOKEN);
-        } catch (ExpiredJwtException e) {
-            log.error("Expired JWT");
-            throw new TokenException(ErrorStatus.EXPIRED_ACCESS_TOKEN);
-        }
-    }
-
     private boolean shouldSkip(String uri) {
-        return Arrays.asList(PERMIT_ALL_PATHS).contains(uri);
+        return PERMIT_ALL_PATHS.contains(uri);
     }
 
 }

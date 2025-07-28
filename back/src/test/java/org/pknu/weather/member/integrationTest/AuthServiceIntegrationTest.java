@@ -6,6 +6,7 @@ import feign.Response;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
@@ -27,7 +27,7 @@ import org.pknu.weather.member.auth.service.AuthService;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.member.service.MemberService;
 import org.pknu.weather.security.exception.TokenException;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.security.jwt.JWTUtil;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -217,14 +217,13 @@ public class AuthServiceIntegrationTest {
                 .isInstanceOf(TokenException.class)
                 .extracting(EXCEPTION_FIELD)
                 .isEqualTo(ErrorStatus.EXPIRED_REFRESH_TOKEN);
-
     }
 
     @Test
     void 유효하지_않은_형식의_리프레시_토큰으로_갱신_시_MALFORMED_REFRESH_TOKEN_예외_발생() {
         // Given
         String malformedRefreshToken = "malformedToken";
-        when(jwtUtil.validateToken(malformedRefreshToken)).thenThrow(new RuntimeException("Invalid token format"));
+        when(jwtUtil.validateToken(malformedRefreshToken)).thenThrow(new MalformedJwtException("Malformed token"));
 
         // When & Then
         assertThatThrownBy(() -> authService.refreshTokens(malformedRefreshToken))

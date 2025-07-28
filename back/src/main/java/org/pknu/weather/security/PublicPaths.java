@@ -1,5 +1,7 @@
 package org.pknu.weather.security;
 
+import java.util.Set;
+
 /**
  * Spring Security 인증 및 인가 설정에서 공통으로 사용되는 "인증 생략 경로" 목록입니다.
  *
@@ -11,10 +13,14 @@ package org.pknu.weather.security;
  * 인증 필터와 인가 설정 간의 동기화를 위해 한 곳에서 정의하여 관리합니다.
  */
 public class PublicPaths {
-    public static final String[] PERMIT_ALL_PATHS = {
+    public static final Set<String> PERMIT_ALL_PATHS = Set.of(
             "/token",
             "/refreshToken",
             "/health-check",
             "/actuator/health"
-    };
+    );
+
+    public static String[] getPermitAllPaths() {
+        return PERMIT_ALL_PATHS.toArray(new String[0]);
+    }
 }
