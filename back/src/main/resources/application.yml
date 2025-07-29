@@ -83,7 +83,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: ["health", "prometheus"]
 
 cloud:
   aws:
@@ -100,7 +100,7 @@ cloud:
 server:
   tomcat:
     mbeanregistry:
-      enabled: true
+      enabled: false
 
 apple:
   public-key-url: https://appleid.apple.com

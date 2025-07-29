@@ -1,7 +1,7 @@
 package org.pknu.weather.common;
 
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.security.util.JWTUtil;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.security.jwt.JWTUtil;
 
 import java.lang.reflect.Field;
 import java.util.Map;

@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.domain.Alarm;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.common.SummaryAlarmTime;
 import org.pknu.weather.dto.AlarmRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;

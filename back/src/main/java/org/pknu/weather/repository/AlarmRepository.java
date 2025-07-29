@@ -4,7 +4,7 @@ package org.pknu.weather.repository;
 import java.util.List;
 import java.util.Optional;
 import org.pknu.weather.domain.Alarm;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

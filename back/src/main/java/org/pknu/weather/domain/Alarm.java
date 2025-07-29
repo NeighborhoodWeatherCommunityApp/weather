@@ -8,6 +8,7 @@ import org.pknu.weather.dto.AlarmRequestDTO;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.pknu.weather.member.entity.Member;
 
 @Builder
 @Entity

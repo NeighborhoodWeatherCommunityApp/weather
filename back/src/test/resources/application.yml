@@ -61,9 +61,20 @@ management:
   health:
     db:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: [ "health", "prometheus" ]
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 cloud:
   aws:
     credentials:

@@ -3,7 +3,7 @@ package org.pknu.weather.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
@@ -13,12 +13,11 @@ import org.pknu.weather.event.weather.WeatherCreateEvent;
 import org.pknu.weather.event.weather.WeatherUpdateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.service.WeatherQueryService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 /**

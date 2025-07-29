@@ -31,13 +31,15 @@ public enum ErrorStatus implements BaseErrorCode {
     //Token
     ACCESS_TOKEN_NOT_ACCEPTED(HttpStatus.UNAUTHORIZED, "Jwt_401_1", "Access Token이 존재하지 않습니다."),
     ACCESS_TOKEN_BADTYPE(HttpStatus.UNAUTHORIZED, "Jwt_401_2", "Access Token의 타입이 bearer가 아닙니다."),
-    MALFORMED_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "JWT_401_3", "Access Token의 값이 올바르게 설정되지 않았습니다. "),
-    BAD_SIGNED_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "JWT_401_4", "Access Token의 서명이 올바르지 않습니다."),
-    EXPIRED_ACCESS_TOKEN(HttpStatus.FORBIDDEN, "JWT_401_5", "Access Token이 만료되었습니다."),
-    MALFORMED_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "JWT_401_7", "Refresh Token의 값이 올바르게 설정되지 않았습니다. "),
-    EXPIRED_REFRESH_TOKEN(HttpStatus.FORBIDDEN, "JWT_401_8", "Refresh Token이 만료되었습니다."),
+    MALFORMED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_3", "Access Token의 값이 올바르게 설정되지 않았습니다. "),
+    BAD_SIGNED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_4", "Access Token의 서명이 올바르지 않습니다."),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_5", "Access Token이 만료되었습니다."),
+    MALFORMED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_7", "Refresh Token의 값이 올바르게 설정되지 않았습니다. "),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_401_8", "Refresh Token이 만료되었습니다."),
     TOKENS_NOT_ACCEPTED(HttpStatus.UNAUTHORIZED, "Jwt_401_9", "Access Token과 refresh Token이 존재하지 않습니다."),
     TYPE_NOT_ACCEPTED(HttpStatus.BAD_REQUEST, "Jwt_400_10", "소셜 로그인의 타입에 문제가 있습니다."),
+    BAD_SIGNED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt_401_11", "Refresh Token의 서명이 올바르지 않습니다"),
+
 
 
     //KaKaoAccessTokenException

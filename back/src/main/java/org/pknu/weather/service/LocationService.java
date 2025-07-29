@@ -7,11 +7,11 @@ import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.common.utils.AddressFinder;
 import org.pknu.weather.common.utils.SgisLocationUtils;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.dto.LocationDTO;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.repository.MemberRepository;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

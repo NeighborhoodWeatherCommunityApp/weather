@@ -7,6 +7,7 @@ import org.pknu.weather.domain.common.PostType;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.pknu.weather.member.entity.Member;
 
 @Entity
 @Getter

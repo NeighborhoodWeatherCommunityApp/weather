@@ -1,7 +1,7 @@
 package org.pknu.weather.common.utils;
 
 import java.util.List;
-import org.pknu.weather.domain.Member;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.Recommendation;
 
 public class RecommendationUtils {
