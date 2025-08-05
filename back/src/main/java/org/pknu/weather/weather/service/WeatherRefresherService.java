@@ -7,7 +7,7 @@ import org.pknu.weather.event.weather.WeatherUpdateEvent;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.weather.ExtraWeather;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
 import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

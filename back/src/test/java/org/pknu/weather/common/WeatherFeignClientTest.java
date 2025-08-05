@@ -4,7 +4,7 @@
 //import org.assertj.core.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.pknu.weather.common.formatter.DateTimeFormatter;
-//import org.pknu.weather.weather.dto.WeatherApiResponse;
+//import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
 //import org.pknu.weather.feignClient.dto.PointDTO;
 //import org.pknu.weather.feignClient.dto.WeatherParams;
 //import org.pknu.weather.feignClient.WeatherFeignClient;
@@ -31,7 +31,7 @@
 //                new PointDTO(55, 127)
 //        );
 //
-//        WeatherApiResponse weatherApiResponses = weatherFeignClient.getVillageShortTermForecast(weatherParams);
+//        WeatherApiResponseDTO weatherApiResponses = weatherFeignClient.getVillageShortTermForecast(weatherParams);
 //
 //        Assertions.assertThat(weatherApiResponses.getResponse().getBody().getItems().getItemList().size()).isEqualTo(288);
 //    }

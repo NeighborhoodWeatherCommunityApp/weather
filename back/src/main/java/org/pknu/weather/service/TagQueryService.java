@@ -11,8 +11,8 @@ import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.TagQueryResult;
 import org.pknu.weather.dto.TagWithSelectedStatusDto;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
 import org.pknu.weather.dto.converter.TagResponseConverter;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.repository.TagRepository;
@@ -74,7 +74,7 @@ public class TagQueryService {
         Location location = member.getLocation();
         Weather weather = weatherQueryService.getNearestWeatherForecastToNow(location);
         ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(member.getEmail(), location.getId());
-        TotalWeatherDto totalWeatherDto = new TotalWeatherDto(weather, extraWeatherInfo);
+        TotalWeatherDTO totalWeatherDto = new TotalWeatherDTO(weather, extraWeatherInfo);
         Map<String, List<TagWithSelectedStatusDto>> map = new HashMap<>();
 
         enumTagMapper.getAll().forEach((key, enumTag) -> {

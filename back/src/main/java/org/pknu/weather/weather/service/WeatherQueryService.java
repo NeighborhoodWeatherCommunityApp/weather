@@ -8,8 +8,8 @@ import org.pknu.weather.event.weather.WeatherCreateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherQueryResult;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
@@ -63,10 +63,10 @@ public class WeatherQueryService {
         return optionalWeather.get();
     }
 
-    public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
+    public WeatherResponseDTO.SimpleRainInformation getSimpleRainInfo(String email) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
-        WeatherQueryResult.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
+        WeatherQueryResultDTO.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
         return WeatherResponseConverter.toSimpleRainInformation(simpleRainInfo);
     }
 

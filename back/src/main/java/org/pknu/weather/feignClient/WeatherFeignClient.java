@@ -1,6 +1,6 @@
 package org.pknu.weather.feignClient;
 
-import org.pknu.weather.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
 import org.pknu.weather.feignClient.dto.WeatherParams;
 import org.pknu.weather.feignClient.error.CommonErrorDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,5 +18,5 @@ public interface WeatherFeignClient {
             method = RequestMethod.GET,
             value = "${api.weather.forecast-value}",
             produces = "application/json")
-    WeatherApiResponse getVillageShortTermForecast(@SpringQueryMap WeatherParams weatherRequest);
+    WeatherApiResponseDTO getVillageShortTermForecast(@SpringQueryMap WeatherParams weatherRequest);
 }

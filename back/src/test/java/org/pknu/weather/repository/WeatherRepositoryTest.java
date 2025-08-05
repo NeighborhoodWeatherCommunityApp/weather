@@ -11,7 +11,7 @@ import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -143,7 +143,7 @@ class WeatherRepositoryTest {
         weatherRepository.save(weather);
 
         // when
-        WeatherQueryResult.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
+        WeatherQueryResultDTO.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
 
         // thne
         assertThat(simpleRainInfo.getRainProbability()).isEqualTo(weather.getRainProb());
@@ -170,7 +170,7 @@ class WeatherRepositoryTest {
         weatherRepository.save(weather);
 
         // when
-        WeatherQueryResult.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
+        WeatherQueryResultDTO.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
 
         // thne
         assertThat(simpleRainInfo).isNull();

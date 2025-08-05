@@ -3,7 +3,7 @@ package org.pknu.weather.dto.converter;
 import org.pknu.weather.domain.tag.EnumTag;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.dto.TagWithSelectedStatusDto;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 
 public class TagResponseConverter {
 
@@ -13,7 +13,7 @@ public class TagResponseConverter {
                 .build();
     }
 
-    public static TagWithSelectedStatusDto toTagSelectedOrNotDto(EnumTag tag, TotalWeatherDto totalWeatherDto) {
+    public static TagWithSelectedStatusDto toTagSelectedOrNotDto(EnumTag tag, TotalWeatherDTO totalWeatherDto) {
         return TagWithSelectedStatusDto.builder()
                 .enumTag(tag)
                 .selected(tag.tagSelectedCheck(tag, totalWeatherDto))

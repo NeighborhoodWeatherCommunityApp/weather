@@ -11,8 +11,8 @@ import org.pknu.weather.feignClient.WeatherFeignClient;
 import org.pknu.weather.feignClient.dto.PointDTO;
 import org.pknu.weather.feignClient.dto.WeatherParams;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherApiResponse;
-import org.pknu.weather.weather.dto.WeatherApiResponse.Response.Body.Items.Item;
+import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
+import org.pknu.weather.weather.dto.WeatherApiResponseDTO.Response.Body.Items.Item;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
@@ -64,8 +64,8 @@ public class WeatherFeignClientUtils {
                     date != null ? date : "N/A",
                     time != null ? time : "N/A"));
 
-            WeatherApiResponse weatherApiResponse = weatherFeignClient.getVillageShortTermForecast(weatherParams);
-            List<Item> itemList = Optional.ofNullable(weatherApiResponse.getResponse()
+            WeatherApiResponseDTO weatherApiResponseDTO = weatherFeignClient.getVillageShortTermForecast(weatherParams);
+            List<Item> itemList = Optional.ofNullable(weatherApiResponseDTO.getResponse()
                             .getBody()
                             .getItems()
                             .getItemList())

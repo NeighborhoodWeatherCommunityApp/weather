@@ -7,7 +7,7 @@ import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import org.pknu.weather.event.weather.WeatherCreateEvent;
 import org.pknu.weather.event.weather.WeatherUpdateEvent;
@@ -43,7 +43,7 @@ public class MainPageService {
      * @param email
      * @return
      */
-    public WeatherResponse.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
+    public WeatherResponseDTO.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = resolveLocation(member, locationId);
 
@@ -93,7 +93,7 @@ public class MainPageService {
         return tagQueryService.getMostSelectedTags(email);
     }
 
-    public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
+    public WeatherResponseDTO.SimpleRainInformation getSimpleRainInfo(String email) {
         return weatherQueryService.getSimpleRainInfo(email);
     }
 }

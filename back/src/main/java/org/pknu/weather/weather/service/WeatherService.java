@@ -7,8 +7,8 @@ import org.pknu.weather.weather.ExtraWeather;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherResponse;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
@@ -142,7 +142,7 @@ public class WeatherService {
     }
 
     @Transactional
-    public WeatherResponse.ExtraWeatherInfo extraWeatherInfo(String email, Long locationId) {
+    public WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo(String email, Long locationId) {
 
         Member member = memberRepository.findMemberWithLocationByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
@@ -154,7 +154,7 @@ public class WeatherService {
                 .orElseGet(() -> fetchAndSaveExtraWeather(location));
     }
 
-    private WeatherResponse.ExtraWeatherInfo processExistingExtraWeather(Location location, ExtraWeather extraWeather) {
+    private WeatherResponseDTO.ExtraWeatherInfo processExistingExtraWeather(Location location, ExtraWeather extraWeather) {
         if (extraWeather.getBasetime().isBefore(LocalDateTime.now().minusHours(3))) {
             return updateAndReturnExtraWeatherInfo(location, extraWeather);
         }

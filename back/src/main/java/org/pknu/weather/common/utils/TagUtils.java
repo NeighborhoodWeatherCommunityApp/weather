@@ -10,7 +10,7 @@ import org.pknu.weather.domain.tag.RainTag;
 import org.pknu.weather.domain.tag.SkyTag;
 import org.pknu.weather.domain.tag.TemperatureTag;
 import org.pknu.weather.domain.tag.WindTag;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 
 public class TagUtils {
 
@@ -24,7 +24,7 @@ public class TagUtils {
 
     public static EnumTag rainType2RainTag(Weather weather) {
         RainTag rainTag = RainTag.NOTHING;
-        return rainTag.weatherValueToTag(new TotalWeatherDto(weather));
+        return rainTag.weatherValueToTag(new TotalWeatherDTO(weather));
     }
 
     public static TemperatureTag tmp2TemperatureTag(Integer tmp, Sensitivity sensitivity) {

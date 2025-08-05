@@ -4,7 +4,7 @@ import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 import org.pknu.weather.exception.GeneralException;
 
 @Getter
@@ -32,7 +32,7 @@ public enum WindTag implements EnumTag {
     }
 
     @Override
-    public WindTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+    public WindTag weatherValueToTag(TotalWeatherDTO totalWeatherDto) {
         Double windSpeed = totalWeatherDto.getWeatherDto().getWindSpeed();
 
         if (windSpeed < 1.5) {
