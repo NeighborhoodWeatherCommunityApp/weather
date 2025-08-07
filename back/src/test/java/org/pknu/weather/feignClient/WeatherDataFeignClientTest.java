@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-class WeatherFeignClientTest {
+class WeatherDataFeignClientTest {
     private final CommonErrorDecoder errorDecoder = new CommonErrorDecoder(Map.of(WeatherFeignClient.class.getSimpleName(), new WeatherFeignErrorDecoder()));
 
     @Test

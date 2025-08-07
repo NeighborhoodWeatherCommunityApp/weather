@@ -23,7 +23,7 @@ import org.pknu.weather.domain.BaseEntity;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
 
 @Entity
 @Getter
@@ -118,7 +118,7 @@ public class Weather extends BaseEntity {
         }
     }
 
-    public void categoryClassify(WeatherApiResponse.Response.Body.Items.Item item) {
+    public void categoryClassify(WeatherApiResponseDTO.Response.Body.Items.Item item) {
         String val = item.getFcstValue();
         switch (item.getCategory()) {
             // 강수 확률

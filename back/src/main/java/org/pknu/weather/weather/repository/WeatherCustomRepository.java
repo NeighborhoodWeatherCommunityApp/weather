@@ -2,7 +2,7 @@ package org.pknu.weather.weather.repository;
 
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public interface WeatherCustomRepository {
 
     boolean weatherHasBeenCreated(Location location);
 
-    WeatherQueryResult.SimpleRainInfo getSimpleRainInfo(Location locationEntity);
+    WeatherQueryResultDTO.SimpleRainInfo getSimpleRainInfo(Location locationEntity);
 
     Optional<Weather> findWeatherByClosestPresentationTime(Location location);
 

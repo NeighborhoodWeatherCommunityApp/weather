@@ -33,7 +33,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import(DataJpaTestConfig.class)
 @DataJpaTest
-class WeatherCustomRepositoryTest {
+class WeatherDataCustomRepositoryTest {
 
     @Autowired
     private WeatherRepository weatherRepository;

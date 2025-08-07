@@ -4,7 +4,7 @@ import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 import org.pknu.weather.exception.GeneralException;
 
 @Getter
@@ -34,7 +34,7 @@ public enum HumidityTag implements EnumTag {
     }
 
     @Override
-    public EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+    public EnumTag weatherValueToTag(TotalWeatherDTO totalWeatherDto) {
         Integer temperature = totalWeatherDto.getWeatherDto().getTemperature();
         Integer humidity = totalWeatherDto.getWeatherDto().getHumidity();
 

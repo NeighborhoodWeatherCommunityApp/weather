@@ -9,7 +9,7 @@ import org.pknu.weather.domain.common.PostType;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.Sensitivity;
 import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -100,8 +100,8 @@ public class TestDataCreator {
                 .build();
     }
 
-    public static WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocalDateTime baseTime) {
-        return WeatherResponse.ExtraWeatherInfo.builder()
+    public static WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocalDateTime baseTime) {
+        return WeatherResponseDTO.ExtraWeatherInfo.builder()
                 .baseTime(baseTime)
                 .o3Grade(1)
                 .uvGrade(1)

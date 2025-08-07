@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.domain.BaseEntity;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 
 import java.time.LocalDateTime;
 
@@ -44,7 +44,7 @@ public class ExtraWeather extends BaseEntity {
     private Integer pm10value;
     private Integer pm25value;
 
-    public void updateExtraWeather (WeatherResponse.ExtraWeatherInfo extraWeatherInfo){
+    public void updateExtraWeather (WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo){
         this.basetime = extraWeatherInfo.getBaseTime();
         if (extraWeatherInfo.getUvGrade() != null)
             this.uv = extraWeatherInfo.getUvGrade();

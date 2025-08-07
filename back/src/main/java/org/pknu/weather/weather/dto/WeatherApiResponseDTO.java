@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeatherApiResponse {
+public class WeatherApiResponseDTO {
 
     @JsonProperty("header")
     private Header header;

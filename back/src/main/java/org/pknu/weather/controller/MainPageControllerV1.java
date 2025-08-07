@@ -9,7 +9,7 @@ import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.service.MainPageService;
 import org.pknu.weather.weather.service.WeatherService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,12 +30,12 @@ public class MainPageControllerV1 {
     private final WeatherService weatherService;
 
     @GetMapping("/weather")
-    public ApiResponse<WeatherResponse.MainPageWeatherData> getMainPageResource(
+    public ApiResponse<WeatherResponseDTO.MainPageWeatherData> getMainPageResource(
             @RequestHeader("Authorization") String authorization,
             @RequestParam(required = false) Long locationId) {
 
         String email = TokenConverter.getEmailByToken(authorization);
-        WeatherResponse.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(email, locationId);
+        WeatherResponseDTO.MainPageWeatherData weatherInfo = mainPageService.getWeatherInfo(email, locationId);
 
         return ApiResponse.onSuccess(weatherInfo);
     }
@@ -50,12 +50,12 @@ public class MainPageControllerV1 {
     }
 
     @GetMapping(value = "/extraWeatherInfo")
-    public ApiResponse<WeatherResponse.ExtraWeatherInfo> getExtraWeatherInfo(
+    public ApiResponse<WeatherResponseDTO.ExtraWeatherInfo> getExtraWeatherInfo(
             @RequestHeader("Authorization") String authorization,
             @RequestParam(required = false) Long locationId) {
 
         String email = getEmailByToken(authorization);
-        WeatherResponse.ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(email, locationId);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(email, locationId);
 
         return ApiResponse.onSuccess(extraWeatherInfo);
     }
@@ -71,7 +71,7 @@ public class MainPageControllerV1 {
     @GetMapping("/weather/simple/rain")
     public ApiResponse<Object> getRainProbability(@RequestHeader("Authorization") String authorization) {
         String email = TokenConverter.getEmailByToken(authorization);
-        WeatherResponse.SimpleRainInformation rainProb = mainPageService.getSimpleRainInfo(email);
+        WeatherResponseDTO.SimpleRainInformation rainProb = mainPageService.getSimpleRainInfo(email);
         return ApiResponse.onSuccess(rainProb);
     }
 }

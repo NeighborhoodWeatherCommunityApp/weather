@@ -1,6 +1,6 @@
 package org.pknu.weather.domain.tag;
 
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 
 public interface EnumTag {
     EnumTag findByCode(int code);
@@ -24,9 +24,9 @@ public interface EnumTag {
         return split[split.length - 1];
     }
 
-    EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto);
+    EnumTag weatherValueToTag(TotalWeatherDTO totalWeatherDto);
 
-    default Boolean tagSelectedCheck(EnumTag tag, TotalWeatherDto totalWeatherDto) {
+    default Boolean tagSelectedCheck(EnumTag tag, TotalWeatherDTO totalWeatherDto) {
         return tag == tag.weatherValueToTag(totalWeatherDto);
     }
 }

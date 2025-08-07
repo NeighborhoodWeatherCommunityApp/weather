@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.dto.LocationDTO;
-import org.pknu.weather.weather.dto.WeatherResponse;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.feignClient.AirConditionClient;
 import org.pknu.weather.feignClient.UVClient;
@@ -44,7 +44,7 @@ public class ExtraWeatherApiUtils {
     private final AirConditionClient airConditionClient;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO) {
+    public WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO) {
 
         UVResponseDTO.Item uvResult = getUV(locationDTO);
         transferUvGrade(uvResult);
@@ -54,7 +54,7 @@ public class ExtraWeatherApiUtils {
         return getExtraWeatherInformation(uvResult, airConditionInfo);
     }
 
-    public WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO, LocalDateTime baseTime) {
+    public WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO, LocalDateTime baseTime) {
 
         UVResponseDTO.Item uvResult = getUV(locationDTO);
         transferUvGrade(uvResult);
