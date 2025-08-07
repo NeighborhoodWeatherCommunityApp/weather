@@ -1,0 +1,92 @@
+package org.pknu.weather.config;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+@RequiredArgsConstructor
+@Configuration
+@EnableRedisRepositories
+public class RedisConfig {
+    @Value("${spring.data.redis.host}")
+    private String host;
+
+    @Value("${spring.data.redis.port}")
+    private int port;
+
+    @Value("${spring.data.redis.password}")
+    private String password;
+
+    /**
+     * RedisConnectionFactory는 스프링 어플리케이션과 레디스를 연결하기 위해 사용된다.
+     * 커넥션의 종류로는 Jedis와 Lettuce가 있는데, Lettuce의 성능이 더 좋은 것으로 알려져있다.
+     */
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        // redis 연결 정보(host, port, password)를 지정한다.
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setHostName(host);
+        config.setPort(port);
+        config.setPassword(password);
+
+        // redis 연결 정보를 토대로 LettuceConnectionFactory 객체를 생성하여 빈으로 등록한다.
+        return new LettuceConnectionFactory(config);
+    }
+
+    /**
+     * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
+     * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
+     */
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+
+        // 직렬화/역직렬화 설정
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType("org.pknu.weather.weather.dto") // 해당 패키지에 포함되어 있으면 역직렬화 자동 매핑 지원
+                        .allowIfSubType("org.pknu.weather.domain")
+                        .allowIfSubType("java.util")
+                        .build(),
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
+
+        // Jackson에 LocalDateTime지원
+        objectMapper.registerModule(new JavaTimeModule());
+        // LocalDateTime, Date 등을 직/역직렬화할 때 숫자(ex. 20251212001212)가 아닌, 문자열(2025.12.12T00:12:12)로 쓰겠다는 설정 (true=숫자, false=문자열)
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        // 접근 제한자를 무시합니다.
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+
+        /**
+         * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
+         * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
+         */
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
+    }
+}
