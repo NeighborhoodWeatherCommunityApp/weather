@@ -47,7 +47,7 @@ public class Pointcuts {
     public void transactionalPointcut() {
     }
 
-    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut()")
+    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut()")
     public void devLoggingPointcut() {
     }
 
