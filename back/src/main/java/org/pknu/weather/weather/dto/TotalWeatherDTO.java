@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 
 @Getter
 public class TotalWeatherDTO {
-    private final WeatherDto weatherDto;
+    private final WeatherDTO weatherDto;
     private final ExtraWeatherDto extraWeatherDto;
     private final LocalDateTime baseTime;
 
     public TotalWeatherDTO(Weather weather) {
         baseTime = weather.getBasetime();
-        weatherDto = WeatherDto.builder()
+        weatherDto = WeatherDTO.builder()
                 .location(weather.getLocation())
                 .windSpeed(weather.getWindSpeed())
                 .humidity(weather.getHumidity())
@@ -38,7 +38,7 @@ public class TotalWeatherDTO {
 
     public TotalWeatherDTO(Weather weather, ExtraWeatherInfo extraWeatherInfo) {
         baseTime = weather.getBasetime();
-        weatherDto = WeatherDto.builder()
+        weatherDto = WeatherDTO.builder()
                 .location(weather.getLocation())
                 .windSpeed(weather.getWindSpeed())
                 .humidity(weather.getHumidity())
@@ -72,7 +72,7 @@ public class TotalWeatherDTO {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class WeatherDto {
+    public static class WeatherDTO {
         private Location location;
         private Double windSpeed;
         private Integer humidity;

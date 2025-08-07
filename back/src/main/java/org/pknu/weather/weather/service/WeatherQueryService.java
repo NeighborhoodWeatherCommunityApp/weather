@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.event.weather.WeatherCreateEvent;
+import org.pknu.weather.weather.event.WeatherCreateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.Weather;

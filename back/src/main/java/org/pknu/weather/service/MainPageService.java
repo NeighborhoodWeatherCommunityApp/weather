@@ -9,12 +9,13 @@ import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
 import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
-import org.pknu.weather.event.weather.WeatherCreateEvent;
-import org.pknu.weather.event.weather.WeatherUpdateEvent;
+import org.pknu.weather.weather.event.WeatherCreateEvent;
+import org.pknu.weather.weather.event.WeatherUpdateEvent;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.repository.LocationRepository;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.service.WeatherQueryService;
+import org.pknu.weather.weather.service.WeatherCacheRefresherService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ public class MainPageService {
     private final TagQueryService tagQueryService;
     private final WeatherFeignClientUtils weatherFeignClientUtils;
     private final ApplicationEventPublisher eventPublisher;
+    private final WeatherCacheRefresherService weatherCacheRefresherService;
 
     /**
      * 메인 페이지에 날씨와 관련된 데이터를 반환한다. 만약 해당 지역의 날씨의 갱신 시간이 지났다면 갱신을 시도하고 반환한다. 만약 해당 지역의 날씨 정보가 없다면 저장하고 반환한다.
@@ -47,7 +49,12 @@ public class MainPageService {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = resolveLocation(member, locationId);
 
-        List<Weather> weatherList = createWeatherIfRequired(location, member);
+        List<Weather> cachedWeatherList = weatherCacheRefresherService.getCachedWeathers(location.getId());
+        if(!cachedWeatherList.isEmpty()) {
+            return WeatherResponseConverter.toMainPageWeatherData(cachedWeatherList, member);
+        }
+
+        List<Weather> weatherList = createWeatherIfRequired(location);
         if (weatherList != null) {
             return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
         }
@@ -64,7 +71,7 @@ public class MainPageService {
                 : member.getLocation();
     }
 
-    private List<Weather> createWeatherIfRequired(Location location, Member member) {
+    private List<Weather> createWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenCreated(location)) {
             List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
             eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
