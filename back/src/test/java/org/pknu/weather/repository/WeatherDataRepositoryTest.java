@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
-class WeatherRepositoryTest {
+class WeatherDataRepositoryTest {
     @Autowired
     WeatherRepository weatherRepository;
 

@@ -50,7 +50,7 @@ import org.pknu.weather.service.supports.AlarmTimeUtil;
 import org.pknu.weather.weather.service.WeatherRefresherService;
 
 @ExtendWith(MockitoExtension.class)
-class WeatherSummaryAlarmHandlerTest {
+class WeatherDataSummaryAlarmHandlerTest {
 
     @InjectMocks
     private WeatherSummaryAlarmHandler weatherSummaryAlarmHandler;

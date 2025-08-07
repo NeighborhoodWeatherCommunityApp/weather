@@ -11,7 +11,7 @@ import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-class WeatherResponseDTOConverterTest {
+class WeatherDataResponseDTOConverterTest {
 
     @ParameterizedTest
     @MethodSource("source")

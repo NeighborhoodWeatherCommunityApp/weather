@@ -13,7 +13,7 @@ import org.pknu.weather.service.dto.WeatherSummaryAlarmInfo;
 import org.pknu.weather.service.sender.FcmMessage;
 import org.pknu.weather.domain.common.AlarmType;
 
-class WeatherSummaryMessageMakerTest {
+class WeatherDataSummaryMessageMakerTest {
 
     private final WeatherSummaryMessageMaker maker = new WeatherSummaryMessageMaker();
 

@@ -4,7 +4,7 @@ package org.pknu.weather.service.message;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-class WeatherAlarmMessageBuilderTest {
+class WeatherDataAlarmMessageBuilderTest {
 
     private static final String STRING_FORMAT = "%-24s";
 

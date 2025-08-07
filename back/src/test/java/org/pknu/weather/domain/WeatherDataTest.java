@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Slf4j
-class WeatherTest {
+class WeatherDataTest {
     @Autowired
     WeatherRepository weatherRepository;
 
