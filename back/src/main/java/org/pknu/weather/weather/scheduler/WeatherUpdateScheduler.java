@@ -1,7 +1,7 @@
 package org.pknu.weather.weather.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.weather.service.WeatherCacheRefresherService;
+import org.pknu.weather.weather.service.WeatherCacheService;
 import org.pknu.weather.weather.service.WeatherRefresherService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WeatherUpdateScheduler {
     private final WeatherRefresherService weatherRefresherService;
-    private final WeatherCacheRefresherService weatherCacheRefresherService;
+    private final WeatherCacheService weatherCacheService;
     private static final int DEFAULT_UPDATE_LIMIT_SIZE = 100;
 
     /**

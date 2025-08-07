@@ -1,7 +1,7 @@
 package org.pknu.weather.weather.event;
 
 import lombok.AllArgsConstructor;
-import org.pknu.weather.weather.service.WeatherCacheRefresherService;
+import org.pknu.weather.weather.service.WeatherCacheService;
 import org.pknu.weather.weather.service.WeatherService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -11,7 +11,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @AllArgsConstructor
 public class WeatherRefreshListener {
     private final WeatherService weatherService;
-    private final WeatherCacheRefresherService weatherCacheRefresherService;
+    private final WeatherCacheService weatherCacheService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(WeatherCreateEvent event) {
@@ -25,6 +25,6 @@ public class WeatherRefreshListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handel(WeatherCacheRefreshEvent event) {
-        weatherCacheRefresherService.updateCachedWeathersForLocation(event.getLocationId());
+        weatherCacheService.updateCachedWeathersForLocation(event.getLocationId());
     }
 }

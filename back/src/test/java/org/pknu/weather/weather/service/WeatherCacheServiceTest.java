@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Import(EmbeddedRedisConfig.class)
-class WeatherCacheRefresherServiceTest {
+class WeatherCacheServiceTest {
     @Autowired
     WeatherRedisRepository weatherRedisRepository;
 
@@ -43,7 +43,7 @@ class WeatherCacheRefresherServiceTest {
     LocationRepository locationRepository;
 
     @SpyBean
-    WeatherCacheRefresherService weatherCacheRefresherService;
+    WeatherCacheService weatherCacheService;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -88,7 +88,7 @@ class WeatherCacheRefresherServiceTest {
         when(weatherFeignClientUtils.getVillageShortTermForecast(location)).thenReturn(weatherList);
 
         // when
-        weatherCacheRefresherService.updateCachedWeathersForLocation(location.getId());
+        weatherCacheService.updateCachedWeathersForLocation(location.getId());
 
         // then
         List<String> keyList = new ArrayList<>();

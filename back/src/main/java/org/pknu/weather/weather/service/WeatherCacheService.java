@@ -10,6 +10,7 @@ import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.converter.WeatherConverter;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
 import org.pknu.weather.weather.repository.WeatherRedisRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WeatherCacheRefresherService {
+public class WeatherCacheService {
     private final WeatherRedisRepository weatherRedisRepository;
     private final WeatherFeignClientUtils weatherFeignClientUtils;
     private final LocationRepository locationRepository;
@@ -28,6 +29,7 @@ public class WeatherCacheRefresherService {
         return WeatherConverter.toWeatherList(weathers);
     }
 
+    @Async("WeatherCUDExecutor")
     public void updateCachedWeathersForLocation(Long locationId) {
         Location location = locationRepository.safeFindById(locationId);
         List<Weather> weatherList = weatherFeignClientUtils.getVillageShortTermForecast(location);
