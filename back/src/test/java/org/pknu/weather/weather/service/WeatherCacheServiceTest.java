@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -100,5 +100,7 @@ class WeatherCacheServiceTest {
         List<Object> objects = redisTemplate.opsForValue().multiGet(keyList);
         Assertions.assertThat(objects.isEmpty()).isEqualTo(false);
         Assertions.assertThat(objects.size()).isEqualTo(24);
+
+        verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(location);
     }
 }
