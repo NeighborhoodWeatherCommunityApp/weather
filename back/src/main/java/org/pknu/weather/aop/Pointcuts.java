@@ -31,6 +31,10 @@ public class Pointcuts {
     public void repositoryPointcut() {
     }
 
+    @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*(..))")
+    public void redisPointcut() {
+    }
+
     @Pointcut("execution(* org.pknu.weather.dto.converter.*.*(..))")
     public void converterPointcut() {
     }
