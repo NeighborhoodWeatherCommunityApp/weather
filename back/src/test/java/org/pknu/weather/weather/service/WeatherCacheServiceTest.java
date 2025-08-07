@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.EmbeddedRedisConfig;
+import org.pknu.weather.config.EmbeddedRedisConnectionFactory;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-@Import(EmbeddedRedisConfig.class)
+@Import({EmbeddedRedisConfig.class, EmbeddedRedisConnectionFactory.class})
 class WeatherCacheServiceTest {
     @Autowired
     WeatherRedisRepository weatherRedisRepository;

@@ -3,6 +3,7 @@ package org.pknu.weather.redis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.config.EmbeddedRedisConfig;
+import org.pknu.weather.config.EmbeddedRedisConnectionFactory;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.domain.common.SkyType;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
@@ -17,7 +18,7 @@ import java.util.Objects;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@Import(EmbeddedRedisConfig.class)
+@Import({EmbeddedRedisConfig.class, EmbeddedRedisConnectionFactory.class})
 public class RedisSerializationTest {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;

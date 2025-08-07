@@ -1,32 +1,19 @@
 package org.pknu.weather.integration;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-
 import jakarta.persistence.EntityManager;
-import java.util.Objects;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pknu.weather.config.EmbeddedRedisConfig;
+import org.pknu.weather.config.EmbeddedRedisConnectionFactory;
 import org.pknu.weather.domain.Alarm;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.domain.common.AlarmType;
-import org.pknu.weather.domain.tag.DustTag;
-import org.pknu.weather.domain.tag.HumidityTag;
-import org.pknu.weather.domain.tag.SkyTag;
-import org.pknu.weather.domain.tag.TemperatureTag;
-import org.pknu.weather.domain.tag.WindTag;
+import org.pknu.weather.domain.tag.*;
 import org.pknu.weather.dto.PostRequest.CreatePost;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.repository.AlarmRepository;
 import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.service.AlarmCooldownService;
 import org.pknu.weather.service.PostService;
 import org.pknu.weather.service.sender.FcmMessage;
@@ -41,9 +28,18 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+import java.util.UUID;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+
 @SpringBootTest
 @Transactional
-@Import(EmbeddedRedisConfig.class)
+@Import({EmbeddedRedisConfig.class, EmbeddedRedisConnectionFactory.class})
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class LiveRainAlarmSendTest {
     @Autowired

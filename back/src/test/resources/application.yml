@@ -45,7 +45,8 @@ spring:
       host: localhost
       port: 63790
       password:
-
+      ssl:
+        enabled: true
 
 logging:
   level:
