@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apiPayload.code.status.ErrorStatus;
 import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.weather.dto.TotalWeatherDTO;
-import org.pknu.weather.weather.dto.TotalWeatherDTO.WeatherDto;
+import org.pknu.weather.weather.dto.TotalWeatherDTO.WeatherDTO;
 import org.pknu.weather.exception.GeneralException;
 
 @Getter
@@ -53,7 +53,7 @@ public enum RainTag implements EnumTag {
         return rainTypeToRainTag(totalWeatherDto.getWeatherDto());
     }
 
-    private static RainTag rainTypeToRainTag(WeatherDto weatherDto) {
+    private static RainTag rainTypeToRainTag(WeatherDTO weatherDto) {
         Float rain = weatherDto.getRain();
         Float snowCover = weatherDto.getSnowCover();
         RainType rainType = weatherDto.getRainType();
