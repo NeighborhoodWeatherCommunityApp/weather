@@ -65,6 +65,22 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
+        /**
+         * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
+         * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
+         */
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(getObjectMapper());
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    private ObjectMapper getObjectMapper() {
         // 직렬화/역직렬화 설정
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -84,18 +100,6 @@ public class RedisConfig {
         // 접근 제한자를 무시합니다.
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 
-        /**
-         * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
-         * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
-         */
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-        template.setValueSerializer(serializer);
-        template.setHashValueSerializer(serializer);
-
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-
-        template.afterPropertiesSet();
-        return template;
+        return objectMapper;
     }
 }
