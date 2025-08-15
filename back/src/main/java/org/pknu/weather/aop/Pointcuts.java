@@ -18,12 +18,13 @@ public class Pointcuts {
     public void getMemberDefaultLocationPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.controller..*.*(..))" +
-            " && !execution(* org.pknu.weather.controller.HealthCheckController.*(..))")
+    @Pointcut("execution(* org.pknu.weather.controller.*.*(..))" +
+            " && !execution(* org.pknu.weather.controller.HealthCheckController.*.*(..))")
     public void controllerPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.service.*.*(..))")
+    @Pointcut("execution(* org.pknu.weather.service.*.*(..))" +
+            " && execution(* org.pknu.weather.weather.service.*.*(..))")
     public void servicePointcut() {
     }
 
@@ -33,6 +34,10 @@ public class Pointcuts {
 
     @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*(..))")
     public void redisPointcut() {
+    }
+
+    @Pointcut("execution(* org.pknu.weather.weather.scheduler.*(..))")
+    public void schedulerPointcut() {
     }
 
     @Pointcut("execution(* org.pknu.weather.dto.converter.*.*(..))")
@@ -47,7 +52,7 @@ public class Pointcuts {
     public void transactionalPointcut() {
     }
 
-    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut()")
+    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut() || schedulerPointcut")
     public void devLoggingPointcut() {
     }
 
