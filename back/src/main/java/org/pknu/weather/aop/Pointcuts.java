@@ -18,25 +18,23 @@ public class Pointcuts {
     public void getMemberDefaultLocationPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.controller.*.*(..))" +
-            " && !execution(* org.pknu.weather.controller.HealthCheckController.*.*(..))")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.RestController) || !execution(* org.pknu.weather.controller.HealthCheckController.*.*(..))")
     public void controllerPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.service.*.*(..))" +
-            " && execution(* org.pknu.weather.weather.service.*.*(..))")
+    @Pointcut("@annotation(org.springframework.stereotype.Service)")
     public void servicePointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.repository.*.*(..))")
+    @Pointcut("@annotation(org.springframework.stereotype.Repository)")
     public void repositoryPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*(..))")
+    @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*.*(..))")
     public void redisPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.weather.scheduler.*(..))")
+    @Pointcut("execution(* org.pknu.weather.weather.scheduler.*.*(..))")
     public void schedulerPointcut() {
     }
 
@@ -44,7 +42,7 @@ public class Pointcuts {
     public void converterPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.feignClient..*.*(..))")
+    @Pointcut("execution(* org.pknu.weather..feignClient..*.*(..))")
     public void feignClientPointcut() {
     }
 
@@ -52,7 +50,7 @@ public class Pointcuts {
     public void transactionalPointcut() {
     }
 
-    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut() || schedulerPointcut")
+    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut()")
     public void devLoggingPointcut() {
     }
 
