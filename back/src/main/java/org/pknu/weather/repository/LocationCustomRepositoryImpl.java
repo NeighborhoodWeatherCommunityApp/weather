@@ -20,7 +20,9 @@ public class LocationCustomRepositoryImpl implements LocationCustomRepository {
      */
     @Override
     public List<Long> findLocationIdsWithRecentlyUpdatedWeather(Integer limitSize) {
-        return jpaQueryFactory.select(weather.location.id)
+        return jpaQueryFactory
+                .select(weather.location.id)
+                .distinct()
                 .from(weather)
                 .orderBy(weather.updatedAt.desc())
                 .limit(limitSize)
