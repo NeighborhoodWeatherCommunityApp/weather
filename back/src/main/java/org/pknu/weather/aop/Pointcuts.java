@@ -18,17 +18,20 @@ public class Pointcuts {
     public void getMemberDefaultLocationPointcut() {
     }
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.RestController) || !execution(* org.pknu.weather.controller.HealthCheckController.*.*(..))")
-    public void controllerPointcut() {
-    }
+    @Pointcut("within(org.pknu.weather.controller.HealthCheckController)")
+    public void healthCheckController() {}
 
-    @Pointcut("@target(org.springframework.stereotype.Service)")
-    public void servicePointcut() {
-    }
+    // Controller: @RestController 붙은 클래스 전부, 단 HealthCheckController는 제외
+    @Pointcut("@within(org.springframework.web.bind.annotation.RestController) && !healthCheckController()")
+    public void controllerPointcut() {}
 
-    @Pointcut("@annotation(org.springframework.stereotype.Repository)")
-    public void repositoryPointcut() {
-    }
+    // Service: service 패키지 + @Service (둘 다 조건)
+    @Pointcut("within(org.pknu.weather..service..*) && @within(org.springframework.stereotype.Service)")
+    public void servicePointcut() {}
+
+    // Repository: repository 패키지 + @Repository
+    @Pointcut("within(org.pknu.weather..repository..*) && @within(org.springframework.stereotype.Repository)")
+    public void repositoryPointcut() {}
 
     @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*.*(..))")
     public void redisPointcut() {
