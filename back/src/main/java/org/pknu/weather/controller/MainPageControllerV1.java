@@ -1,22 +1,19 @@
 package org.pknu.weather.controller;
 
-import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
-
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apiPayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.service.MainPageService;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.service.WeatherService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
 
 /**
  * 메인 화면에 사용되는 API를 관리하는 컨트롤러. 화면용입니다.

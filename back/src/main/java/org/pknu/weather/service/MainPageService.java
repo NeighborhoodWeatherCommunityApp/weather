@@ -45,6 +45,7 @@ public class MainPageService {
      * @param email
      * @return
      */
+    @Transactional(readOnly = true)
     public WeatherResponseDTO.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = resolveLocation(member, locationId);
