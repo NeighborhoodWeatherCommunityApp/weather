@@ -100,6 +100,7 @@ dependencies {
 
     // Spring Data Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.apache.commons:commons-pool2:2.12.0'
 
     // Embeded Redis
     testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
@@ -110,6 +111,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
 }
+
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy 'jacocoTestReport'      // 테스트가 끝난 후 jacoco 보고서 생성
