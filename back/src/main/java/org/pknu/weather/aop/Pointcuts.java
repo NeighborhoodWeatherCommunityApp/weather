@@ -22,7 +22,7 @@ public class Pointcuts {
     public void controllerPointcut() {
     }
 
-    @Pointcut("@annotation(org.springframework.stereotype.Service)")
+    @Pointcut("@target(org.springframework.stereotype.Service)")
     public void servicePointcut() {
     }
 
