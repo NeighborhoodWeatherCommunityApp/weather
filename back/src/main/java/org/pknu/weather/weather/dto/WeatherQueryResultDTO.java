@@ -1,12 +1,13 @@
 package org.pknu.weather.weather.dto;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class WeatherQueryResult {
+import java.time.LocalDateTime;
+
+public class WeatherQueryResultDTO {
     @Getter
     @Builder
     @NoArgsConstructor

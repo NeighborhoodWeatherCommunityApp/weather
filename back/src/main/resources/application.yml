@@ -46,7 +46,7 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       ssl:
-        enabled: true
+        enabled: false
 
   cache:
     type: caffeine
@@ -114,4 +114,4 @@ fcm:
   project-id: ${FCM_ID}
   service-account: ${FCM_CREDENTIAL}
 
-log-option: prod
+log-option: dev

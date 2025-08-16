@@ -13,7 +13,7 @@ import org.pknu.weather.domain.QLocation;
 import org.pknu.weather.weather.QWeather;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.weather.dto.WeatherQueryResult;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.dto.WeatherSummaryDTO;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,9 +45,9 @@ public class WeatherCustomRepositoryImpl implements WeatherCustomRepository {
      * @param locationEntity
      * @return 비소식이 없으면 null을 반환.
      */
-    public WeatherQueryResult.SimpleRainInfo getSimpleRainInfo(Location locationEntity) {
+    public WeatherQueryResultDTO.SimpleRainInfo getSimpleRainInfo(Location locationEntity) {
         return jpaQueryFactory
-                .select(Projections.constructor(WeatherQueryResult.SimpleRainInfo.class,
+                .select(Projections.constructor(WeatherQueryResultDTO.SimpleRainInfo.class,
                         weather.presentationTime,
                         weather.rainProb,
                         weather.rain,

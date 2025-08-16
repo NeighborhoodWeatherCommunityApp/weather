@@ -8,7 +8,7 @@ import org.pknu.weather.common.mapper.EnumTagMapper;
 import org.pknu.weather.domain.Location;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
 import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.member.repository.MemberRepository;
@@ -83,7 +83,7 @@ class TagQueryServiceTest {
         Location location = member.getLocation();
         LocalDateTime baseTime = TestDataCreator.getBaseTime();
         List<Weather> newForecast = TestDataCreator.getNewForecast(location, baseTime);
-        WeatherResponse.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
 
         when(memberRepository.safeFindByEmail(member.getEmail())).thenReturn(member);
         when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(Optional.empty());
@@ -107,7 +107,7 @@ class TagQueryServiceTest {
         Location location = member.getLocation();
         LocalDateTime baseTime = TestDataCreator.getBaseTime();
         List<Weather> newForecast = TestDataCreator.getNewForecast(location, baseTime);
-        WeatherResponse.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
 
         when(memberRepository.safeFindByEmail(member.getEmail())).thenReturn(member);
         when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(Optional.ofNullable(newForecast.get(0)));

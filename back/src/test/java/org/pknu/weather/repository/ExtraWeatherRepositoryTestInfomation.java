@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(DataJpaTestConfig.class)
 @DataJpaTest
-class ExtraWeatherRepositoryTest {
+class ExtraWeatherRepositoryTestInfomation {
 
     @Autowired
     private ExtraWeatherRepository extraWeatherRepository;
