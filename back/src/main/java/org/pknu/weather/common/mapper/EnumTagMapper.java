@@ -1,7 +1,7 @@
 package org.pknu.weather.common.mapper;
 
-import org.pknu.weather.domain.tag.EnumTag;
-import org.pknu.weather.dto.TagDto;
+import org.pknu.weather.post.tag.enums.EnumTag;
+import org.pknu.weather.post.dto.TagDto;
 
 import java.util.*;
 import java.util.stream.Collectors;

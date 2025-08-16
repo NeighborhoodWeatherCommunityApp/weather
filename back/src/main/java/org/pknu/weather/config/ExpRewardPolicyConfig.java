@@ -1,10 +1,10 @@
 package org.pknu.weather.config;
 
 import java.util.Map;
-import org.pknu.weather.domain.exp.CreatePostExpRewardLimitPolicy;
-import org.pknu.weather.domain.exp.ExpEvent;
-import org.pknu.weather.domain.exp.ExpRewardLimitPolicy;
-import org.pknu.weather.domain.exp.RecommendationExpRewardLimitPolicy;
+import org.pknu.weather.member.exp.CreatePostExpRewardLimitPolicy;
+import org.pknu.weather.member.exp.ExpEvent;
+import org.pknu.weather.member.exp.ExpRewardLimitPolicy;
+import org.pknu.weather.member.exp.RecommendationExpRewardLimitPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

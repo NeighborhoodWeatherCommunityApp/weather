@@ -2,8 +2,8 @@ package org.pknu.weather.member.repository;
 
 
 import java.util.List;
-import org.pknu.weather.domain.common.SummaryAlarmTime;
-import org.pknu.weather.dto.AlarmMemberDTO;
+import org.pknu.weather.alarm.enums.SummaryAlarmTime;
+import org.pknu.weather.alarm.dto.AlarmMemberDTO;
 import java.time.LocalDateTime;
 import org.pknu.weather.member.entity.Member;
 

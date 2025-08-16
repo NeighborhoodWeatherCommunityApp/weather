@@ -10,16 +10,16 @@ public class Pointcuts {
     public void doCheckLocationPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.controller.MainPageControllerV1.*(..))")
+    @Pointcut("execution(* org.pknu.weather.mainpage.controller.MainPageControllerV1.*(..))")
     public void mainPageControllerV1Pointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.controller.LocationControllerV1.getMemberDefaultLocation(..))")
+    @Pointcut("execution(* org.pknu.weather.location.controller.LocationControllerV1.getMemberDefaultLocation(..))")
     public void getMemberDefaultLocationPointcut() {
     }
 
     @Pointcut("execution(* org.pknu.weather.controller..*.*(..))" +
-            " && !execution(* org.pknu.weather.controller.HealthCheckController.*(..))")
+            " && !execution(* org.pknu.weather.infra.mornitoring.HealthCheckController.*(..))")
     public void controllerPointcut() {
     }
 

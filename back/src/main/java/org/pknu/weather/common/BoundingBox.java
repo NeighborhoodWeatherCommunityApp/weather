@@ -3,7 +3,7 @@ package org.pknu.weather.common;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,14 +1,14 @@
 package org.pknu.weather.common;
 
 import org.pknu.weather.common.formatter.DateTimeFormatter;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.domain.Post;
+import org.pknu.weather.post.entity.Post;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.domain.common.PostType;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.Sensitivity;
-import org.pknu.weather.domain.common.SkyType;
+import org.pknu.weather.post.enums.PostType;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.member.enums.Sensitivity;
+import org.pknu.weather.weather.enums.SkyType;
 import org.pknu.weather.weather.dto.WeatherResponse;
 
 import java.time.LocalDateTime;

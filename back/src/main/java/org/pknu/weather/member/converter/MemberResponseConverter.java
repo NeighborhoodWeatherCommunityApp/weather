@@ -2,7 +2,7 @@ package org.pknu.weather.member.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.domain.exp.Level;
+import org.pknu.weather.member.exp.Level;
 import org.pknu.weather.member.dto.MemberResponse;
 import org.pknu.weather.member.dto.MemberResponse.MemberLevelUpDTO;
 

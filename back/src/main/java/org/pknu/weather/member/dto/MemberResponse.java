@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.pknu.weather.domain.common.Sensitivity;
+import org.pknu.weather.member.enums.Sensitivity;
 
 
 public class MemberResponse {

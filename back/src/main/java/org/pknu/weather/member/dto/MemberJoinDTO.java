@@ -1,7 +1,7 @@
 package org.pknu.weather.member.dto;
 
 import lombok.*;
-import org.pknu.weather.domain.common.Sensitivity;
+import org.pknu.weather.member.enums.Sensitivity;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter

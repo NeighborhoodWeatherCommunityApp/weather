@@ -2,7 +2,7 @@ package org.pknu.weather.weather.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.Weather;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
