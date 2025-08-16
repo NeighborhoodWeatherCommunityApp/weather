@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.config.EmbeddedRedisConfig;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.member.Role;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.member.enums.Role;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.member.repository.MemberRepository;
