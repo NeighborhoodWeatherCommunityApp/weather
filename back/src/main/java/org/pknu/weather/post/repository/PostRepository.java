@@ -1,7 +1,7 @@
 package org.pknu.weather.post.repository;
 
 import java.util.Optional;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.post.entity.Post;
 import org.pknu.weather.exception.GeneralException;
 import org.springframework.data.jpa.repository.EntityGraph;

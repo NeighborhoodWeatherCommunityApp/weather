@@ -1,7 +1,7 @@
 package org.pknu.weather.post.dto;
 
 import lombok.*;
-import org.pknu.weather.post.tag.enums.EnumTag;
+import org.pknu.weather.tag.enums.EnumTag;
 
 @Getter
 @Builder

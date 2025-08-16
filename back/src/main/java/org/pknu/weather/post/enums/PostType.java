@@ -1,6 +1,6 @@
 package org.pknu.weather.post.enums;
 
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 
 public enum PostType {

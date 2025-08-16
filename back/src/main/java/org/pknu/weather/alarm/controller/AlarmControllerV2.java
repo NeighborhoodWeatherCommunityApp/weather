@@ -3,7 +3,7 @@ package org.pknu.weather.alarm.controller;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.alarm.enums.AlarmType;
 import org.pknu.weather.alarm.dto.AlarmRequestDTO;

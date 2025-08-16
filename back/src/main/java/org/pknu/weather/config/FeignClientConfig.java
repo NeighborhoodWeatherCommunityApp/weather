@@ -2,9 +2,9 @@ package org.pknu.weather.config;
 
 import feign.Request;
 import feign.codec.ErrorDecoder;
-import org.pknu.weather.weather.feignClient.WeatherFeignClient;
-import org.pknu.weather.common.feignClient.error.CommonErrorDecoder;
-import org.pknu.weather.weather.feignClient.error.WeatherFeignErrorDecoder;
+import org.pknu.weather.weather.feignclient.WeatherFeignClient;
+import org.pknu.weather.weather.feignclient.error.CommonErrorDecoder;
+import org.pknu.weather.weather.feignclient.error.WeatherFeignErrorDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

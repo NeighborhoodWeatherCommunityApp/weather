@@ -3,7 +3,7 @@ package org.pknu.weather.location.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.pknu.weather.common.entity.BaseEntity;
-import org.pknu.weather.post.tag.entity.Tag;
+import org.pknu.weather.tag.entity.Tag;
 import org.pknu.weather.weather.Weather;
 
 import java.util.ArrayList;

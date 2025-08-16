@@ -1,11 +1,10 @@
 package org.pknu.weather.member.auth.service;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import java.time.Instant;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.security.exception.TokenException;

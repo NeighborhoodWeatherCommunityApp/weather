@@ -5,7 +5,7 @@ import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.post.dto.PostResponse;
 import org.pknu.weather.post.dto.TagDto;

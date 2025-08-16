@@ -2,7 +2,7 @@ package org.pknu.weather.post.converter;
 
 import java.util.Arrays;
 import org.pknu.weather.post.dto.PostRequest;
-import org.pknu.weather.post.tag.enums.*;
+import org.pknu.weather.tag.enums.*;
 
 public class PostRequestConverter {
     public static PostRequest.CreatePost toCreatePost(PostRequest.Params params) {

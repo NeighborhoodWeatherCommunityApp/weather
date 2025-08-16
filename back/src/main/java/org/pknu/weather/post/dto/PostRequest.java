@@ -7,11 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.post.tag.enums.DustTag;
-import org.pknu.weather.post.tag.enums.HumidityTag;
-import org.pknu.weather.post.tag.enums.SkyTag;
-import org.pknu.weather.post.tag.enums.TemperatureTag;
-import org.pknu.weather.post.tag.enums.WindTag;
+import org.pknu.weather.tag.enums.DustTag;
+import org.pknu.weather.tag.enums.HumidityTag;
+import org.pknu.weather.tag.enums.SkyTag;
+import org.pknu.weather.tag.enums.TemperatureTag;
+import org.pknu.weather.tag.enums.WindTag;
 
 public class PostRequest {
 

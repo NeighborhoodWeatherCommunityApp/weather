@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.post.tag.enums.EnumTag;
+import org.pknu.weather.tag.enums.EnumTag;
 
 @Getter
 public class TagDto {

@@ -2,7 +2,7 @@ package org.pknu.weather.post.converter;
 
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.post.entity.Post;
-import org.pknu.weather.post.tag.entity.Tag;
+import org.pknu.weather.tag.entity.Tag;
 import org.pknu.weather.post.enums.PostType;
 import org.pknu.weather.post.dto.PostRequest;
 

@@ -1,7 +1,7 @@
 package org.pknu.weather.post.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.post.dto.PostResponse;
 import org.pknu.weather.post.service.PostQueryService;

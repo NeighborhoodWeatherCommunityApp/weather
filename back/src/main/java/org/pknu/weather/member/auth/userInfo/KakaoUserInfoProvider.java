@@ -3,7 +3,7 @@ package org.pknu.weather.member.auth.userInfo;
 import feign.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.member.auth.feignClient.KaKaoAuthClient;
 import org.pknu.weather.member.auth.dto.KakaoUserResponseDTO;
 import org.pknu.weather.security.exception.TokenException;

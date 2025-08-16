@@ -3,7 +3,7 @@ package org.pknu.weather.common.validation.validator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.common.validation.annotation.IsRequiredTermsAgreed;
 import org.pknu.weather.member.dto.TermsDto;
 import org.springframework.stereotype.Component;

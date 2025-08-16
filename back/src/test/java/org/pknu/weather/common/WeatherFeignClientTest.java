@@ -5,7 +5,7 @@
 //import org.junit.jupiter.api.Test;
 //import org.pknu.weather.common.formatter.DateTimeFormatter;
 //import org.pknu.weather.weather.dto.WeatherApiResponse;
-//import org.pknu.weather.common.feignClient.dto.PointDTO;
+//import org.pknu.weather.weather.feignClient.dto.PointDTO;
 //import org.pknu.weather.feignClient.dto.WeatherParams;
 //import org.pknu.weather.feignClient.WeatherFeignClient;
 //import org.springframework.beans.factory.annotation.Autowired;

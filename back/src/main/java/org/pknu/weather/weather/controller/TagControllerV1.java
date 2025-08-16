@@ -1,12 +1,12 @@
 package org.pknu.weather.weather.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
-import org.pknu.weather.common.mapper.EnumTagMapper;
+import org.pknu.weather.tag.enums.EnumTagMapper;
 import org.pknu.weather.post.dto.TagDto;
 import org.pknu.weather.post.dto.TagWithSelectedStatusDto;
-import org.pknu.weather.post.tag.service.TagQueryService;
+import org.pknu.weather.tag.service.TagQueryService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;

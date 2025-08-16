@@ -21,7 +21,7 @@ import org.pknu.weather.alarm.dto.AlarmRequestDTO;
 import org.pknu.weather.alarm.entity.Alarm;
 import org.pknu.weather.alarm.enums.SummaryAlarmTime;
 import org.pknu.weather.alarm.repository.AlarmRepository;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.common.TestUtil;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;

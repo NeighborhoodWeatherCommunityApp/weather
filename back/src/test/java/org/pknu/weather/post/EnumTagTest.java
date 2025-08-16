@@ -2,8 +2,8 @@ package org.pknu.weather.post;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.pknu.weather.common.mapper.EnumTagMapper;
-import org.pknu.weather.post.tag.enums.EnumTag;
+import org.pknu.weather.tag.enums.EnumTagMapper;
+import org.pknu.weather.tag.enums.EnumTag;
 import org.pknu.weather.weather.dto.TotalWeatherDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

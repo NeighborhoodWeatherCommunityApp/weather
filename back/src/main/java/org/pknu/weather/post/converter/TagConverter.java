@@ -1,13 +1,13 @@
 package org.pknu.weather.post.converter;
 
-import org.pknu.weather.common.mapper.EnumTagMapper;
+import org.pknu.weather.tag.enums.EnumTagMapper;
 import org.pknu.weather.location.entity.Location;
-import org.pknu.weather.post.tag.entity.Tag;
-import org.pknu.weather.post.tag.enums.DustTag;
-import org.pknu.weather.post.tag.enums.HumidityTag;
-import org.pknu.weather.post.tag.enums.SkyTag;
-import org.pknu.weather.post.tag.enums.TemperatureTag;
-import org.pknu.weather.post.tag.enums.WindTag;
+import org.pknu.weather.tag.entity.Tag;
+import org.pknu.weather.tag.enums.DustTag;
+import org.pknu.weather.tag.enums.HumidityTag;
+import org.pknu.weather.tag.enums.SkyTag;
+import org.pknu.weather.tag.enums.TemperatureTag;
+import org.pknu.weather.tag.enums.WindTag;
 import org.pknu.weather.post.dto.PostRequest;
 
 public class TagConverter {

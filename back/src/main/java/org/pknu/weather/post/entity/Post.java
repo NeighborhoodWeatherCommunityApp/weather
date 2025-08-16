@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.pknu.weather.common.entity.BaseEntity;
 import org.pknu.weather.recomandation.entity.Recommendation;
-import org.pknu.weather.post.tag.entity.Tag;
+import org.pknu.weather.tag.entity.Tag;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.post.enums.PostType;
 

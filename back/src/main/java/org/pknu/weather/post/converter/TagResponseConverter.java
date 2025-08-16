@@ -1,6 +1,6 @@
 package org.pknu.weather.post.converter;
 
-import org.pknu.weather.post.tag.enums.EnumTag;
+import org.pknu.weather.tag.enums.EnumTag;
 import org.pknu.weather.post.dto.TagDto;
 import org.pknu.weather.post.dto.TagWithSelectedStatusDto;
 import org.pknu.weather.weather.dto.TotalWeatherDto;

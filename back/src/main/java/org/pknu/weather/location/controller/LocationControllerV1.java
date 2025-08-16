@@ -2,8 +2,8 @@ package org.pknu.weather.location.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.ApiResponse;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.ApiResponse;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.location.dto.LocationDTO;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.location.service.LocationService;

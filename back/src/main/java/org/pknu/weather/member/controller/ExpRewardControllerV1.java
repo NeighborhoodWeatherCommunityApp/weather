@@ -5,7 +5,7 @@ import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.member.exp.ExpEvent;
 import org.pknu.weather.member.dto.ExpEventRequestDto;
 import org.pknu.weather.member.service.ExpRewardService;

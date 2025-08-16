@@ -3,7 +3,7 @@ package org.pknu.weather.member.attandance.controller;
 import static org.pknu.weather.common.converter.TokenConverter.getEmailByToken;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.member.attandance.service.AttendanceService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

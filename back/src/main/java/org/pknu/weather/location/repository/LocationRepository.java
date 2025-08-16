@@ -2,7 +2,7 @@ package org.pknu.weather.location.repository;
 
 import java.util.Collection;
 import java.util.List;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.exception.GeneralException;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.location.entity.Location;
-import org.pknu.weather.weather.feignClient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.repository.WeatherRepository;

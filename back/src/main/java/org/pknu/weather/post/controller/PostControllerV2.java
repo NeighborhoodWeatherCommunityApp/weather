@@ -2,7 +2,7 @@ package org.pknu.weather.post.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.common.converter.TokenConverter;
 import org.pknu.weather.post.dto.PostRequest;
 import org.pknu.weather.post.service.PostService;
