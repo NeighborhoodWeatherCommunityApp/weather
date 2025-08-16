@@ -3,22 +3,23 @@ package org.pknu.weather.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.domain.Location;
-import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.weather.Weather;
 import org.pknu.weather.dto.PostResponse;
 import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.event.WeatherCreateEvent;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
-import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
-import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.member.repository.MemberRepository;
-import org.pknu.weather.weather.service.WeatherQueryService;
 import org.pknu.weather.weather.service.WeatherCacheService;
+import org.pknu.weather.weather.service.WeatherQueryService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -28,7 +29,6 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class MainPageService {
     private final MemberRepository memberRepository;
     private final WeatherQueryService weatherQueryService;
@@ -92,14 +92,17 @@ public class MainPageService {
      * @param email
      * @return
      */
+    @Transactional(readOnly = true)
     public List<PostResponse.Post> getLatestPostList(String email) {
         return postQueryService.getLatestPostList(email);
     }
 
+    @Transactional(readOnly = true)
     public List<TagDto.SimpleTag> getMostSelectedTags(String email) {
         return tagQueryService.getMostSelectedTags(email);
     }
 
+    @Transactional(readOnly = true)
     public WeatherResponseDTO.SimpleRainInformation getSimpleRainInfo(String email) {
         return weatherQueryService.getSimpleRainInfo(email);
     }
