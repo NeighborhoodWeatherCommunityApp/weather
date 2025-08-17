@@ -84,20 +84,25 @@ public class RedisConfig {
 
         // Connection Pool을 사용할 경우 이 설정 사용
         GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-        genericObjectPoolConfig.setMaxTotal(10000);
-        genericObjectPoolConfig.setMaxIdle(10000);
-        genericObjectPoolConfig.setMinIdle(10);
+        genericObjectPoolConfig.setMaxTotal(50);
+        genericObjectPoolConfig.setMaxIdle(20);
+        genericObjectPoolConfig.setMinIdle(5);
+
+        genericObjectPoolConfig.setTestOnBorrow(false);
+        genericObjectPoolConfig.setTestOnReturn(false);
+        genericObjectPoolConfig.setTestWhileIdle(true);
+        genericObjectPoolConfig.setTimeBetweenEvictionRuns(Duration.ofSeconds(30));
 
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .poolConfig(genericObjectPoolConfig)
-                .commandTimeout(Duration.ofSeconds(2))
-                .shutdownTimeout(Duration.ofMillis(100))
+                .commandTimeout(Duration.ofMillis(300))
+                .shutdownTimeout(Duration.ofMillis(300))
                 .useSsl()
                 .and()
                 .build();
 
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisConfig, clientConfig);
-        connectionFactory.setShareNativeConnection(true);
+        connectionFactory.setShareNativeConnection(false);
         return connectionFactory;
     }
 
