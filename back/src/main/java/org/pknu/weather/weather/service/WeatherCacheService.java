@@ -3,9 +3,9 @@ package org.pknu.weather.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
-import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.converter.WeatherConverter;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;

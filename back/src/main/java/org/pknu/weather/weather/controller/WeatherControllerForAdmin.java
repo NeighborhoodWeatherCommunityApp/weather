@@ -1,7 +1,7 @@
 package org.pknu.weather.weather.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.weather.service.WeatherRefresherService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

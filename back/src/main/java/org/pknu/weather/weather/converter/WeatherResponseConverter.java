@@ -1,17 +1,18 @@
 package org.pknu.weather.weather.converter;
 
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.post.dto.TagDto;
+import org.pknu.weather.tag.enums.RainTag;
+import org.pknu.weather.tag.enums.TemperatureTag;
+import org.pknu.weather.tag.utils.TagUtils;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.pknu.weather.common.utils.TagUtils;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.weather.Weather;
-import org.pknu.weather.domain.tag.RainTag;
-import org.pknu.weather.domain.tag.TemperatureTag;
-import org.pknu.weather.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
-import org.pknu.weather.weather.dto.WeatherResponseDTO;
 
 public class WeatherResponseConverter {
 

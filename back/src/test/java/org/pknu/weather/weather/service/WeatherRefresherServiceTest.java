@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
-import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;

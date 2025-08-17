@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import org.pknu.weather.weather.ExtraWeather;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.dto.ExtraWeatherSummaryDTO;
 import org.pknu.weather.weather.dto.WeatherResponseDTO;
 

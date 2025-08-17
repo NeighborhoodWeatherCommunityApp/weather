@@ -105,6 +105,7 @@ dependencies {
     // Embeded Redis
     testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
 
+
     // 비동기 코드 테스트를 위한 Awaitility
     testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.3.0'
 

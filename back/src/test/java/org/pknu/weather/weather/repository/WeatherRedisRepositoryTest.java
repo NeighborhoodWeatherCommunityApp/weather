@@ -4,10 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.pknu.weather.config.EmbeddedRedisConfig;
-import org.pknu.weather.config.EmbeddedRedisConnectionFactory;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.SkyType;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.weather.enums.SkyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -25,7 +24,7 @@ import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Import({EmbeddedRedisConfig.class, EmbeddedRedisConnectionFactory.class})
+@Import({EmbeddedRedisConfig.class})
 class WeatherRedisRepositoryTest {
 
     @Autowired

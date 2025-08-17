@@ -2,7 +2,7 @@ package org.pknu.weather.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

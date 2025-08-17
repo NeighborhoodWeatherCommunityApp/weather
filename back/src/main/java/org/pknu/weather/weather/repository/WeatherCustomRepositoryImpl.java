@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.QueryUtils;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.QLocation;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.entity.QLocation;
 import org.pknu.weather.weather.QWeather;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.domain.common.RainType;
 import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.dto.WeatherSummaryDTO;
+import org.pknu.weather.weather.enums.RainType;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 

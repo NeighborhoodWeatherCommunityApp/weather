@@ -3,6 +3,11 @@ package org.pknu.weather.config;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
 
@@ -15,6 +20,13 @@ public class EmbeddedRedisConfig {
 
     private static final int REDIS_PORT = 63790;
     private RedisServer redisServer;
+
+    @Bean
+    @Primary
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration("localhost", 63790);
+        return new LettuceConnectionFactory(config);
+    }
 
     @PostConstruct
     public void configRedisServer() throws IOException {

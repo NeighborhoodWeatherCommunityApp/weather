@@ -95,7 +95,7 @@ public class RedisConfig {
 
         LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .poolConfig(genericObjectPoolConfig)
-                .commandTimeout(Duration.ofMillis(300))
+                .commandTimeout(Duration.ofMillis(2000))
                 .shutdownTimeout(Duration.ofMillis(300))
                 .useSsl()
                 .and()

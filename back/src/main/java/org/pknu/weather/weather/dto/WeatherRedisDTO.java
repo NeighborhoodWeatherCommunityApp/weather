@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.SkyType;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.weather.enums.SkyType;
 
 import java.time.LocalDateTime;
 

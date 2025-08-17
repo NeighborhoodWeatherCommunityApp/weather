@@ -2,7 +2,7 @@ package org.pknu.weather.weather.service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

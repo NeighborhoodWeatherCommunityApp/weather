@@ -7,13 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.EmbeddedRedisConfig;
-import org.pknu.weather.config.EmbeddedRedisConnectionFactory;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
-import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.weather.enums.SkyType;
+import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.weather.repository.WeatherRedisRepository;
 import org.pknu.weather.weather.utils.WeatherRedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-@Import({EmbeddedRedisConfig.class, EmbeddedRedisConnectionFactory.class})
+@Import(EmbeddedRedisConfig.class)
 class WeatherCacheServiceTest {
     @Autowired
     WeatherRedisRepository weatherRedisRepository;

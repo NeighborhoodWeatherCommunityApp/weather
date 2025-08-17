@@ -5,7 +5,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.security.exception.TokenException;
 import org.springframework.stereotype.Component;
 

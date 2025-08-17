@@ -3,7 +3,7 @@ package org.pknu.weather.member.auth.unlink;
 import feign.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.feignClient.KaKaoAuthClient;
 import org.springframework.beans.factory.annotation.Value;

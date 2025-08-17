@@ -8,7 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.auth.feignClient.AppleAuthClient;
 import org.pknu.weather.member.auth.generator.ApplePublicKeyGenerator;

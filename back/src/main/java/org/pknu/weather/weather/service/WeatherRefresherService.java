@@ -2,14 +2,14 @@ package org.pknu.weather.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.repository.LocationRepository;
+import org.pknu.weather.weather.ExtraWeather;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.event.WeatherCacheRefreshEvent;
 import org.pknu.weather.weather.event.WeatherEvent;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
-import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
-import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.weather.ExtraWeather;
-import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
+import org.pknu.weather.weather.feignclient.utils.ExtraWeatherApiUtils;
 import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
+import static org.pknu.weather.location.converter.LocationConverter.toLocationDTO;
 import static org.pknu.weather.weather.converter.ExtraWeatherConverter.toExtraWeather;
 
 @Slf4j
@@ -64,7 +64,7 @@ public class WeatherRefresherService {
 
     private void updateExistingExtraWeather(Location location, ExtraWeather extraWeather) {
         if (extraWeather.getBasetime().isBefore(LocalDateTime.now().minusHours(3))) {
-            ExtraWeatherInfo extraWeatherInfo = extraWeatherApiUtils.getExtraWeatherInfo(
+            WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = extraWeatherApiUtils.getExtraWeatherInfo(
                     toLocationDTO(location), extraWeather.getBasetime());
             extraWeather.updateExtraWeather(extraWeatherInfo);
             extraWeatherRepository.save(extraWeather);
@@ -72,7 +72,7 @@ public class WeatherRefresherService {
     }
 
     private void saveExtraWeather(Location location) {
-        ExtraWeatherInfo extraWeatherInfo = extraWeatherApiUtils.getExtraWeatherInfo(
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = extraWeatherApiUtils.getExtraWeatherInfo(
                 toLocationDTO(location));
 
         extraWeatherRepository.save(toExtraWeather(location, extraWeatherInfo));

@@ -2,7 +2,7 @@ package org.pknu.weather.security.exception;
 
 
 import lombok.Getter;
-import org.pknu.weather.apiPayload.code.BaseErrorCode;
+import org.pknu.weather.apipayload.code.BaseErrorCode;
 import org.pknu.weather.exception.GeneralException;
 
 @Getter

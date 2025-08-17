@@ -1,6 +1,6 @@
 package org.pknu.weather.weather.repository;
 
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.dto.WeatherSummaryDTO;
