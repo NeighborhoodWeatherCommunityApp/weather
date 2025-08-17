@@ -7,20 +7,20 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
-import org.pknu.weather.domain.BaseEntity;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Post;
-import org.pknu.weather.domain.Recommendation;
-import org.pknu.weather.domain.common.Sensitivity;
-import org.pknu.weather.domain.exp.Level;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
+import org.pknu.weather.common.entity.BaseEntity;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.post.entity.Post;
+import org.pknu.weather.recomandation.entity.Recommendation;
+import org.pknu.weather.member.enums.Sensitivity;
+import org.pknu.weather.member.exp.Level;
 import org.pknu.weather.member.dto.MemberJoinDTO;
 import org.pknu.weather.exception.GeneralException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.pknu.weather.member.Role;
+import org.pknu.weather.member.enums.Role;
 
 @Entity(name = "member")
 @Getter

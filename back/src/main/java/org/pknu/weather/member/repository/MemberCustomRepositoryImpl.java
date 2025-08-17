@@ -6,9 +6,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.domain.QAlarm;
-import org.pknu.weather.domain.common.SummaryAlarmTime;
-import org.pknu.weather.dto.AlarmMemberDTO;
+import org.pknu.weather.alarm.entity.QAlarm;
+import org.pknu.weather.alarm.enums.SummaryAlarmTime;
+import org.pknu.weather.alarm.dto.AlarmMemberDTO;
 
 import java.time.LocalDateTime;
 import org.pknu.weather.member.entity.Member;

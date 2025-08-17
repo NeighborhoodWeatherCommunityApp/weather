@@ -6,11 +6,11 @@ import static org.pknu.weather.common.converter.TokenConverter.getMemberInfoFrom
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.ApiResponse;
+import org.pknu.weather.apipayload.ApiResponse;
 import org.pknu.weather.member.dto.MemberJoinDTO;
 import org.pknu.weather.member.dto.MemberResponse;
 import org.pknu.weather.member.dto.MemberResponse.MemberLevelUpDTO;
-import org.pknu.weather.dto.TermsDto;
+import org.pknu.weather.member.dto.TermsDto;
 import org.pknu.weather.member.service.MemberService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;

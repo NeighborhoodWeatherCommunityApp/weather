@@ -1,7 +1,7 @@
 package org.pknu.weather.common.utils;
 
 
-import org.pknu.weather.feignClient.dto.PointDTO;
+import org.pknu.weather.weather.feignclient.dto.PointDTO;
 
 public final class GeometryUtils {
 

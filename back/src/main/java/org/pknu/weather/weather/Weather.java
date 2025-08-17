@@ -18,11 +18,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.common.utils.SensibleTemperatureUtils;
-import org.pknu.weather.domain.BaseEntity;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.SkyType;
+import org.pknu.weather.weather.utils.SensibleTemperatureUtils;
+import org.pknu.weather.common.entity.BaseEntity;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.weather.enums.SkyType;
 import org.pknu.weather.weather.dto.WeatherApiResponse;
 
 @Entity

@@ -1,7 +1,7 @@
 package org.pknu.weather.config;
 
 import lombok.RequiredArgsConstructor;
-import org.pknu.weather.filter.InitFilter;
+import org.pknu.weather.common.filter.InitFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

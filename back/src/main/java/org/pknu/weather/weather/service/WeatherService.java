@@ -2,18 +2,18 @@ package org.pknu.weather.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.weather.ExtraWeather;
-import org.pknu.weather.domain.Location;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.dto.WeatherResponse;
 import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.feignClient.utils.ExtraWeatherApiUtils;
-import org.pknu.weather.feignClient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.utils.ExtraWeatherApiUtils;
+import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.weather.repository.ExtraWeatherRepository;
-import org.pknu.weather.repository.LocationRepository;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.scheduling.annotation.Async;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static org.pknu.weather.weather.converter.ExtraWeatherConverter.toExtraWeather;
 import static org.pknu.weather.weather.converter.ExtraWeatherConverter.toExtraWeatherInfo;
-import static org.pknu.weather.dto.converter.LocationConverter.toLocationDTO;
+import static org.pknu.weather.location.converter.LocationConverter.toLocationDTO;
 
 @Service
 @RequiredArgsConstructor

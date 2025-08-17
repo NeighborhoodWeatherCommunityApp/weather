@@ -2,21 +2,17 @@ package org.pknu.weather.security.filter;
 
 import static org.pknu.weather.security.PublicPaths.PERMIT_ALL_PATHS;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.apiPayload.code.status.ErrorStatus;
+import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.repository.MemberRepository;

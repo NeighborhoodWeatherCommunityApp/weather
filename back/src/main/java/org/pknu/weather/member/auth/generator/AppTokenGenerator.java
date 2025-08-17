@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.member.Role;
+import org.pknu.weather.member.enums.Role;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.member.auth.userInfo.UserInfoProvider;
 import org.pknu.weather.member.service.MemberService;
