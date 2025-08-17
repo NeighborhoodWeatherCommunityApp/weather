@@ -9,11 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
@@ -99,6 +97,7 @@ public class RedisConfig {
         LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisConfig, clientConfig);
         connectionFactory.setShareNativeConnection(true);
         return connectionFactory;
+    }
 
     /**
      * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
