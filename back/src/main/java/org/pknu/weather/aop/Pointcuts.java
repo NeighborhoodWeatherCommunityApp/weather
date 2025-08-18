@@ -30,7 +30,7 @@ public class Pointcuts {
     public void schedulerPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather..converter.*.*(..))")
+    @Pointcut("within(org.pknu.weather..converter..*)")
     public void converterPointcut() {
     }
 
@@ -42,7 +42,7 @@ public class Pointcuts {
     public void transactionalPointcut() {
     }
 
-    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut()")
+    @Pointcut("controllerPointcut() || servicePointcut() || feignClientPointcut() || repositoryPointcut() || converterPointcut()")
     public void devLoggingPointcut() {
     }
 
