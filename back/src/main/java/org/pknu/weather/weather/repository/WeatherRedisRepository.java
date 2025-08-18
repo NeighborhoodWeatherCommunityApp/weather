@@ -48,7 +48,7 @@ public class WeatherRedisRepository {
         }
     }
 
-    public void updateWeather(Long locationId,WeatherRedisDTO.WeatherData weatherData) {
+    public void updateWeather(Long locationId, WeatherRedisDTO.WeatherData weatherData) {
         opsForValue().set(buildKey(locationId, weatherData.getPresentationTime()), weatherData, DEFAULT_DURATION);
     }
 
@@ -66,7 +66,9 @@ public class WeatherRedisRepository {
     }
 
     public void rightPushAll(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {
-        opsForList().rightPushAll(buildKey(locationId), weatherDataList);
+        for (WeatherRedisDTO.WeatherData weatherData : weatherDataList) {
+            opsForList().rightPush(buildKey(locationId), weatherData);
+        }
         redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION);
     }
 
@@ -99,6 +101,7 @@ public class WeatherRedisRepository {
     private ValueOperations<String, Object> opsForValue() {
         return redisTemplate.opsForValue();
     }
+
     private ListOperations<String, Object> opsForList() {
         return redisTemplate.opsForList();
     }
