@@ -187,6 +187,17 @@ public class TestDataCreator {
                 .build();
     }
 
+    public static Location getBusanLocation(Long id) {
+        return Location.builder()
+                .id(id)
+                .city("시군구")
+                .province("부산광역시" + locationIdx++)
+                .street("읍면동")
+                .latitude(TestGlobalParams.BusanGeometry.LATITUDE)
+                .longitude(TestGlobalParams.BusanGeometry.LONGITUDE)
+                .build();
+    }
+
     public static Location getSeoulLocation() {
         return Location.builder()
                 .city("시군구")

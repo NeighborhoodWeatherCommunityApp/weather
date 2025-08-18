@@ -1,5 +1,6 @@
 package org.pknu.weather.weather.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-@Import(EmbeddedRedisConfig.class)
+@Import({EmbeddedRedisConfig.class})
+@Slf4j
 class WeatherCacheServiceTest {
     @Autowired
     WeatherRedisRepository weatherRedisRepository;
@@ -102,4 +104,6 @@ class WeatherCacheServiceTest {
 
         verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(location);
     }
+
 }
+
