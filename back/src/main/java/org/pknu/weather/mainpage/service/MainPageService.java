@@ -13,6 +13,7 @@ import org.pknu.weather.tag.service.TagQueryService;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.event.WeatherCacheRefreshEvent;
 import org.pknu.weather.weather.event.WeatherCreateEvent;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
 import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
@@ -78,6 +79,7 @@ public class MainPageService {
         if (!weatherQueryService.weatherHasBeenCreated(location)) {
             List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
             eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            eventPublisher.publishEvent(new WeatherCacheRefreshEvent(location.getId()));
             return newForecast;
         }
         return null;
@@ -86,6 +88,7 @@ public class MainPageService {
     private void updateWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenUpdated(location)) {
             eventPublisher.publishEvent(new WeatherUpdateEvent(location.getId()));
+            eventPublisher.publishEvent(new WeatherCacheRefreshEvent(location.getId()));
         }
     }
 
