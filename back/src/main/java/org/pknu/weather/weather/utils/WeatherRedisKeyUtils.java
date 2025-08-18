@@ -13,6 +13,10 @@ public class WeatherRedisKeyUtils {
         return String.format("weather:location:%d:presentation_time:%s", locationId, presentationTime.toString());
     }
 
+    public static String buildKey(Long locationId) {
+        return String.format("weather:location:%d", locationId);
+    }
+
     /**
      * 특정 location에 대하여 startTime부터 hours 만큼 1시간 단위로 redis key를 생성하여 반환합니다.
      */

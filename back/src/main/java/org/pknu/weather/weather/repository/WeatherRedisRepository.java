@@ -3,13 +3,17 @@ package org.pknu.weather.weather.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
@@ -52,6 +56,29 @@ public class WeatherRedisRepository {
         redisTemplate.delete(buildKey(locationId, presentationTime));
     }
 
+    public List<WeatherRedisDTO.WeatherData> getWeatherList(Long locationId) {
+        List<Object> objectList = opsForList().range(buildKey(locationId), 0, -1);
+
+        return objectList.stream()
+                .filter(Objects::nonNull)
+                .map(obj -> (WeatherRedisDTO.WeatherData) obj)
+                .toList();
+    }
+
+    public void rightPushAll(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {
+        opsForList().rightPushAll(buildKey(locationId), weatherDataList);
+        redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION);
+    }
+
+    public void updateWeatherList(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {
+        redisTemplate.delete(buildKey(locationId));
+        rightPushAll(locationId, weatherDataList);
+    }
+
+    public void deleteWeatherList(Long locationId) {
+        redisTemplate.delete(buildKey(locationId));
+    }
+
     /**
      * TTL을 지금부터 timeout만큼 지난 후에 만료되도록 재설정합니다.
      * <p>
@@ -71,5 +98,8 @@ public class WeatherRedisRepository {
 
     private ValueOperations<String, Object> opsForValue() {
         return redisTemplate.opsForValue();
+    }
+    private ListOperations<String, Object> opsForList() {
+        return redisTemplate.opsForList();
     }
 }

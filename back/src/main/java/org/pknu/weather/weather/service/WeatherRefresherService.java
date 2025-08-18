@@ -97,6 +97,8 @@ public class WeatherRefresherService {
         for (Long locationId : locationIdsWithRecentlyUpdatedWeather) {
             publishEvent(new WeatherCacheRefreshEvent(locationId));
         }
+
+        log.info("캐싱된 지역 수: {}, 지역 ids: {}", locationIdsWithRecentlyUpdatedWeather.size(), locationIdsWithRecentlyUpdatedWeather);
     }
 
     private void publishEvent(WeatherEvent event) {
