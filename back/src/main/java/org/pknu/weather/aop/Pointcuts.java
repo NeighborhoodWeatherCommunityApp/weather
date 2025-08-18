@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Pointcut;
 public class Pointcuts {
 
 
-    @Pointcut("within(org.pknu.weather.controller.HealthCheckController)")
+    @Pointcut("within(org.pknu.weather.infra.mornitoring.HealthCheckController)")
     public void healthCheckController() {}
 
     // Controller: @RestController 붙은 클래스 전부, 단 HealthCheckController는 제외
@@ -15,11 +15,11 @@ public class Pointcuts {
     public void controllerPointcut() {}
 
     // Service: service 패키지 + @Service (둘 다 조건)
-    @Pointcut("within(org.pknu.weather..service..*) && @within(org.springframework.stereotype.Service)")
+    @Pointcut("within(org.pknu.weather..service..*) || @within(org.springframework.stereotype.Service)")
     public void servicePointcut() {}
 
     // Repository: repository 패키지 + @Repository
-    @Pointcut("within(org.pknu.weather..repository..*) && @within(org.springframework.stereotype.Repository)")
+    @Pointcut("within(org.pknu.weather..repository..*) || @within(org.springframework.stereotype.Repository)")
     public void repositoryPointcut() {}
 
     @Pointcut("execution(* org.pknu.weather.weather.repository.WeatherRedisRepository.*.*(..))")
@@ -30,7 +30,7 @@ public class Pointcuts {
     public void schedulerPointcut() {
     }
 
-    @Pointcut("execution(* org.pknu.weather.dto.converter.*.*(..))")
+    @Pointcut("execution(* org.pknu.weather..converter.*.*(..))")
     public void converterPointcut() {
     }
 

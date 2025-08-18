@@ -111,6 +111,7 @@ public class RedisConfig {
      * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
      */
     @Bean
+    @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
@@ -120,11 +121,11 @@ public class RedisConfig {
          * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
          */
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(getObjectMapper());
-        template.setValueSerializer(serializer);
-        template.setHashValueSerializer(serializer);
-
         template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+
         template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(serializer);
 
         template.afterPropertiesSet();
         return template;
