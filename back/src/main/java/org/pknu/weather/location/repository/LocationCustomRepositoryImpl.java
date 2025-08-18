@@ -22,10 +22,10 @@ public class LocationCustomRepositoryImpl implements LocationCustomRepository {
     public List<Long> findLocationIdsWithRecentlyUpdatedWeather(Integer limitSize) {
         return jpaQueryFactory
                 .select(weather.location.id)
-                .distinct()
                 .from(weather)
-                .orderBy(weather.updatedAt.desc())
-                .limit(limitSize)
+                .groupBy(weather.location.id)
+                .orderBy(weather.updatedAt.max().desc())
+                .limit(100)
                 .fetch();
     }
 }
