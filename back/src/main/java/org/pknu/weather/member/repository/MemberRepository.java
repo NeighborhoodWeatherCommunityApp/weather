@@ -34,12 +34,13 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
 
     Optional<Member> findMemberWithLocationByEmail(@Param("email") String email);
 
+    @Cacheable(value = "memberCache", key = "#email")
     default Member safeFindByEmail(String email) {
         return findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus._MEMBER_NOT_FOUND));
     }
 
-    @EntityGraph(attributePaths = {"roles"})
+    @EntityGraph(attributePaths = {"roles", "location"})
     @Cacheable(value = "memberCache", key = "#email")
     Optional<Member> findMemberWithRolesByEmail(@Param("email") String email);
 
