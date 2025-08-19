@@ -32,7 +32,6 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class MainPageService {
     private final MemberRepository memberRepository;
     private final WeatherQueryService weatherQueryService;

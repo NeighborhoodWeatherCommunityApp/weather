@@ -17,6 +17,7 @@ public class WeatherControllerForAdmin {
     @PostMapping("/redis/weather")
     public ApiResponse<Object> refreshWeatherRedisData(@RequestHeader("Authorization") String authorization) {
         weatherRefresherService.updateWeatherCachedDataScheduled(100);
+        weatherRefresherService.updateWeatherDataScheduled(100);
         return ApiResponse.onSuccess();
     }
 }
