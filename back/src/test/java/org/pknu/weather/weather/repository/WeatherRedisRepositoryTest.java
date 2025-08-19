@@ -2,7 +2,6 @@ package org.pknu.weather.weather.repository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.pknu.weather.config.EmbeddedRedisConfig;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
 import org.pknu.weather.weather.enums.RainType;
@@ -23,7 +22,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
 
 @SpringBootTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import({EmbeddedRedisConfig.class})
 class WeatherRedisRepositoryTest {
 
