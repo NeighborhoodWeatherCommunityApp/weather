@@ -1,12 +1,13 @@
 package org.pknu.weather.tag.enums;
 
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
-import org.pknu.weather.weather.dto.TotalWeatherDto.ExtraWeatherDto;
 import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
+import org.pknu.weather.weather.dto.TotalWeatherDTO.ExtraWeatherDto;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public enum DustTag implements EnumTag {
     }
 
     @Override
-    public EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+    public EnumTag weatherValueToTag(TotalWeatherDTO totalWeatherDto) {
         return pmValueToDustTag(totalWeatherDto.getExtraWeatherDto());
     }
 

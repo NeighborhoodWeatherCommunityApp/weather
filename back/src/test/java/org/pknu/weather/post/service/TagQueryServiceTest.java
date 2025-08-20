@@ -4,17 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
-import org.pknu.weather.tag.enums.EnumTagMapper;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.tag.enums.EnumTagMapper;
 import org.pknu.weather.tag.repository.TagRepository;
 import org.pknu.weather.tag.service.TagQueryService;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.feignclient.utils.ExtraWeatherApiUtils;
 import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
-import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.pknu.weather.weather.service.WeatherQueryService;
@@ -85,7 +85,7 @@ class TagQueryServiceTest {
         Location location = member.getLocation();
         LocalDateTime baseTime = TestDataCreator.getBaseTime();
         List<Weather> newForecast = TestDataCreator.getNewForecast(location, baseTime);
-        WeatherResponse.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
 
         when(memberRepository.safeFindByEmail(member.getEmail())).thenReturn(member);
         when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(Optional.empty());
@@ -109,7 +109,7 @@ class TagQueryServiceTest {
         Location location = member.getLocation();
         LocalDateTime baseTime = TestDataCreator.getBaseTime();
         List<Weather> newForecast = TestDataCreator.getNewForecast(location, baseTime);
-        WeatherResponse.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
 
         when(memberRepository.safeFindByEmail(member.getEmail())).thenReturn(member);
         when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(Optional.ofNullable(newForecast.get(0)));

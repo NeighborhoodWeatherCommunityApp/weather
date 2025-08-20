@@ -1,40 +1,40 @@
 package org.pknu.weather.post.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.post.entity.Post;
-import org.pknu.weather.recomandation.entity.Recommendation;
-import org.pknu.weather.recomandation.service.RecommendationService;
-import org.pknu.weather.weather.Weather;
-import org.pknu.weather.post.enums.PostType;
-import org.pknu.weather.tag.enums.DustTag;
-import org.pknu.weather.tag.enums.HumidityTag;
-import org.pknu.weather.tag.enums.SkyTag;
-import org.pknu.weather.tag.enums.TemperatureTag;
-import org.pknu.weather.tag.enums.WindTag;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.post.dto.PostRequest;
 import org.pknu.weather.post.dto.PostRequest.HobbyParams;
-import org.pknu.weather.location.repository.LocationRepository;
-import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.entity.Post;
+import org.pknu.weather.post.enums.PostType;
 import org.pknu.weather.post.repository.PostRepository;
+import org.pknu.weather.recomandation.entity.Recommendation;
 import org.pknu.weather.recomandation.repository.RecommendationRepository;
+import org.pknu.weather.recomandation.service.RecommendationService;
+import org.pknu.weather.tag.enums.*;
+import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -64,6 +64,15 @@ class PostServiceTest {
 
     @Autowired
     EntityManager em;
+
+    @Autowired
+    CacheManager cm;
+
+    @BeforeEach
+    void init() {
+        cm.getCacheNames()
+                .forEach(name -> Objects.requireNonNull(cm.getCache(name)).clear());
+    }
 
     @Test
     @Transactional

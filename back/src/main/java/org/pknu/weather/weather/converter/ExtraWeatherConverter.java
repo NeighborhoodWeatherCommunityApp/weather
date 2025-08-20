@@ -7,12 +7,12 @@ import java.util.List;
 import org.pknu.weather.weather.ExtraWeather;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.dto.ExtraWeatherSummaryDTO;
-import org.pknu.weather.weather.dto.WeatherResponse;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 
 public class ExtraWeatherConverter {
 
-    public static WeatherResponse.ExtraWeatherInfo toExtraWeatherInfo(ExtraWeather extraWeather) {
-        return WeatherResponse.ExtraWeatherInfo.builder()
+    public static WeatherResponseDTO.ExtraWeatherInfo toExtraWeatherInfo(ExtraWeather extraWeather) {
+        return WeatherResponseDTO.ExtraWeatherInfo.builder()
                 .baseTime(extraWeather.getBasetime())
                 .uvGrade(extraWeather.getUv())
                 .uvGradePlus3(extraWeather.getUvPlus3())
@@ -30,7 +30,7 @@ public class ExtraWeatherConverter {
                 .build();
     }
 
-    public static ExtraWeather toExtraWeather(Location location, WeatherResponse.ExtraWeatherInfo extraWeatherInfo) {
+    public static ExtraWeather toExtraWeather(Location location, WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo) {
         return ExtraWeather.builder()
                 .location(location)
                 .basetime(extraWeatherInfo.getBaseTime())

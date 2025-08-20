@@ -1,13 +1,13 @@
 package org.pknu.weather.tag.enums;
 
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
-import org.pknu.weather.weather.enums.RainType;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
-import org.pknu.weather.weather.dto.TotalWeatherDto.WeatherDto;
 import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
+import org.pknu.weather.weather.enums.RainType;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -49,11 +49,11 @@ public enum RainTag implements EnumTag {
     }
 
     @Override
-    public EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+    public EnumTag weatherValueToTag(TotalWeatherDTO totalWeatherDto) {
         return rainTypeToRainTag(totalWeatherDto.getWeatherDto());
     }
 
-    private static RainTag rainTypeToRainTag(WeatherDto weatherDto) {
+    private static RainTag rainTypeToRainTag(TotalWeatherDTO.WeatherDTO weatherDto) {
         Float rain = weatherDto.getRain();
         Float snowCover = weatherDto.getSnowCover();
         RainType rainType = weatherDto.getRainType();

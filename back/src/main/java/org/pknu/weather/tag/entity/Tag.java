@@ -1,27 +1,10 @@
 package org.pknu.weather.tag.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.pknu.weather.common.entity.BaseEntity;
 import org.pknu.weather.location.entity.Location;
-import org.pknu.weather.tag.enums.DustTag;
-import org.pknu.weather.tag.enums.HumidityTag;
-import org.pknu.weather.tag.enums.SkyTag;
-import org.pknu.weather.tag.enums.TemperatureTag;
-import org.pknu.weather.tag.enums.WindTag;
+import org.pknu.weather.tag.enums.*;
 
 @Entity
 @Getter

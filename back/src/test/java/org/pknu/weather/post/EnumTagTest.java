@@ -1,12 +1,12 @@
-package org.pknu.weather.post;
+package org.pknu.weather.domain;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.pknu.weather.tag.enums.EnumTagMapper;
 import org.pknu.weather.tag.enums.EnumTag;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.tag.enums.EnumTagMapper;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class EnumTagTest {
@@ -46,7 +46,7 @@ enum Test implements EnumTag {
     }
 
     @Override
-    public EnumTag weatherValueToTag(TotalWeatherDto totalWeatherDto) {
+    public EnumTag weatherValueToTag(TotalWeatherDTO totalWeatherDto) {
         return null;
     }
 }

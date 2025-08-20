@@ -46,12 +46,12 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       ssl:
-        enabled: true
+        enabled: false
 
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=500,expireAfterWrite=10s
+      spec: maximumSize=100,expireAfterWrite=10m
 
 
 logging:
@@ -114,4 +114,4 @@ fcm:
   project-id: ${FCM_ID}
   service-account: ${FCM_CREDENTIAL}
 
-log-option: prod
+log-option: dev

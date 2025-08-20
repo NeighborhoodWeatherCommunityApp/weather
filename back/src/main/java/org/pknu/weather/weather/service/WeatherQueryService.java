@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.weather.event.WeatherCreateEvent;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherQueryResult;
-import org.pknu.weather.weather.dto.WeatherResponse;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
+import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.event.WeatherCreateEvent;
+import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -63,10 +63,10 @@ public class WeatherQueryService {
         return optionalWeather.get();
     }
 
-    public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
+    public WeatherResponseDTO.SimpleRainInformation getSimpleRainInfo(String email) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
-        WeatherQueryResult.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
+        WeatherQueryResultDTO.SimpleRainInfo simpleRainInfo = weatherRepository.getSimpleRainInfo(location);
         return WeatherResponseConverter.toSimpleRainInformation(simpleRainInfo);
     }
 

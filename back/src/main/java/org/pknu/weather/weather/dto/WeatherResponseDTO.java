@@ -9,7 +9,7 @@ import org.pknu.weather.weather.enums.SkyType;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class WeatherResponse {
+public class WeatherResponseDTO {
 
     @Getter
     @Builder

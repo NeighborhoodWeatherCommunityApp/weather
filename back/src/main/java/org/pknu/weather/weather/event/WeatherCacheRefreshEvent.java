@@ -3,10 +3,10 @@ package org.pknu.weather.weather.event;
 import lombok.Getter;
 
 @Getter
-public class WeatherUpdateEvent implements WeatherEvent {
+public class WeatherCacheRefreshEvent implements WeatherEvent {
     private Long locationId;
 
-    public WeatherUpdateEvent(Long locationId) {
+    public WeatherCacheRefreshEvent(Long locationId) {
         this.locationId = locationId;
     }
 

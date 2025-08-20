@@ -3,23 +3,26 @@ package org.pknu.weather.mainpage.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.dto.PostResponse;
+import org.pknu.weather.post.dto.TagDto;
 import org.pknu.weather.post.service.PostQueryService;
 import org.pknu.weather.tag.service.TagQueryService;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.post.dto.PostResponse;
-import org.pknu.weather.post.dto.TagDto;
-import org.pknu.weather.weather.dto.WeatherResponse;
 import org.pknu.weather.weather.converter.WeatherResponseConverter;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.event.WeatherCacheRefreshEvent;
 import org.pknu.weather.weather.event.WeatherCreateEvent;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
 import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
-import org.pknu.weather.location.repository.LocationRepository;
-import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.weather.service.WeatherCacheService;
 import org.pknu.weather.weather.service.WeatherQueryService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -29,7 +32,6 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class MainPageService {
     private final MemberRepository memberRepository;
     private final WeatherQueryService weatherQueryService;
@@ -38,6 +40,7 @@ public class MainPageService {
     private final TagQueryService tagQueryService;
     private final WeatherFeignClientUtils weatherFeignClientUtils;
     private final ApplicationEventPublisher eventPublisher;
+    private final WeatherCacheService weatherCacheService;
 
     /**
      * 메인 페이지에 날씨와 관련된 데이터를 반환한다. 만약 해당 지역의 날씨의 갱신 시간이 지났다면 갱신을 시도하고 반환한다. 만약 해당 지역의 날씨 정보가 없다면 저장하고 반환한다.
@@ -45,11 +48,16 @@ public class MainPageService {
      * @param email
      * @return
      */
-    public WeatherResponse.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
+    public WeatherResponseDTO.MainPageWeatherData getWeatherInfo(String email, Long locationId) {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = resolveLocation(member, locationId);
 
-        List<Weather> weatherList = createWeatherIfRequired(location, member);
+        List<Weather> cachedWeatherList = weatherCacheService.getCachedWeathers(location.getId());
+        if(!cachedWeatherList.isEmpty()) {
+            return WeatherResponseConverter.toMainPageWeatherData(cachedWeatherList, member);
+        }
+
+        List<Weather> weatherList = createWeatherIfRequired(location);
         if (weatherList != null) {
             return WeatherResponseConverter.toMainPageWeatherData(weatherList, member);
         }
@@ -66,10 +74,11 @@ public class MainPageService {
                 : member.getLocation();
     }
 
-    private List<Weather> createWeatherIfRequired(Location location, Member member) {
+    private List<Weather> createWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenCreated(location)) {
             List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
             eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
+            eventPublisher.publishEvent(new WeatherCacheRefreshEvent(location.getId()));
             return newForecast;
         }
         return null;
@@ -78,6 +87,7 @@ public class MainPageService {
     private void updateWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenUpdated(location)) {
             eventPublisher.publishEvent(new WeatherUpdateEvent(location.getId()));
+            eventPublisher.publishEvent(new WeatherCacheRefreshEvent(location.getId()));
         }
     }
 
@@ -87,15 +97,18 @@ public class MainPageService {
      * @param email
      * @return
      */
+    @Transactional(readOnly = true)
     public List<PostResponse.Post> getLatestPostList(String email) {
         return postQueryService.getLatestPostList(email);
     }
 
+    @Transactional(readOnly = true)
     public List<TagDto.SimpleTag> getMostSelectedTags(String email) {
         return tagQueryService.getMostSelectedTags(email);
     }
 
-    public WeatherResponse.SimpleRainInformation getSimpleRainInfo(String email) {
+    @Transactional(readOnly = true)
+    public WeatherResponseDTO.SimpleRainInformation getSimpleRainInfo(String email) {
         return weatherQueryService.getSimpleRainInfo(email);
     }
 }

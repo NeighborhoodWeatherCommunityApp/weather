@@ -31,7 +31,7 @@
 //                new PointDTO(55, 127)
 //        );
 //
-//        WeatherApiResponse weatherApiResponses = weatherFeignClient.getVillageShortTermForecast(weatherParams);
+//        WeatherApiResponseDTO weatherApiResponses = weatherFeignClient.getVillageShortTermForecast(weatherParams);
 //
 //        Assertions.assertThat(weatherApiResponses.getResponse().getBody().getItems().getItemList().size()).isEqualTo(288);
 //    }

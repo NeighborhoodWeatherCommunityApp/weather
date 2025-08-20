@@ -1,26 +1,29 @@
 package org.pknu.weather.security.integrationTest;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.config.EmbeddedRedisConfig;
 import org.pknu.weather.location.entity.Location;
-import org.pknu.weather.member.enums.Role;
 import org.pknu.weather.member.auth.userInfo.SocialUserInfo;
 import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.enums.Role;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.security.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.Set;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -37,8 +40,17 @@ class JwtAuthenticationIntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    CacheManager cm;
+
     private static final String ACTUATOR_TEST_PATH = "/actuator/prometheus";
     private static final String API_TEST_PATH = "/api/v1/member/info";
+
+    @BeforeEach
+    void init() {
+        cm.getCacheNames()
+                .forEach(name -> Objects.requireNonNull(cm.getCache(name)).clear());
+    }
 
     @Test
     void 유효한_토큰이_없는_사용자는_API에_접근할_수_없다() throws Exception {
@@ -108,7 +120,6 @@ class JwtAuthenticationIntegrationTest {
 
         SocialUserInfo userInfo = new SocialUserInfo("kakao", email);
         String token = jwtUtil.generateToken(userInfo.getUserInfo(), 3);
-
 
         mockMvc.perform(get(ACTUATOR_TEST_PATH)
                         .header("Authorization", "Bearer " + token))

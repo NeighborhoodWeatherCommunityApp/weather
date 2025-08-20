@@ -1,22 +1,12 @@
 package org.pknu.weather.weather.feignclient.utils;
 
-import static org.pknu.weather.common.converter.CoordinateConverter.transformWGS84ToUTMK;
-import static org.pknu.weather.common.formatter.DateTimeFormatter.getFormattedLocalDate;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
-import org.pknu.weather.location.dto.LocationDTO;
-import org.pknu.weather.weather.dto.WeatherResponse;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
 import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.location.dto.LocationDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO.ExtraWeatherInfo;
 import org.pknu.weather.weather.feignclient.AirConditionClient;
 import org.pknu.weather.weather.feignclient.UVClient;
 import org.pknu.weather.weather.feignclient.dto.AirConditionResponseDTO;
@@ -28,6 +18,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+import static org.pknu.weather.common.converter.CoordinateConverter.transformWGS84ToUTMK;
+import static org.pknu.weather.common.formatter.DateTimeFormatter.getFormattedLocalDate;
 
 @Slf4j
 @Component
@@ -44,7 +45,7 @@ public class ExtraWeatherApiUtils {
     private final AirConditionClient airConditionClient;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO) {
+    public WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO) {
 
         Item uvResult = getUV(locationDTO);
         transferUvGrade(uvResult);
@@ -54,7 +55,7 @@ public class ExtraWeatherApiUtils {
         return getExtraWeatherInformation(uvResult, airConditionInfo);
     }
 
-    public WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO, LocalDateTime baseTime) {
+    public WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocationDTO locationDTO, LocalDateTime baseTime) {
 
         Item uvResult = getUV(locationDTO);
         transferUvGrade(uvResult);

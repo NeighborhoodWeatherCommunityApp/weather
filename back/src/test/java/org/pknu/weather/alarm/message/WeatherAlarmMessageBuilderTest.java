@@ -1,10 +1,9 @@
 package org.pknu.weather.alarm.message;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
-import org.pknu.weather.alarm.message.WeatherAlarmMessageBuilder;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class WeatherAlarmMessageBuilderTest {
 

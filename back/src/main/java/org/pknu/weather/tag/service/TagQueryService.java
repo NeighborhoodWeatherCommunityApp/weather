@@ -2,20 +2,20 @@ package org.pknu.weather.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.tag.enums.EnumTagMapper;
-import org.pknu.weather.tag.utils.TagUtils;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.tag.repository.TagRepository;
-import org.pknu.weather.weather.Weather;
-import org.pknu.weather.tag.enums.EnumTag;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.converter.TagResponseConverter;
 import org.pknu.weather.post.dto.TagDto;
 import org.pknu.weather.post.dto.TagQueryResult;
 import org.pknu.weather.post.dto.TagWithSelectedStatusDto;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
-import org.pknu.weather.weather.dto.WeatherResponse.ExtraWeatherInfo;
-import org.pknu.weather.post.converter.TagResponseConverter;
-import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.tag.enums.EnumTag;
+import org.pknu.weather.tag.enums.EnumTagMapper;
+import org.pknu.weather.tag.repository.TagRepository;
+import org.pknu.weather.tag.utils.TagUtils;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.service.WeatherQueryService;
 import org.pknu.weather.weather.service.WeatherService;
 import org.springframework.stereotype.Service;
@@ -73,8 +73,8 @@ public class TagQueryService {
         Member member = memberRepository.safeFindByEmail(email);
         Location location = member.getLocation();
         Weather weather = weatherQueryService.getNearestWeatherForecastToNow(location);
-        ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(member.getEmail(), location.getId());
-        TotalWeatherDto totalWeatherDto = new TotalWeatherDto(weather, extraWeatherInfo);
+        WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = weatherService.extraWeatherInfo(member.getEmail(), location.getId());
+        TotalWeatherDTO totalWeatherDto = new TotalWeatherDTO(weather, extraWeatherInfo);
         Map<String, List<TagWithSelectedStatusDto>> map = new HashMap<>();
 
         enumTagMapper.getAll().forEach((key, enumTag) -> {

@@ -33,7 +33,7 @@ spring:
   kakao:
     admin_key: ${KAKAO_SERVICE_ADMIN_KEY}
   profiles:
-    active: default
+    active: local
   servlet:
     multipart:
       enabled: true
@@ -44,7 +44,9 @@ spring:
     redis:
       host: localhost
       port: 63790
-
+      password:
+      ssl:
+        enabled: true
 
 logging:
   level:

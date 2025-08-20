@@ -1,14 +1,6 @@
 package org.pknu.weather.alarm.integration;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-
 import jakarta.persistence.EntityManager;
-import java.util.Objects;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.alarm.entity.Alarm;
@@ -19,16 +11,12 @@ import org.pknu.weather.alarm.sender.NotificationSender;
 import org.pknu.weather.alarm.service.AlarmCooldownService;
 import org.pknu.weather.config.EmbeddedRedisConfig;
 import org.pknu.weather.location.entity.Location;
-import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.tag.enums.DustTag;
-import org.pknu.weather.tag.enums.HumidityTag;
-import org.pknu.weather.tag.enums.SkyTag;
-import org.pknu.weather.tag.enums.TemperatureTag;
-import org.pknu.weather.tag.enums.WindTag;
-import org.pknu.weather.post.dto.PostRequest.CreatePost;
 import org.pknu.weather.location.repository.LocationRepository;
+import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.dto.PostRequest.CreatePost;
 import org.pknu.weather.post.service.PostService;
+import org.pknu.weather.tag.enums.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -38,6 +26,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.UUID;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @SpringBootTest
 @Transactional

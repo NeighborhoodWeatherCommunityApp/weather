@@ -3,13 +3,13 @@ package org.pknu.weather.common;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.post.entity.Post;
-import org.pknu.weather.weather.Weather;
-import org.pknu.weather.post.enums.PostType;
-import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.member.enums.Sensitivity;
+import org.pknu.weather.post.entity.Post;
+import org.pknu.weather.post.enums.PostType;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.weather.enums.SkyType;
-import org.pknu.weather.weather.dto.WeatherResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -100,8 +100,8 @@ public class TestDataCreator {
                 .build();
     }
 
-    public static WeatherResponse.ExtraWeatherInfo getExtraWeatherInfo(LocalDateTime baseTime) {
-        return WeatherResponse.ExtraWeatherInfo.builder()
+    public static WeatherResponseDTO.ExtraWeatherInfo getExtraWeatherInfo(LocalDateTime baseTime) {
+        return WeatherResponseDTO.ExtraWeatherInfo.builder()
                 .baseTime(baseTime)
                 .o3Grade(1)
                 .uvGrade(1)
@@ -179,6 +179,17 @@ public class TestDataCreator {
 
     public static Location getBusanLocation() {
         return Location.builder()
+                .city("시군구")
+                .province("부산광역시" + locationIdx++)
+                .street("읍면동")
+                .latitude(TestGlobalParams.BusanGeometry.LATITUDE)
+                .longitude(TestGlobalParams.BusanGeometry.LONGITUDE)
+                .build();
+    }
+
+    public static Location getBusanLocation(Long id) {
+        return Location.builder()
+                .id(id)
                 .city("시군구")
                 .province("부산광역시" + locationIdx++)
                 .street("읍면동")

@@ -1,29 +1,15 @@
 package org.pknu.weather.weather;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import java.time.LocalDateTime;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.pknu.weather.weather.utils.SensibleTemperatureUtils;
+import jakarta.persistence.*;
+import lombok.*;
 import org.pknu.weather.common.entity.BaseEntity;
 import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
 import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.weather.enums.SkyType;
-import org.pknu.weather.weather.dto.WeatherApiResponse;
+import org.pknu.weather.weather.utils.SensibleTemperatureUtils;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -118,7 +104,7 @@ public class Weather extends BaseEntity {
         }
     }
 
-    public void categoryClassify(WeatherApiResponse.Response.Body.Items.Item item) {
+    public void categoryClassify(WeatherApiResponseDTO.Response.Body.Items.Item item) {
         String val = item.getFcstValue();
         switch (item.getCategory()) {
             // 강수 확률

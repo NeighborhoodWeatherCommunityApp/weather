@@ -1,17 +1,11 @@
 package org.pknu.weather.tag.utils;
 
-import java.util.List;
-
-import org.pknu.weather.tag.enums.SkyTag;
-import org.pknu.weather.tag.enums.TemperatureTag;
-import org.pknu.weather.tag.enums.WindTag;
-import org.pknu.weather.weather.Weather;
 import org.pknu.weather.member.enums.Sensitivity;
-import org.pknu.weather.tag.enums.DustTag;
-import org.pknu.weather.tag.enums.EnumTag;
-import org.pknu.weather.tag.enums.HumidityTag;
-import org.pknu.weather.tag.enums.RainTag;
-import org.pknu.weather.weather.dto.TotalWeatherDto;
+import org.pknu.weather.tag.enums.*;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.TotalWeatherDTO;
+
+import java.util.List;
 
 public class TagUtils {
 
@@ -25,7 +19,7 @@ public class TagUtils {
 
     public static EnumTag rainType2RainTag(Weather weather) {
         RainTag rainTag = RainTag.NOTHING;
-        return rainTag.weatherValueToTag(new TotalWeatherDto(weather));
+        return rainTag.weatherValueToTag(new TotalWeatherDTO(weather));
     }
 
     public static TemperatureTag tmp2TemperatureTag(Integer tmp, Sensitivity sensitivity) {

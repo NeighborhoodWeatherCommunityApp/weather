@@ -49,6 +49,9 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
           fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
+          spring.data.redis.host: localhost
+          spring.data.redis.port: 63790
+          spring.data.redis.password:
 
       - name: Grant execute permission for gradlew
         run: chmod +x back/gradlew
@@ -104,6 +107,15 @@ jobs:
           spring.data.redis.port: ${{secrets.REDIS_PORT_DEV}}
           spring.data.redis.password: ${{secrets.REDIS_PASSWORD_DEV}}
 
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Build
         working-directory: back
