@@ -6,6 +6,7 @@ import {
   isSupported,
   getPermission,
   requestPermission,
+  AuthorizationStatus,
 } from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useRef} from 'react';
@@ -21,8 +22,8 @@ export const requestUserPermission = async () => {
     });
 
     const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      authStatus === AuthorizationStatus.AUTHORIZED ||
+      authStatus === AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
       console.log('iOS 알림 권한 허용됨:', authStatus);
