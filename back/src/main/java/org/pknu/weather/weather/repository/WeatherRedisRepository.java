@@ -1,12 +1,7 @@
 package org.pknu.weather.weather.repository;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.weather.dto.WeatherRedisDTO;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Repository;
+import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
+import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourlyWeatherKeys;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -14,10 +9,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-
-import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
-import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourlyWeatherKeys;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.pknu.weather.weather.dto.WeatherRedisDTO;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -69,7 +69,8 @@ public class WeatherRedisRepository {
         for (WeatherRedisDTO.WeatherData weatherData : weatherDataList) {
             opsForList().rightPush(buildKey(locationId), weatherData);
         }
-        redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION);
+        redisTemplate.expire(buildKey(locationId),
+                DEFAULT_DURATION.ofMinutes(ThreadLocalRandom.current().nextInt(0, 11)));
     }
 
     public void updateWeatherList(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {

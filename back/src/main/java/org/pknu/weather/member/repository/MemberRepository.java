@@ -1,14 +1,14 @@
 package org.pknu.weather.member.repository;
 
+import java.util.Optional;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.entity.Member;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long>, MemberCustomRepository {
 
@@ -44,5 +44,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     @Cacheable(value = "memberCache", key = "#email")
     Optional<Member> findMemberWithRolesByEmail(@Param("email") String email);
 
+    @Override
+    @CacheEvict(value = "memberCache", key = "#email")
+    <S extends Member> S save(S entity);
 }
 
