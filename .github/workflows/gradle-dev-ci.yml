@@ -9,8 +9,8 @@ on:
       - back/**
       - .github/**
 
-  workflow_dispatch:  
-  
+  workflow_dispatch:
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -55,15 +55,13 @@ jobs:
           spring.data.redis.port: 63790
           spring.data.redis.password:
 
-      - name: Restore Gradle cache
-        id: gradle-cache-test
-        uses: actions/cache@v3
+      - name: Gradle Caching
+        uses: actions/cache@v4
         with:
           path: |
-            ${{ env.GRADLE_USER_HOME }}/caches
-            ${{ env.GRADLE_USER_HOME }}/wrapper
-            ${{ env.GRADLE_USER_HOME }}/caches/build-cache-1
-          key: ${{ runner.os }}-gradle-${{ hashFiles('back/**/*.gradle*', 'back/**/gradle-wrapper.properties', 'back/**/gradle.lockfile') }}
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -122,13 +120,12 @@ jobs:
           spring.data.redis.password: ${{secrets.REDIS_PASSWORD_DEV}}
 
       - name: Gradle Caching
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
-            ${{ env.GRADLE_USER_HOME }}/caches
-            ${{ env.GRADLE_USER_HOME }}/wrapper
-            ${{ env.GRADLE_USER_HOME }}/caches/build-cache-1
-          key: ${{ runner.os }}-gradle-${{ hashFiles('back/**/*.gradle*', 'back/**/gradle-wrapper.properties', 'back/**/gradle.lockfile') }}
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
