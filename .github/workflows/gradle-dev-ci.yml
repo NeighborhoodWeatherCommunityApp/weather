@@ -20,42 +20,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: JDK 설치
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 환경변수 주입
-      - name: Set yml value
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: "**/src/test/resources/application.yml"
-        env:
-          spring.datasource.url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-          spring.datasource.username: sa
-          spring.datasource.password:
-          api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
-          spring.jwt.key: ${{ secrets.JWT_KEY }}
-          spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
-          spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
-          cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
-          cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
-          cloud.aws.s3.bucket: ${{ secrets.S3_BUCKET_PROD }}
-          cloud.aws.cdn.cloud-front: ${{ secrets.CLOUD_FRONT_PROD }}
-          spring.weather.key: ${{ secrets.METEOROLOGICAL_ADMIN_KEY }}
-          spring.kakao.admin_key: ${{ secrets.KAKAO_SERVICE_ADMIN_KEY }}
-          apple.client-id: ${{ secrets.CLIENT_ID }}
-          apple.team-id: ${{ secrets.TEAM_ID }}
-          apple.key.id: ${{ secrets.APPLE_KEY_ID }}
-          apple.key.content: ${{ secrets.APPLE_KEY }}
-          fcm.project-id: ${{secrets.FCM_ID}}
-          fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
-          spring.data.redis.host: localhost
-          spring.data.redis.port: 63790
-          spring.data.redis.password:
+      - name: 권한 부여
+        run: chmod +x back/gradlew
 
-      - name: Gradle Caching
+      - name: 테스트 코드 캐싱
+        uses: actions/cache@v4
+        id: test-code-cache
+        with:
+          path: |
+            src/test/java/**
+          key: ${{ runner.os }}-test-${{ hashFiles('**/src/test/java/**/*.java') }}
+          restore-keys: |
+            ${{ runner.os }}-test-
+
+      - name: 의존성 캐싱
         uses: actions/cache@v4
         with:
           path: |
@@ -65,11 +49,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x back/gradlew
+      - name: profile 설정
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "**/src/test/resources/application.yml"
+        env:
+          spring.profiles.active: test
 
-      - name: Build with Gradle Wrapper
+      - name: 테스트 시작
         working-directory: back
+        if: steps.test-code-cache.outputs.cache-hit != 'true'
         run: ./gradlew test -i
 
   build-and-push:

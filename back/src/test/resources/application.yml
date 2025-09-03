@@ -100,7 +100,7 @@ apple:
     id: ${APPLE_KEY_ID}
     content: ${APPLE_KEY}
 
-integration-logging: false
+log-option: dev
 
 fcm:
   project-id: ${FCM_ID}
