@@ -34,7 +34,7 @@ jobs:
         id: test-code-cache
         with:
           path: |
-            src/test/java/**
+            ~/src/test/java/**
           key: ${{ runner.os }}-test-${{ hashFiles('**/src/test/java/**/*.java') }}
           restore-keys: |
             ${{ runner.os }}-test-
