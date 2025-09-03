@@ -29,16 +29,6 @@ jobs:
       - name: 권한 부여
         run: chmod +x back/gradlew
 
-      - name: 테스트 코드 캐싱
-        uses: actions/cache@v4
-        id: test-code-cache
-        with:
-          path: |
-            ~/src/test/java/**
-          key: ${{ runner.os }}-test-${{ hashFiles('**/src/test/java/**/*.java') }}
-          restore-keys: |
-            ${{ runner.os }}-test-
-
       - name: 의존성 캐싱
         uses: actions/cache@v4
         with:
@@ -77,10 +67,12 @@ jobs:
           spring.data.redis.port: 63790
           spring.data.redis.password:
 
-      - name: 테스트 시작
+      - name: 자동 캐시/빌드 캐시 연동
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: 테스트 시작 (캐시 적중시 테스트 생략)
         working-directory: back
-        if: steps.test-code-cache.outputs.cache-hit != 'true'
-        run: ./gradlew test -i
+        run: ./gradlew test -i --build-cache
 
   build-and-push:
     runs-on: dev-self-hosted
