@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +21,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
 
 @RequiredArgsConstructor
 @Configuration
@@ -41,7 +42,6 @@ public class RedisConfig {
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         return new StringRedisTemplate(connectionFactory);
     }
-
 
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
@@ -79,7 +79,7 @@ public class RedisConfig {
      * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
      */
     @Bean
-    @ConditionalOnMissingBean(RedisTemplate.class)
+//    @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
