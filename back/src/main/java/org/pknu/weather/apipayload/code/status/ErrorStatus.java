@@ -41,7 +41,6 @@ public enum ErrorStatus implements BaseErrorCode {
     BAD_SIGNED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt_401_11", "Refresh Token의 서명이 올바르지 않습니다"),
 
 
-
     //KaKaoAccessTokenException
     KAKAO_SERVER_ERROR(HttpStatus.BAD_REQUEST, "Kakao_400_1", "카카오 서버의 일시적인 장애입니다."),
     KAKAO_ACCESS_TOKEN_BAT_TYPE(HttpStatus.BAD_REQUEST, "Kakao_400_2", "주어진 액세스 토큰 정보가 잘못된 형식입니다."),
@@ -60,7 +59,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // member
     _MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_404_1", "사용자를 찾을 수 없습니다."),
     _MEMBER_NOT_FOUND_LOCATION(HttpStatus.NOT_FOUND, "MEMBER_404_2", "사용자의 기본 주소지가 설정되어 있지 않습니다."),
-    _DUPILICATED_NICKNAME(HttpStatus.BAD_REQUEST, "MEMBER_400_3", "사용자의 닉네임이 중복됩니다."),
+    _DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "MEMBER_400_3", "사용자의 닉네임이 중복됩니다."),
+
+    // attendance
+    _DUPLICATED_ATTENDANCE(HttpStatus.OK, "200", "중복된 출석체크 요청입니다."),
+
 
     // 약관동의
     _ESSENTIAL_TERMS_IS_REQUIRED(HttpStatus.BAD_REQUEST, "TERMS_400_1", "필수 약관 동의는 필수입니다."),
