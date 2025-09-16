@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +18,10 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import java.time.Duration;
 
 @RequiredArgsConstructor
 @Configuration
@@ -37,47 +37,15 @@ public class RedisConfig {
     private String password;
 
 
-    /**
-     * RedisConnectionFactory는 스프링 어플리케이션과 레디스를 연결하기 위해 사용된다.
-     * 커넥션의 종류로는 Jedis와 Lettuce가 있는데, Lettuce의 성능이 더 좋은 것으로 알려져있다.
-     */
-//    @Bean
-//    @ConditionalOnMissingBean(RedisConnectionFactory.class)
-//    public RedisConnectionFactory redisConnectionFactory() {
-//        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
-//        redisConfig.setPassword(RedisPassword.of(password));
-//
-////        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-////                .useSsl() // TLS 연결
-////                .and()
-////                .build();
-//
-//        // 커넥션 풀 설정 (중요!)
-//        GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
-//        poolConfig.setMaxTotal(50);        // 최대 연결 수
-//        poolConfig.setMaxIdle(20);         // 최대 유휴 연결
-//        poolConfig.setMinIdle(2);          // 최소 유휴 연결
-//        poolConfig.setTestOnBorrow(true);  // 연결 유효성 검사
-//
-//        LettucePoolingClientConfiguration poolingConfig = LettucePoolingClientConfiguration.builder()
-//                .poolConfig(poolConfig)
-//                .commandTimeout(Duration.ofSeconds(2))
-//                .shutdownTimeout(Duration.ofMillis(100))
-//                .useSsl()
-//                .and()
-//                .build();
-//
-//        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisConfig, clientConfig);
-//        connectionFactory.setShareNativeConnection(true);
-//
-//        // redis 연결 정보를 토대로 LettuceConnectionFactory 객체를 생성하여 빈으로 등록한다.
-//        return new LettuceConnectionFactory(
-//                new RedisStandaloneConfiguration(host, port), poolingConfig);
-//    }
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
+    }
+
 
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
-    public LettuceConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory() {
         // Redis Config
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
         redisConfig.setPassword(password);
