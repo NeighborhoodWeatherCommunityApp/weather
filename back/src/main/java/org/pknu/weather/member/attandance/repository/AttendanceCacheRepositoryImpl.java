@@ -1,11 +1,12 @@
 package org.pknu.weather.member.attandance.repository;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
@@ -19,7 +20,7 @@ public class AttendanceCacheRepositoryImpl implements AttendanceCacheRepository 
     }
 
     @Override
-    public boolean checkIn(DefaultRedisScript<Boolean> script, String key, Long userId) {
-        return stringRedisTemplate.execute(script, List.of(key), userId, true);
+    public boolean checkIn(DefaultRedisScript<Long> script, String key, Long userId) {
+        return stringRedisTemplate.execute(script, List.of(key), String.valueOf(userId)) != 0L;
     }
 }

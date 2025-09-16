@@ -1,6 +1,5 @@
 package org.pknu.weather.member.attandance.service;
 
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.member.attandance.entity.Attendance;
@@ -12,6 +11,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -38,6 +39,7 @@ public class AttendanceService {
     }
 
     @Async
+    @Transactional
     public void checkInAsync(Member member, LocalDate date) {
         Attendance attendance = Attendance.builder()
                 .date(date)
