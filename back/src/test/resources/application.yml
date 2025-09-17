@@ -33,7 +33,7 @@ spring:
   kakao:
     admin_key: ${KAKAO_SERVICE_ADMIN_KEY}
   profiles:
-    active: test
+    active: default
   servlet:
     multipart:
       enabled: true
