@@ -17,7 +17,7 @@ import java.time.LocalDate;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uq_attendance_date_member",
-                        columnNames = {"date", "member_id"}
+                        columnNames = {"date", "member_member_id"}
                 )
         }
 )
@@ -29,6 +29,7 @@ public class Attendance extends BaseEntity {
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_member_id")
     private Member member;
 
     // 중복 출석 방지용
