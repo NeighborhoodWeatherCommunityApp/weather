@@ -40,6 +40,9 @@ public enum ErrorStatus implements BaseErrorCode {
     TYPE_NOT_ACCEPTED(HttpStatus.BAD_REQUEST, "Jwt_400_10", "소셜 로그인의 타입에 문제가 있습니다."),
     BAD_SIGNED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt_401_11", "Refresh Token의 서명이 올바르지 않습니다"),
 
+    // redis
+    _REDIS_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS_500_1", "요청 key가 null 이거나 script에 문제가 발생했습니다."),
+
 
     //KaKaoAccessTokenException
     KAKAO_SERVER_ERROR(HttpStatus.BAD_REQUEST, "Kakao_400_1", "카카오 서버의 일시적인 장애입니다."),
