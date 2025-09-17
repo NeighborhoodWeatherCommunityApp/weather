@@ -21,9 +21,8 @@ public class AttendanceCacheService {
     private final AttendanceService attendanceService;
     private final AttendanceRepository attendanceRepository;
 
-    public void checkInSynchronized(String email) {
+    public void checkInSynchronized(String email, LocalDate date) {
         Member member = memberRepository.safeFindByEmail(email);
-        LocalDate date = LocalDate.now();
 
         synchronized (this) {
             boolean result = attendanceRepository.checkIn(getKey(date), member.getId());
@@ -31,9 +30,8 @@ public class AttendanceCacheService {
         }
     }
 
-    public void checkIn(String email) {
+    public boolean checkIn(String email, LocalDate date) {
         Member member = memberRepository.safeFindByEmail(email);
-        LocalDate date = LocalDate.now();
 
         DefaultRedisScript<Long> script = new DefaultRedisScript<>();
         script.setResultType(Long.class);
@@ -43,6 +41,8 @@ public class AttendanceCacheService {
 
         boolean result = attendanceRepository.checkIn(script, getKey(date), member.getId());
         postCheckIn(result, member, date);
+
+        return result;
     }
 
     private void postCheckIn(Boolean result, Member member, LocalDate date) {
