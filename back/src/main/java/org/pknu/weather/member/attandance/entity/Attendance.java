@@ -1,25 +1,26 @@
 package org.pknu.weather.member.attandance.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.pknu.weather.common.entity.BaseEntity;
 import org.pknu.weather.member.entity.Member;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(
+        name = "attendance",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_attendance_date_member",
+                        columnNames = {"date", "member_id"}
+                )
+        }
+)
 public class Attendance extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
