@@ -1,22 +1,28 @@
 package org.pknu.weather.alarm.repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.alarm.dto.AlarmRequestDTO;
 import org.pknu.weather.alarm.entity.Alarm;
 import org.pknu.weather.alarm.enums.SummaryAlarmTime;
-import org.pknu.weather.alarm.repository.AlarmRepository;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Import(DataJpaTestConfig.class)
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.alarm.repository.AlarmRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 @DataJpaTest
 public class AlarmRepositoryTest {
 

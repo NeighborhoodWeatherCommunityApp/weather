@@ -1,28 +1,37 @@
 package org.pknu.weather.post.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.post.entity.Post;
-import org.pknu.weather.post.repository.PostRepository;
-import org.pknu.weather.recomandation.entity.Recommendation;
 import org.pknu.weather.member.enums.Sensitivity;
 import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.entity.Post;
+import org.pknu.weather.recomandation.entity.Recommendation;
 import org.pknu.weather.recomandation.repository.RecommendationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.post.repository.PostRepository.class,
+        org.pknu.weather.member.repository.MemberRepository.class,
+        org.pknu.weather.location.repository.LocationRepository.class,
+        org.pknu.weather.recomandation.repository.RecommendationRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 class PostRepositoryTest {
 
     @Autowired
