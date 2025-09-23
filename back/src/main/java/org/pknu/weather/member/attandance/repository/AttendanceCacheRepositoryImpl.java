@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.exception.GeneralException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Repository
 @Slf4j
 public class AttendanceCacheRepositoryImpl implements AttendanceCacheRepository {
-
+    @Qualifier("stringRedisTemplate")
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override

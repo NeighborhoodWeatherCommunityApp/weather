@@ -1,7 +1,13 @@
 package org.pknu.weather.weather.repository;
 
-import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
-import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourlyWeatherKeys;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.pknu.weather.weather.dto.WeatherRedisDTO;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,18 +17,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.pknu.weather.weather.dto.WeatherRedisDTO;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Repository;
+
+import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
+import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourlyWeatherKeys;
 
 @RequiredArgsConstructor
 @Slf4j
 @Repository
 public class WeatherRedisRepository {
+    @Qualifier("jsonRedisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
     private final Duration DEFAULT_DURATION = Duration.ofHours(24);
     private final Integer DEFAULT_HOURS = 24;
