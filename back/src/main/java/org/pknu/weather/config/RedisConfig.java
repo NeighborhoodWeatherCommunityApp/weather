@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +37,6 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.password}")
     private String password;
-
-
-    @Bean
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
-    }
 
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
@@ -74,12 +69,19 @@ public class RedisConfig {
         return connectionFactory;
     }
 
+    @Bean
+    @Qualifier("stringRedisTemplate")
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
+    }
+
+
     /**
      * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
      * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
      */
     @Bean
-//    @ConditionalOnMissingBean(RedisTemplate.class)
+    @Qualifier("jsonRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
