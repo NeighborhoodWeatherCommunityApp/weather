@@ -19,7 +19,6 @@ import org.pknu.weather.weather.utils.WeatherRedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -44,7 +43,7 @@ class WeatherCacheServiceTest {
     @MockBean
     LocationRepository locationRepository;
 
-    @SpyBean
+    @Autowired
     WeatherCacheService weatherCacheService;
 
     @Autowired
@@ -87,7 +86,7 @@ class WeatherCacheServiceTest {
     void updateWeatherDataScheduled_성공테스트() {
         // given
         when(locationRepository.safeFindById(location.getId())).thenReturn(location);
-        when(weatherFeignClientUtils.getVillageShortTermForecast(location)).thenReturn(weatherList);
+        when(weatherFeignClientUtils.getVillageShortTermForecast(any(Location.class))).thenReturn(weatherList);
 
         // when
         weatherCacheService.updateCachedWeathersForLocation(location.getId());
@@ -102,7 +101,7 @@ class WeatherCacheServiceTest {
         Assertions.assertThat(objects.isEmpty()).isEqualTo(false);
         Assertions.assertThat(objects.size()).isEqualTo(24);
 
-        verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(location);
+        verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(any(Location.class));
     }
 
 }

@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 
 @TestConfiguration
 public class EmbeddedRedisConfig {
-
     private static final int REDIS_PORT = 63790;
     private RedisServer redisServer;
 
