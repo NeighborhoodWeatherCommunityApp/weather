@@ -26,16 +26,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 의존성 캐싱
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.GRADLE_USER_HOME }}/caches
-            ${{ env.GRADLE_USER_HOME }}/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: 환경변수 주입
         uses: microsoft/variable-substitution@v1
         with:
@@ -70,6 +60,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
+          gradle-home-cache-cleanup: true
 
       - name: 테스트 시작 (캐시 적중시 테스트 생략)
         working-directory: back
