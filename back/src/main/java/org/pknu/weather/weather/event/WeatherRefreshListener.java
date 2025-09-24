@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.weather.service.WeatherCacheService;
 import org.pknu.weather.weather.service.WeatherService;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -26,7 +27,7 @@ public class WeatherRefreshListener {
         weatherService.bulkUpdateWeathersAsync(event.getLocationId());
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void handel(WeatherCacheRefreshEvent event) {
         log.info("캐시 refresh 이벤트 발행 locationId: {}", event.getLocationId());
         weatherCacheService.updateCachedWeathersForLocation(event.getLocationId());
