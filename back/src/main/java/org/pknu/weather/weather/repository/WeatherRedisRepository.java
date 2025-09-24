@@ -27,8 +27,8 @@ import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourly
 public class WeatherRedisRepository {
     @Qualifier("jsonRedisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
-    private final Duration DEFAULT_DURATION = Duration.ofHours(24);
-    private final Integer DEFAULT_HOURS = 24;
+    private final static Duration DEFAULT_DURATION = Duration.ofHours(24);
+    private final static Integer DEFAULT_HOURS = 24;
 
     public List<WeatherRedisDTO.WeatherData> getWeathers(Long locationId, LocalDateTime localDateTime) {
         List<Object> result = Optional.ofNullable(
@@ -72,8 +72,9 @@ public class WeatherRedisRepository {
         for (WeatherRedisDTO.WeatherData weatherData : weatherDataList) {
             opsForList().rightPush(buildKey(locationId), weatherData);
         }
-        redisTemplate.expire(buildKey(locationId),
-                DEFAULT_DURATION.ofMinutes(ThreadLocalRandom.current().nextInt(0, 11)));
+
+        int jitter = ThreadLocalRandom.current().nextInt(0, 11);
+        redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION.plusMinutes(jitter));
     }
 
     public void updateWeatherList(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {
