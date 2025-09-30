@@ -1,5 +1,13 @@
 package org.pknu.weather.weather.service;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +21,7 @@ import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.weather.enums.SkyType;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.weatherapi.router.RoutingWeatherApi;
 import org.pknu.weather.weather.repository.WeatherRedisRepository;
 import org.pknu.weather.weather.utils.WeatherRedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +30,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +40,7 @@ class WeatherCacheServiceTest {
     WeatherRedisRepository weatherRedisRepository;
 
     @MockBean
-    WeatherFeignClientUtils weatherFeignClientUtils;
+    RoutingWeatherApi weatherApi;
 
     @MockBean
     LocationRepository locationRepository;
@@ -87,7 +88,7 @@ class WeatherCacheServiceTest {
     void updateWeatherDataScheduled_성공테스트() {
         // given
         when(locationRepository.safeFindById(location.getId())).thenReturn(location);
-        when(weatherFeignClientUtils.getVillageShortTermForecast(location)).thenReturn(weatherList);
+        when(weatherApi.getVillageShortTermForecast(location)).thenReturn(weatherList);
 
         // when
         weatherCacheService.updateCachedWeathersForLocation(location.getId());
@@ -102,7 +103,7 @@ class WeatherCacheServiceTest {
         Assertions.assertThat(objects.isEmpty()).isEqualTo(false);
         Assertions.assertThat(objects.size()).isEqualTo(24);
 
-        verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(location);
+        verify(weatherApi, times(1)).getVillageShortTermForecast(location);
     }
 
 }
