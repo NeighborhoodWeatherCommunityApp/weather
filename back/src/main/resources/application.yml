@@ -68,9 +68,8 @@ log:
 
 api:
   weather:
-    forecast-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
-    forecast-value: /getVilageFcst
     service-key: ${SHORT_TERM_FORECAST_API_KEY}
+    kmshub-service-key: ${KMS_HUB_KEY}
     data-type: JSON
 
 management:
@@ -83,7 +82,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: ["health", "prometheus"]
+        include: [ "health", "prometheus" ]
 
 cloud:
   aws:
