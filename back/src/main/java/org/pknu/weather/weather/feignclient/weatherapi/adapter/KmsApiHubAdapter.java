@@ -1,33 +1,37 @@
-package org.pknu.weather.weather.feignclient.utils;
+package org.pknu.weather.weather.feignclient.weatherapi.adapter;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.common.formatter.DateTimeFormatter;
 import org.pknu.weather.common.utils.GeometryUtils;
-import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.weather.feignclient.WeatherFeignClient;
-import org.pknu.weather.weather.feignclient.dto.PointDTO;
-import org.pknu.weather.weather.feignclient.dto.WeatherParams;
+import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.Weather;
-import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
-import org.pknu.weather.weather.dto.WeatherApiResponseDTO.Response.Body.Items.Item;
+import org.pknu.weather.weather.feignclient.dto.PointDTO;
+import org.pknu.weather.weather.feignclient.weatherapi.KmaApiHubFeignClient;
+import org.pknu.weather.weather.feignclient.weatherapi.dto.Item;
+import org.pknu.weather.weather.feignclient.weatherapi.dto.KmsApiHubParamDTO;
+import org.pknu.weather.weather.feignclient.weatherapi.dto.KmsApiHubResponseDTO;
+import org.pknu.weather.weather.feignclient.weatherapi.target.WeatherApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
-@Component
+@Component("KMA_API_HUB")
 @RequiredArgsConstructor
 @Slf4j
-public class WeatherFeignClientUtils {
+public class KmsApiHubAdapter implements WeatherApi {
 
-    private final WeatherFeignClient weatherFeignClient;
+    private final KmaApiHubFeignClient kmaApiHubFeignClient;
 
-    @Value("${api.weather.service-key}")
+    @Value("${api.weather.kmshub-service-key}")
     private String weatherServiceKey;
 
     private final RetryTemplate retryTemplate;
@@ -56,7 +60,7 @@ public class WeatherFeignClientUtils {
             String date = DateTimeFormatter.getFormattedBaseDate(newBaseLocalDateTime);
             String time = DateTimeFormatter.getFormattedBaseTime(newBaseLocalDateTime);
 
-            WeatherParams weatherParams = WeatherFeignClientUitls.create(weatherServiceKey, date, time, pointDTO);
+            KmsApiHubParamDTO kmsApiHubParamDTO = createParam(weatherServiceKey, date, time, pointDTO);
 
             log.info(String.format("Retry Forecast API x:%s y:%s date:%s time:%s",
                     pointDTO.getX() != null ? String.valueOf(pointDTO.getX()) : "N/A",
@@ -64,14 +68,14 @@ public class WeatherFeignClientUtils {
                     date != null ? date : "N/A",
                     time != null ? time : "N/A"));
 
-            WeatherApiResponseDTO weatherApiResponseDTO = weatherFeignClient.getVillageShortTermForecast(weatherParams);
-            List<Item> itemList = Optional.ofNullable(weatherApiResponseDTO.getResponse()
-                            .getBody()
+            KmsApiHubResponseDTO kmsApiHubResponseDTO = kmaApiHubFeignClient.getVillageShortTermForecast(
+                    kmsApiHubParamDTO);
+            List<Item> itemList = Optional.ofNullable(kmsApiHubResponseDTO.getBody()
                             .getItems()
                             .getItemList())
                     .orElseThrow(() -> new GeneralException(ErrorStatus._API_SERVER_ERROR));
 
-            return WeatherFeignClientUtils.responseProcess(itemList, date, time);
+            return toWeatherList(itemList, date, time);
         });
     }
 
@@ -83,7 +87,7 @@ public class WeatherFeignClientUtils {
      * @param time     ex. "0500"
      * @return
      */
-    public static List<Weather> responseProcess(List<Item> itemList, String date, String time) {
+    private List<Weather> toWeatherList(List<Item> itemList, String date, String time) {
         Map<String, Weather> weatherMap = new HashMap<>();
         LocalDateTime baseTime = DateTimeFormatter.formattedDateTime2LocalDateTime(date, time);
 
@@ -113,5 +117,17 @@ public class WeatherFeignClientUtils {
                 .filter(weather -> weather.getPresentationTime().isAfter(LocalDateTime.now()))
                 .sorted(Comparator.comparing(Weather::getPresentationTime))
                 .toList();
+    }
+
+    private KmsApiHubParamDTO createParam(String authKey, String baseDate, String baseTime, PointDTO pointDTO) {
+        return KmsApiHubParamDTO.builder()
+                .authKey(authKey)
+                .pageNo(1)
+                .numOfRows(288)
+                .base_date(baseDate)
+                .base_time(baseTime)
+                .nx(pointDTO.getX())
+                .ny(pointDTO.getY())
+                .build();
     }
 }

@@ -1,5 +1,9 @@
 package org.pknu.weather.weather.service;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.location.entity.Location;
@@ -10,7 +14,7 @@ import org.pknu.weather.weather.converter.WeatherResponseConverter;
 import org.pknu.weather.weather.dto.WeatherQueryResultDTO;
 import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.event.WeatherCreateEvent;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.weatherapi.target.WeatherApi;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -18,11 +22,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ import java.util.Optional;
 public class WeatherQueryService {
     private final MemberRepository memberRepository;
     private final WeatherRepository weatherRepository;
-    private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final WeatherApi weatherApi;
     private final ApplicationEventPublisher eventPublisher;
     private final CacheManager cm;
     private final String LOCATION_UPDATE_STORE = "locationUpdateStore";
@@ -55,7 +54,7 @@ public class WeatherQueryService {
         Optional<Weather> optionalWeather = weatherRepository.findWeatherByClosestPresentationTime(location);
 
         if (optionalWeather.isEmpty()) {
-            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            List<Weather> newForecast = weatherApi.getVillageShortTermForecast(location);
             eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
             return newForecast.get(0);
         }
