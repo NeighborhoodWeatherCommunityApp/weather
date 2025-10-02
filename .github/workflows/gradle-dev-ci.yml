@@ -88,6 +88,7 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_USERNAME }}
           spring.datasource.password: ${{ secrets.DB_PASSWORD }}
           api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          api.weather.kmshub-service-key: ${{ secrets.KMS_HUB_KEY }}
           spring.jwt.key: ${{ secrets.JWT_KEY }}
           spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
           spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
