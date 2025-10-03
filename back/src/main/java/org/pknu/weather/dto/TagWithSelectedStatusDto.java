@@ -2,7 +2,7 @@ package org.pknu.weather.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.pknu.weather.domain.tag.EnumTag;
+import org.pknu.weather.tag.enums.EnumTag;
 
 @Getter
 public class TagWithSelectedStatusDto {

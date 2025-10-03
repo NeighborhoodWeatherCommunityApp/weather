@@ -1,34 +1,22 @@
 package org.pknu.weather.integration;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-
 import jakarta.persistence.EntityManager;
-import java.util.Objects;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pknu.weather.alarm.entity.Alarm;
+import org.pknu.weather.alarm.enums.AlarmType;
+import org.pknu.weather.alarm.repository.AlarmRepository;
+import org.pknu.weather.alarm.sender.FcmMessage;
+import org.pknu.weather.alarm.sender.NotificationSender;
+import org.pknu.weather.alarm.service.AlarmCooldownService;
 import org.pknu.weather.config.EmbeddedRedisConfig;
-import org.pknu.weather.domain.Alarm;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.domain.common.AlarmType;
-import org.pknu.weather.domain.tag.DustTag;
-import org.pknu.weather.domain.tag.HumidityTag;
-import org.pknu.weather.domain.tag.SkyTag;
-import org.pknu.weather.domain.tag.TemperatureTag;
-import org.pknu.weather.domain.tag.WindTag;
-import org.pknu.weather.dto.PostRequest.CreatePost;
-import org.pknu.weather.repository.AlarmRepository;
-import org.pknu.weather.repository.LocationRepository;
-import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.service.AlarmCooldownService;
-import org.pknu.weather.service.PostService;
-import org.pknu.weather.service.sender.FcmMessage;
-import org.pknu.weather.service.sender.NotificationSender;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.location.repository.LocationRepository;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.post.dto.PostRequest;
+import org.pknu.weather.post.service.PostService;
+import org.pknu.weather.tag.enums.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -38,6 +26,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.UUID;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @SpringBootTest
 @Transactional
@@ -107,7 +104,7 @@ public class LiveRainAlarmSendTest {
     @Test
     void 비가_온다는_태그_저장시_같은_지역의_사용자에게_알림이_전송된다() {
         String email = postMember.getEmail();
-        CreatePost createPost = CreatePost.builder()
+        PostRequest.CreatePost createPost = PostRequest.CreatePost.builder()
                 .content("testContent")
                 .dustTag(DustTag.NORMAL)
                 .humidityTag(HumidityTag.PLEASANT)
@@ -130,7 +127,7 @@ public class LiveRainAlarmSendTest {
     @Test
     void 비가_온다는_태그가_아닌_다른_태그_저장시_같은_지역의_사용자에게_알림이_전송되지_않는다() {
         String email = postMember.getEmail();
-        CreatePost createPost = CreatePost.builder()
+        PostRequest.CreatePost createPost = PostRequest.CreatePost.builder()
                 .content("testContent")
                 .dustTag(DustTag.NORMAL)
                 .humidityTag(HumidityTag.PLEASANT)
@@ -154,7 +151,7 @@ public class LiveRainAlarmSendTest {
     void 쿨다운_상태인_사용자에게는_알림이_전송되지_않는다() {
         alarmCooldownService.setCooldown(AlarmType.RAIN_ALERT, savedAlarm.getFcmToken());
         String email = postMember.getEmail();
-        CreatePost createPost = CreatePost.builder()
+        PostRequest.CreatePost createPost = PostRequest.CreatePost.builder()
                 .content("testContent")
                 .dustTag(DustTag.NORMAL)
                 .humidityTag(HumidityTag.PLEASANT)
