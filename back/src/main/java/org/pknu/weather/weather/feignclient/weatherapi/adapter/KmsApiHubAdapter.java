@@ -67,7 +67,8 @@ public class KmsApiHubAdapter implements WeatherApi {
 
             KmsApiHubResponseDTO kmsApiHubResponseDTO = kmaApiHubFeignClient.getVillageShortTermForecast(kmsApiHubParamDTO);
             log.info("locationId={}, res={}", location.getId(), kmsApiHubResponseDTO);
-            List<Item> itemList = Optional.ofNullable(kmsApiHubResponseDTO.getBody()
+            List<Item> itemList = Optional.ofNullable(kmsApiHubResponseDTO.getResponse()
+                            .getBody()
                             .getItems()
                             .getItemList())
                     .orElseThrow(() -> new GeneralException(ErrorStatus._API_SERVER_ERROR));
