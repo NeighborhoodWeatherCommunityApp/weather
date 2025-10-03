@@ -1,22 +1,22 @@
-package org.pknu.weather.weather.feignclient;
+package org.pknu.weather.weather.feignclient.weatherapi;
 
-import org.pknu.weather.weather.dto.WeatherApiResponseDTO;
-import org.pknu.weather.weather.feignclient.dto.WeatherParams;
 import org.pknu.weather.weather.feignclient.error.CommonErrorDecoder;
+import org.pknu.weather.weather.feignclient.weatherapi.dto.OpenApiParamDTO;
+import org.pknu.weather.weather.feignclient.weatherapi.dto.OpenApiResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "weather",
-        url = "${api.weather.forecast-url}",
+@FeignClient(value = "open-api",
+        url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0",
         configuration = CommonErrorDecoder.class)
-public interface WeatherFeignClient {
+public interface OpenApiFeignClient {
 
     @RequestMapping(
             headers = "Accept=application/json",
             method = RequestMethod.GET,
-            value = "${api.weather.forecast-value}",
+            value = "/getVilageFcst",
             produces = "application/json")
-    WeatherApiResponseDTO getVillageShortTermForecast(@SpringQueryMap WeatherParams weatherRequest);
+    OpenApiResponseDTO getVillageShortTermForecast(@SpringQueryMap OpenApiParamDTO param);
 }

@@ -2,14 +2,13 @@ package org.pknu.weather.config;
 
 import feign.Request;
 import feign.codec.ErrorDecoder;
-import org.pknu.weather.weather.feignclient.WeatherFeignClient;
-import org.pknu.weather.weather.feignclient.error.CommonErrorDecoder;
-import org.pknu.weather.weather.feignclient.error.WeatherFeignErrorDecoder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.pknu.weather.weather.feignclient.error.CommonErrorDecoder;
+import org.pknu.weather.weather.feignclient.error.WeatherFeignErrorDecoder;
+import org.pknu.weather.weather.feignclient.weatherapi.OpenApiFeignClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FeignClientConfig {
@@ -29,7 +28,7 @@ public class FeignClientConfig {
     public Map<String, ErrorDecoder> errorDecoderMap() {
         Map<String, ErrorDecoder> map = new HashMap<>();
 
-        map.put(WeatherFeignClient.class.getSimpleName(), new WeatherFeignErrorDecoder());
+        map.put(OpenApiFeignClient.class.getSimpleName(), new WeatherFeignErrorDecoder());
 
         return map;
     }

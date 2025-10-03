@@ -1,5 +1,18 @@
 package org.pknu.weather.post.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +27,7 @@ import org.pknu.weather.tag.service.TagQueryService;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.feignclient.utils.ExtraWeatherApiUtils;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.weatherapi.target.WeatherApi;
 import org.pknu.weather.weather.repository.ExtraWeatherRepository;
 import org.pknu.weather.weather.repository.WeatherRepository;
 import org.pknu.weather.weather.service.WeatherQueryService;
@@ -23,17 +36,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class TagQueryServiceTest {
-    WeatherFeignClientUtils weatherFeignClientUtils = mock(WeatherFeignClientUtils.class);
+    WeatherApi weatherFeignClientUtils = mock(WeatherApi.class);
     WeatherRepository weatherRepository = mock(WeatherRepository.class);
     MemberRepository memberRepository = mock(MemberRepository.class);
     ExtraWeatherApiUtils mockextraweatherapiutils = mock(ExtraWeatherApiUtils.class);
@@ -112,7 +117,8 @@ class TagQueryServiceTest {
         WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo = TestDataCreator.getExtraWeatherInfo(baseTime);
 
         when(memberRepository.safeFindByEmail(member.getEmail())).thenReturn(member);
-        when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(Optional.ofNullable(newForecast.get(0)));
+        when(weatherRepository.findWeatherByClosestPresentationTime(any(Location.class))).thenReturn(
+                Optional.ofNullable(newForecast.get(0)));
 
         doReturn(newForecast).when(weatherFeignClientUtils).getVillageShortTermForecast(location);
         doReturn(extraWeatherInfo).when(weatherService).extraWeatherInfo(member.getEmail(), location.getId());
