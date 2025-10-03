@@ -20,7 +20,7 @@ public class Attendance extends BaseEntity {
     private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     // 중복 출석 방지용
