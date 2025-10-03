@@ -22,6 +22,7 @@ import java.util.Map;
 public class HealthCheckController {
     private final RedisTemplate<String, String> redisTemplate;
 
+    @GetMapping
     public Map<String, Integer> healthCheck() {
         Map<String, Integer> map = new HashMap<>();
         map.put("code", 200);
