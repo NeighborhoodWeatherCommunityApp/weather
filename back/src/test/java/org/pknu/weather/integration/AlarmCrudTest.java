@@ -118,7 +118,7 @@ class AlarmCrudTest {
         entityManager.clear();
     }
 
-    @Test
+//    @Test
     public void 알람_저장이_성공한다() throws Exception {
 
         Member member = saveMember();

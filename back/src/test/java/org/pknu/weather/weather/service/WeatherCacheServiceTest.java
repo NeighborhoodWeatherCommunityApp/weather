@@ -1,13 +1,5 @@
 package org.pknu.weather.weather.service;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +22,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -88,7 +88,7 @@ class WeatherCacheServiceTest {
     void updateWeatherDataScheduled_성공테스트() {
         // given
         when(locationRepository.safeFindById(location.getId())).thenReturn(location);
-        when(weatherApi.getVillageShortTermForecast(location)).thenReturn(weatherList);
+        when(weatherApi.getVillageShortTermForecast(any(Location.class))).thenReturn(weatherList);
 
         // when
         weatherCacheService.updateCachedWeathersForLocation(location.getId());
