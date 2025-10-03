@@ -1,7 +1,8 @@
 /* 개발 서버 */
-const BASE_URL = 'https://weather-community.shop';
+/* const BASE_URL = 'https://weather-community.shop'; */
 /* 운영 서버 */
-/* const BASE_URL = 'https://weather-community.store'; */
+
+const BASE_URL = 'https://weather-community.store';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

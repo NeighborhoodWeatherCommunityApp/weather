@@ -46,12 +46,12 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       ssl:
-        enabled: true
+        enabled: false
 
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=500,expireAfterWrite=10s
+      spec: maximumSize=100,expireAfterWrite=10m
 
 
 logging:
@@ -68,9 +68,8 @@ log:
 
 api:
   weather:
-    forecast-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
-    forecast-value: /getVilageFcst
     service-key: ${SHORT_TERM_FORECAST_API_KEY}
+    kmshub-service-key: ${KMS_HUB_KEY}
     data-type: JSON
 
 management:
@@ -83,7 +82,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: [ "health", "prometheus" ]
 
 cloud:
   aws:
@@ -100,7 +99,7 @@ cloud:
 server:
   tomcat:
     mbeanregistry:
-      enabled: true
+      enabled: false
 
 apple:
   public-key-url: https://appleid.apple.com
@@ -114,4 +113,4 @@ fcm:
   project-id: ${FCM_ID}
   service-account: ${FCM_CREDENTIAL}
 
-integration-logging: true
+log-option: dev

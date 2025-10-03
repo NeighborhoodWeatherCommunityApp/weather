@@ -1,7 +1,5 @@
 package org.pknu.weather.controller;
 
-import static org.mockito.Mockito.when;
-
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,11 +7,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pknu.weather.common.TestDataCreator;
-import org.pknu.weather.domain.Member;
-import org.pknu.weather.repository.MemberRepository;
-import org.pknu.weather.service.ExpRewardService;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
+import org.pknu.weather.member.service.ExpRewardService;
+import org.pknu.weather.post.controller.PostControllerV1;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PostControllerV1Test {

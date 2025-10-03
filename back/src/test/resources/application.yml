@@ -44,7 +44,9 @@ spring:
     redis:
       host: localhost
       port: 63790
-
+      password:
+      ssl:
+        enabled: true
 
 logging:
   level:
@@ -52,18 +54,28 @@ logging:
     org.springframework.cache: DEBUG
 api:
   weather:
-    forecast-url: http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
-    forecast-value: /getVilageFcst
     service-key: ${SHORT_TERM_FORECAST_API_KEY}
+    kmshub-service-key: ${KMS_HUB_KEY}
     data-type: JSON
 
 management:
   health:
     db:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: [ "health", "prometheus" ]
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 cloud:
   aws:
     credentials:

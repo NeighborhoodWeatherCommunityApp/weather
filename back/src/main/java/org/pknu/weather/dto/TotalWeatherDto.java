@@ -1,15 +1,16 @@
 package org.pknu.weather.dto;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.pknu.weather.domain.Location;
-import org.pknu.weather.domain.Weather;
-import org.pknu.weather.domain.common.RainType;
-import org.pknu.weather.domain.common.SkyType;
-import org.pknu.weather.dto.WeatherResponse.ExtraWeatherInfo;
+import org.pknu.weather.location.entity.Location;
+import org.pknu.weather.weather.Weather;
+import org.pknu.weather.weather.dto.WeatherResponseDTO;
+import org.pknu.weather.weather.enums.RainType;
+import org.pknu.weather.weather.enums.SkyType;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class TotalWeatherDto {
@@ -35,7 +36,7 @@ public class TotalWeatherDto {
         extraWeatherDto = new ExtraWeatherDto();
     }
 
-    public TotalWeatherDto(Weather weather, ExtraWeatherInfo extraWeatherInfo) {
+    public TotalWeatherDto(Weather weather, WeatherResponseDTO.ExtraWeatherInfo extraWeatherInfo) {
         baseTime = weather.getBasetime();
         weatherDto = WeatherDto.builder()
                 .location(weather.getLocation())

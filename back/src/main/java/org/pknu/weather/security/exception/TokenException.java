@@ -3,9 +3,9 @@ package org.pknu.weather.security.exception;
 
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletResponse;
-import org.pknu.weather.apiPayload.ApiResponse;
-import org.pknu.weather.apiPayload.code.BaseErrorCode;
-import org.pknu.weather.apiPayload.code.ErrorReasonDTO;
+import org.pknu.weather.apipayload.ApiResponse;
+import org.pknu.weather.apipayload.code.BaseErrorCode;
+import org.pknu.weather.apipayload.code.ErrorReasonDTO;
 import org.pknu.weather.exception.GeneralException;
 import org.springframework.http.MediaType;
 

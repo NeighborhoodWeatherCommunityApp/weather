@@ -9,8 +9,8 @@ on:
       - back/**
       - .github/**
 
-  workflow_dispatch:
-
+  workflow_dispatch:  
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -34,6 +34,7 @@ jobs:
           spring.datasource.username: sa
           spring.datasource.password:
           api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          api.weather.kmshub-service-key: ${{ secrets.KMS_HUB_KEY }}
           spring.jwt.key: ${{ secrets.JWT_KEY }}
           spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
           spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
@@ -49,6 +50,9 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
           fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
+          spring.data.redis.host: localhost
+          spring.data.redis.port: 63790
+          spring.data.redis.password:
 
       - name: Grant execute permission for gradlew
         run: chmod +x back/gradlew
@@ -84,6 +88,7 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_USERNAME }}
           spring.datasource.password: ${{ secrets.DB_PASSWORD }}
           api.weather.service-key: ${{ secrets.SHORT_TERM_FORECAST_API_KEY }}
+          api.weather.kmshub-service-key: ${{ secrets.KMS_HUB_KEY }}
           spring.jwt.key: ${{ secrets.JWT_KEY }}
           spring.sigs.key: ${{ secrets.CONSUMER_KEY }}
           spring.sigs.secret: ${{ secrets.CONSUMER_SECRET }}
@@ -99,11 +104,20 @@ jobs:
           apple.key.content: ${{ secrets.APPLE_KEY }}
           fcm.project-id: ${{secrets.FCM_ID}}
           fcm.service-account: ${{secrets.FCM_CREDENTIAL}}
-          integration-logging: true
+          log-option: dev
           spring.data.redis.host: ${{secrets.REDIS_HOST_DEV}}
           spring.data.redis.port: ${{secrets.REDIS_PORT_DEV}}
           spring.data.redis.password: ${{secrets.REDIS_PASSWORD_DEV}}
 
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Build
         working-directory: back
