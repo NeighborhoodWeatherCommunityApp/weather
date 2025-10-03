@@ -1,11 +1,5 @@
 package org.pknu.weather.weather.feignclient.weatherapi.adapter;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
@@ -23,6 +17,9 @@ import org.pknu.weather.weather.feignclient.weatherapi.target.WeatherApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component("KMA_API_HUB")
 @RequiredArgsConstructor
@@ -68,8 +65,8 @@ public class KmsApiHubAdapter implements WeatherApi {
                     date != null ? date : "N/A",
                     time != null ? time : "N/A"));
 
-            KmsApiHubResponseDTO kmsApiHubResponseDTO = kmaApiHubFeignClient.getVillageShortTermForecast(
-                    kmsApiHubParamDTO);
+            KmsApiHubResponseDTO kmsApiHubResponseDTO = kmaApiHubFeignClient.getVillageShortTermForecast(kmsApiHubParamDTO);
+            log.info("locationId={}, res={}", location.getId(), kmsApiHubResponseDTO);
             List<Item> itemList = Optional.ofNullable(kmsApiHubResponseDTO.getBody()
                             .getItems()
                             .getItemList())
