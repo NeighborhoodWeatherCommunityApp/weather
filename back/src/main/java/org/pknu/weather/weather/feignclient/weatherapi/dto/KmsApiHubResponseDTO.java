@@ -2,21 +2,30 @@ package org.pknu.weather.weather.feignclient.weatherapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KmsApiHubResponseDTO {
 
-    @JsonProperty("header")
-    private Header header;
+    @JsonProperty("response")
+    private Response response;
 
-    @JsonProperty("body")
-    private Body body;
+    @Getter
+    @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Response {
+        @JsonProperty("header")
+        private Header header;
+
+        @JsonProperty("body")
+        private Body body;
+    }
 
     @Getter
     @NoArgsConstructor
