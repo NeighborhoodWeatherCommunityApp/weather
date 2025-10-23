@@ -17,7 +17,7 @@ import org.pknu.weather.weather.dto.WeatherResponseDTO;
 import org.pknu.weather.weather.event.WeatherCacheRefreshEvent;
 import org.pknu.weather.weather.event.WeatherCreateEvent;
 import org.pknu.weather.weather.event.WeatherUpdateEvent;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.weatherapi.target.WeatherApi;
 import org.pknu.weather.weather.service.WeatherCacheService;
 import org.pknu.weather.weather.service.WeatherQueryService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -37,7 +37,7 @@ public class MainPageService {
     private final LocationRepository locationRepository;
     private final PostQueryService postQueryService;
     private final TagQueryService tagQueryService;
-    private final WeatherFeignClientUtils weatherFeignClientUtils;
+    private final WeatherApi weatherApi;
     private final ApplicationEventPublisher eventPublisher;
     private final WeatherCacheService weatherCacheService;
 
@@ -75,7 +75,7 @@ public class MainPageService {
 
     private List<Weather> createWeatherIfRequired(Location location) {
         if (!weatherQueryService.weatherHasBeenCreated(location)) {
-            List<Weather> newForecast = weatherFeignClientUtils.getVillageShortTermForecast(location);
+            List<Weather> newForecast = weatherApi.getVillageShortTermForecast(location);
             eventPublisher.publishEvent(new WeatherCreateEvent(location.getId(), newForecast));
             eventPublisher.publishEvent(new WeatherCacheRefreshEvent(location.getId()));
             return newForecast;

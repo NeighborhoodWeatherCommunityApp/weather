@@ -1,15 +1,16 @@
-package org.pknu.weather.weather.dto;
+package org.pknu.weather.weather.feignclient.weatherapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-
 import java.util.List;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeatherApiResponseDTO {
+public class OpenApiResponseDTO {
 
     @JsonProperty("header")
     private Header header;
@@ -59,35 +60,6 @@ public class WeatherApiResponseDTO {
 
                 @JsonProperty("item")
                 private List<Item> itemList;
-
-                @Getter
-                @NoArgsConstructor
-                public static class Item {
-
-                    @JsonProperty("baseDate")
-                    private String baseDate;
-
-                    @JsonProperty("baseTime")
-                    private String baseTime;
-
-                    @JsonProperty("category")
-                    private String category;
-
-                    @JsonProperty("fcstDate")
-                    private String fcstDate;
-
-                    @JsonProperty("fcstTime")
-                    private String fcstTime;
-
-                    @JsonProperty("fcstValue")
-                    private String fcstValue;
-
-                    @JsonProperty("nx")
-                    private int nx;
-
-                    @JsonProperty("ny")
-                    private int ny;
-                }
             }
         }
     }

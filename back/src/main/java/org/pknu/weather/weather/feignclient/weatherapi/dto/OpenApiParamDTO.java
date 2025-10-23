@@ -1,11 +1,11 @@
-package org.pknu.weather.weather.feignclient.dto;
+package org.pknu.weather.weather.feignclient.weatherapi.dto;
 
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class WeatherParams {
+public class OpenApiParamDTO {
     private String serviceKey;
 
     private String dataType;
@@ -20,10 +20,11 @@ public class WeatherParams {
 
     private Integer nx;
 
-    private final Integer ny;
+    private Integer ny;
 
     @Builder
-    private WeatherParams(String serviceKey, Integer pageNo, Integer numOfRows, String base_date, String base_time, Integer nx, Integer ny) {
+    private OpenApiParamDTO(String serviceKey, Integer pageNo, Integer numOfRows, String base_date, String base_time,
+                            Integer nx, Integer ny) {
         this.serviceKey = serviceKey;
         this.dataType = "JSON";
         this.pageNo = pageNo;

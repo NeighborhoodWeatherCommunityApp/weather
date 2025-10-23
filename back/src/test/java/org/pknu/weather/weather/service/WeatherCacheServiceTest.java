@@ -13,7 +13,7 @@ import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.weather.Weather;
 import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.weather.enums.SkyType;
-import org.pknu.weather.weather.feignclient.utils.WeatherFeignClientUtils;
+import org.pknu.weather.weather.feignclient.weatherapi.router.RoutingWeatherApi;
 import org.pknu.weather.weather.repository.WeatherRedisRepository;
 import org.pknu.weather.weather.utils.WeatherRedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -38,7 +39,7 @@ class WeatherCacheServiceTest {
     WeatherRedisRepository weatherRedisRepository;
 
     @MockBean
-    WeatherFeignClientUtils weatherFeignClientUtils;
+    RoutingWeatherApi weatherApi;
 
     @MockBean
     LocationRepository locationRepository;
@@ -86,7 +87,7 @@ class WeatherCacheServiceTest {
     void updateWeatherDataScheduled_성공테스트() {
         // given
         when(locationRepository.safeFindById(location.getId())).thenReturn(location);
-        when(weatherFeignClientUtils.getVillageShortTermForecast(any(Location.class))).thenReturn(weatherList);
+        when(weatherApi.getVillageShortTermForecast(any(Location.class))).thenReturn(weatherList);
 
         // when
         weatherCacheService.updateCachedWeathersForLocation(location.getId());
@@ -101,7 +102,7 @@ class WeatherCacheServiceTest {
         Assertions.assertThat(objects.isEmpty()).isEqualTo(false);
         Assertions.assertThat(objects.size()).isEqualTo(24);
 
-        verify(weatherFeignClientUtils, times(1)).getVillageShortTermForecast(any(Location.class));
+        verify(weatherApi, times(1)).getVillageShortTermForecast(location);
     }
 
 }
