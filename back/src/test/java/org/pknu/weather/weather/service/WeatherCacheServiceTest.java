@@ -19,7 +19,6 @@ import org.pknu.weather.weather.utils.WeatherRedisKeyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -45,7 +44,7 @@ class WeatherCacheServiceTest {
     @MockBean
     LocationRepository locationRepository;
 
-    @SpyBean
+    @Autowired
     WeatherCacheService weatherCacheService;
 
     @Autowired

@@ -1,10 +1,6 @@
 package org.pknu.weather.member.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import jakarta.persistence.EntityManager;
-import java.util.stream.Stream;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,17 +9,27 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.DataJpaTestConfig;
+import org.pknu.weather.exception.GeneralException;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.member.exp.Level;
-import org.pknu.weather.exception.GeneralException;
-import org.pknu.weather.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.member.repository.MemberRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;

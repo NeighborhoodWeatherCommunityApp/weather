@@ -14,22 +14,22 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.pknu.weather.apipayload.code.status.ErrorStatus;
 import org.pknu.weather.common.utils.LocalUploaderUtils;
 import org.pknu.weather.common.utils.S3UploaderUtils;
-import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.member.entity.MemberTerms;
-import org.pknu.weather.member.entity.Terms;
-import org.pknu.weather.member.exp.Level;
+import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.member.auth.unlink.AppleUnlinker;
+import org.pknu.weather.member.auth.unlink.KakaoUnlinker;
+import org.pknu.weather.member.converter.MemberResponseConverter;
+import org.pknu.weather.member.converter.TermsConverter;
 import org.pknu.weather.member.dto.MemberJoinDTO;
 import org.pknu.weather.member.dto.MemberResponse;
 import org.pknu.weather.member.dto.MemberResponse.MemberLevelUpDTO;
 import org.pknu.weather.member.dto.TermsDto;
-import org.pknu.weather.member.converter.MemberResponseConverter;
-import org.pknu.weather.member.converter.TermsConverter;
-import org.pknu.weather.exception.GeneralException;
+import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.entity.MemberTerms;
+import org.pknu.weather.member.entity.Terms;
+import org.pknu.weather.member.exp.Level;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.member.repository.MemberTermsRepository;
 import org.pknu.weather.member.repository.TermsRepository;
-import org.pknu.weather.member.auth.unlink.AppleUnlinker;
-import org.pknu.weather.member.auth.unlink.KakaoUnlinker;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +149,7 @@ public class MemberService {
                 Throwable sqlCause = constraintViolationException.getCause();
 
                 if (sqlCause instanceof SQLException sqlException && sqlException.getErrorCode() == 1062) {
-                    throw new GeneralException(ErrorStatus._DUPILICATED_NICKNAME);
+                    throw new GeneralException(ErrorStatus._DUPLICATED_NICKNAME);
                 }
             }
         }

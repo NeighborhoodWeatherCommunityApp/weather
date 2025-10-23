@@ -1,12 +1,5 @@
 package org.pknu.weather.member.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,14 +9,29 @@ import org.pknu.weather.alarm.entity.Alarm;
 import org.pknu.weather.alarm.enums.SummaryAlarmTime;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.member.entity.Member;
-import org.pknu.weather.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import(DataJpaTestConfig.class)
 @DataJpaTest
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.post.repository.PostRepository.class,
+        org.pknu.weather.member.repository.MemberRepository.class,
+        org.pknu.weather.location.repository.LocationRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 class MemberCustomRepositoryImplTest {
 
     @Autowired

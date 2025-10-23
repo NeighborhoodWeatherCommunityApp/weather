@@ -6,9 +6,11 @@ import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.weather.ExtraWeather;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,6 +21,10 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(DataJpaTestConfig.class)
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.weather.repository.WeatherRedisRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 @DataJpaTest
 class ExtraWeatherRepositoryTest {
 
