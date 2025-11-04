@@ -1,5 +1,6 @@
 package org.pknu.weather.member.attandance.service;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.member.attandance.entity.Attendance;
@@ -12,8 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -51,7 +50,7 @@ public class AttendanceService {
                 .build();
 
         attendance.checkIn();
-        attendanceRepository.save(attendance);
+        attendanceRepository.upsertAttendance(LocalDate.now(), member.getId());
 
         eventPublisher.publishEvent(new AttendanceCheckedEvent(member.getEmail()));
     }
