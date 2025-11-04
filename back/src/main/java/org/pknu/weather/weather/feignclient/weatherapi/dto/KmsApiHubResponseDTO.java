@@ -13,10 +13,17 @@ import lombok.NoArgsConstructor;
 public class KmsApiHubResponseDTO {
 
     @JsonProperty("header")
-    private Header header;
+    private Header response;
 
-    @JsonProperty("body")
-    private Body body;
+    @Getter
+    @NoArgsConstructor
+    public static class response {
+        @JsonProperty("header")
+        private Header header;
+
+        @JsonProperty("body")
+        private Body body;
+    }
 
     @Getter
     @NoArgsConstructor
