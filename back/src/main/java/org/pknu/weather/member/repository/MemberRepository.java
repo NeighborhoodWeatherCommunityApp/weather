@@ -34,6 +34,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
 
     Optional<Member> findMemberWithLocationByEmail(@Param("email") String email);
 
+    @EntityGraph(attributePaths = {"roles", "location"})
     @Cacheable(value = "memberCache", key = "#email")
     default Member safeFindByEmail(String email) {
         return findByEmail(email)
@@ -43,6 +44,5 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
     @EntityGraph(attributePaths = {"roles", "location"})
     @Cacheable(value = "memberCache", key = "#email")
     Optional<Member> findMemberWithRolesByEmail(@Param("email") String email);
-
 }
 

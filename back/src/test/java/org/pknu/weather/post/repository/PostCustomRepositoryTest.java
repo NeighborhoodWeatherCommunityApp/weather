@@ -10,13 +10,14 @@ import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.location.entity.Location;
 import org.pknu.weather.location.repository.LocationRepository;
 import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.post.entity.Post;
 import org.pknu.weather.post.enums.PostType;
-import org.pknu.weather.member.repository.MemberRepository;
-import org.pknu.weather.post.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,12 @@ import java.util.List;
 
 @DataJpaTest
 @Import(DataJpaTestConfig.class)
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.post.repository.PostRepository.class,
+        org.pknu.weather.member.repository.MemberRepository.class,
+        org.pknu.weather.location.repository.LocationRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 class PostCustomRepositoryTest {
     @Autowired
     PostRepository postRepository;

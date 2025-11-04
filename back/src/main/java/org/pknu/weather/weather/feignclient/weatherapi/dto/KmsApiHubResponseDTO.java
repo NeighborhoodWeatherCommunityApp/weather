@@ -13,46 +13,53 @@ import lombok.NoArgsConstructor;
 public class KmsApiHubResponseDTO {
 
     @JsonProperty("header")
-    private Header header;
-
-    @JsonProperty("body")
-    private Body body;
+    private Response response;
 
     @Getter
     @NoArgsConstructor
-    public static class Header {
-        @JsonProperty("resultCode")
-        private Integer resultCode;
+    public static class Response {
+        @JsonProperty("header")
+        private Header header;
 
-        @JsonProperty("resultMsg")
-        private String resultMsg;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class Body {
-
-        @JsonProperty("dataType")
-        private String dataType;
-
-        @JsonProperty("items")
-        private Items items;
-
-        @JsonProperty("pageNo")
-        private int pageNo;
-
-        @JsonProperty("numOfRows")
-        private int numOfRows;
-
-        @JsonProperty("totalCount")
-        private int totalCount;
+        @JsonProperty("body")
+        private Body body;
 
         @Getter
         @NoArgsConstructor
-        public static class Items {
+        public static class Header {
+            @JsonProperty("resultCode")
+            private Integer resultCode;
 
-            @JsonProperty("item")
-            private List<Item> itemList;
+            @JsonProperty("resultMsg")
+            private String resultMsg;
+        }
+
+        @Getter
+        @NoArgsConstructor
+        public static class Body {
+
+            @JsonProperty("dataType")
+            private String dataType;
+
+            @JsonProperty("items")
+            private Items items;
+
+            @JsonProperty("pageNo")
+            private int pageNo;
+
+            @JsonProperty("numOfRows")
+            private int numOfRows;
+
+            @JsonProperty("totalCount")
+            private int totalCount;
+
+            @Getter
+            @NoArgsConstructor
+            public static class Items {
+
+                @JsonProperty("item")
+                private List<Item> itemList;
+            }
         }
     }
 }

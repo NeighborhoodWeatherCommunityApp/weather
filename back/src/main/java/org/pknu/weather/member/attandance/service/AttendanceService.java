@@ -1,17 +1,18 @@
 package org.pknu.weather.member.attandance.service;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.member.attandance.entity.Attendance;
+import org.pknu.weather.member.attandance.repository.AttendanceRepository;
 import org.pknu.weather.member.entity.Member;
 import org.pknu.weather.member.event.AttendanceCheckedEvent;
-import org.pknu.weather.member.attandance.repository.AttendanceRepository;
 import org.pknu.weather.member.repository.MemberRepository;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -21,13 +22,30 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final AttendanceRepository attendanceRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Transactional
-    public void checkIn(String email) {
+    public boolean checkIn(String email) {
         Member member = memberRepository.safeFindByEmail(email);
 
+//        Attendance attendance = Attendance.builder()
+//                .date(LocalDate.now())
+//                .member(member)
+//                .build();
+
+//        attendance.checkIn();
+        int i = attendanceRepository.upsertAttendance(LocalDate.now(), member.getId());
+
+        eventPublisher.publishEvent(new AttendanceCheckedEvent(member.getEmail()));
+
+        return i == 0;
+    }
+
+    @Async
+    @Transactional
+    public void checkInAsync(Member member, LocalDate date) {
         Attendance attendance = Attendance.builder()
-                .date(LocalDate.now())
+                .date(date)
                 .member(member)
                 .build();
 

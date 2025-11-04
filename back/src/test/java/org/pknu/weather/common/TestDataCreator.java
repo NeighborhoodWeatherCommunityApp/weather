@@ -12,10 +12,7 @@ import org.pknu.weather.weather.enums.RainType;
 import org.pknu.weather.weather.enums.SkyType;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestDataCreator {
     private static long locationIdx = 1;
@@ -76,12 +73,13 @@ public class TestDataCreator {
     }
 
     public static Member getBusanMember() {
+        String str = String.valueOf(UUID.randomUUID());
         return Member.builder()
                 .location(getBusanLocation())
-                .email("test@naver.com")
+                .email(str + "@naver.com")
                 .profileImage("http://test.png")
                 .sensitivity(Sensitivity.HOT)
-                .nickname("busan member")
+                .nickname(str + "busan member")
                 .build();
     }
 

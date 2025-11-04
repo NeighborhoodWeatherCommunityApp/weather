@@ -40,6 +40,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TYPE_NOT_ACCEPTED(HttpStatus.BAD_REQUEST, "Jwt_400_10", "소셜 로그인의 타입에 문제가 있습니다."),
     BAD_SIGNED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt_401_11", "Refresh Token의 서명이 올바르지 않습니다"),
 
+    // redis
+    _REDIS_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "REDIS_500_1", "요청 key가 null 이거나 script에 문제가 발생했습니다."),
 
 
     //KaKaoAccessTokenException
@@ -60,7 +62,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // member
     _MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_404_1", "사용자를 찾을 수 없습니다."),
     _MEMBER_NOT_FOUND_LOCATION(HttpStatus.NOT_FOUND, "MEMBER_404_2", "사용자의 기본 주소지가 설정되어 있지 않습니다."),
-    _DUPILICATED_NICKNAME(HttpStatus.BAD_REQUEST, "MEMBER_400_3", "사용자의 닉네임이 중복됩니다."),
+    _DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "MEMBER_400_3", "사용자의 닉네임이 중복됩니다."),
+
+    // attendance
+    _DUPLICATED_ATTENDANCE(HttpStatus.OK, "200", "중복된 출석체크 요청입니다."),
+
 
     // 약관동의
     _ESSENTIAL_TERMS_IS_REQUIRED(HttpStatus.BAD_REQUEST, "TERMS_400_1", "필수 약관 동의는 필수입니다."),
