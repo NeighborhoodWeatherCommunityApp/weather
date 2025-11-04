@@ -50,7 +50,7 @@ public class AttendanceService {
                 .build();
 
         attendance.checkIn();
-        attendanceRepository.upsertAttendance(LocalDate.now(), member.getId());
+        attendanceRepository.save(attendance);
 
         eventPublisher.publishEvent(new AttendanceCheckedEvent(member.getEmail()));
     }
