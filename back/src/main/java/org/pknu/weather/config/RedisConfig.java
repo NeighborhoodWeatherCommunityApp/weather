@@ -17,6 +17,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -36,48 +37,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.password}")
     private String password;
 
-
-    /**
-     * RedisConnectionFactory는 스프링 어플리케이션과 레디스를 연결하기 위해 사용된다.
-     * 커넥션의 종류로는 Jedis와 Lettuce가 있는데, Lettuce의 성능이 더 좋은 것으로 알려져있다.
-     */
-//    @Bean
-//    @ConditionalOnMissingBean(RedisConnectionFactory.class)
-//    public RedisConnectionFactory redisConnectionFactory() {
-//        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
-//        redisConfig.setPassword(RedisPassword.of(password));
-//
-////        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-////                .useSsl() // TLS 연결
-////                .and()
-////                .build();
-//
-//        // 커넥션 풀 설정 (중요!)
-//        GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
-//        poolConfig.setMaxTotal(50);        // 최대 연결 수
-//        poolConfig.setMaxIdle(20);         // 최대 유휴 연결
-//        poolConfig.setMinIdle(2);          // 최소 유휴 연결
-//        poolConfig.setTestOnBorrow(true);  // 연결 유효성 검사
-//
-//        LettucePoolingClientConfiguration poolingConfig = LettucePoolingClientConfiguration.builder()
-//                .poolConfig(poolConfig)
-//                .commandTimeout(Duration.ofSeconds(2))
-//                .shutdownTimeout(Duration.ofMillis(100))
-//                .useSsl()
-//                .and()
-//                .build();
-//
-//        LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(redisConfig, clientConfig);
-//        connectionFactory.setShareNativeConnection(true);
-//
-//        // redis 연결 정보를 토대로 LettuceConnectionFactory 객체를 생성하여 빈으로 등록한다.
-//        return new LettuceConnectionFactory(
-//                new RedisStandaloneConfiguration(host, port), poolingConfig);
-//    }
-
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
-    public LettuceConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory() {
         // Redis Config
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
         redisConfig.setPassword(password);
@@ -106,12 +68,17 @@ public class RedisConfig {
         return connectionFactory;
     }
 
+    @Bean(name = "stringRedisTemplate")
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
+    }
+
+
     /**
      * 이 설정은 모든 Redis 값에 대해 JSON 형태로 직렬화를 수행하도록 설정합니다.
      * 키에 대해서는 StringRedisSerializer를 사용하여 문자열로 직렬화합니다.
      */
-    @Bean
-    @ConditionalOnMissingBean(RedisTemplate.class)
+    @Bean(name = "jsonRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);

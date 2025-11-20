@@ -6,16 +6,23 @@ import org.junit.jupiter.api.Test;
 import org.pknu.weather.common.TestDataCreator;
 import org.pknu.weather.config.DataJpaTestConfig;
 import org.pknu.weather.member.entity.Member;
+import org.pknu.weather.member.repository.MemberRepository;
 import org.pknu.weather.post.entity.Post;
 import org.pknu.weather.post.repository.PostRepository;
 import org.pknu.weather.recomandation.entity.Recommendation;
-import org.pknu.weather.member.repository.MemberRepository;
-import org.pknu.weather.recomandation.repository.RecommendationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @DataJpaTest
+@EnableJpaRepositories(basePackageClasses = {
+        org.pknu.weather.member.repository.MemberRepository.class,
+        org.pknu.weather.post.repository.PostRepository.class,
+        org.pknu.weather.recomandation.repository.RecommendationRepository.class,
+})
+@EntityScan(basePackages = "org.pknu.weather")
 @Import(DataJpaTestConfig.class)
 class RecommendationRepositoryTest {
 

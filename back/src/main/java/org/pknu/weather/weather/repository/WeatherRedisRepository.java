@@ -3,6 +3,7 @@ package org.pknu.weather.weather.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pknu.weather.weather.dto.WeatherRedisDTO;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.buildKey;
@@ -23,9 +25,10 @@ import static org.pknu.weather.weather.utils.WeatherRedisKeyUtils.generateHourly
 @Slf4j
 @Repository
 public class WeatherRedisRepository {
+    @Qualifier("jsonRedisTemplate")
     private final RedisTemplate<String, Object> redisTemplate;
-    private final Duration DEFAULT_DURATION = Duration.ofHours(24);
-    private final Integer DEFAULT_HOURS = 24;
+    private final static Duration DEFAULT_DURATION = Duration.ofHours(24);
+    private final static Integer DEFAULT_HOURS = 24;
 
     public List<WeatherRedisDTO.WeatherData> getWeathers(Long locationId, LocalDateTime localDateTime) {
         List<Object> result = Optional.ofNullable(
@@ -69,7 +72,9 @@ public class WeatherRedisRepository {
         for (WeatherRedisDTO.WeatherData weatherData : weatherDataList) {
             opsForList().rightPush(buildKey(locationId), weatherData);
         }
-        redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION);
+
+        int jitter = ThreadLocalRandom.current().nextInt(0, 11);
+        redisTemplate.expire(buildKey(locationId), DEFAULT_DURATION.plusMinutes(jitter));
     }
 
     public void updateWeatherList(Long locationId, List<WeatherRedisDTO.WeatherData> weatherDataList) {
